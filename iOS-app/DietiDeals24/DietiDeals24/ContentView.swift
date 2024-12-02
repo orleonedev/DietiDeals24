@@ -8,12 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    var env: String {
+#if DEV
+        return "dev"
+        #else
+        return "prod"
+#endif
+    }
     var body: some View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("Hello, \(env)!")
         }
         .padding()
     }

@@ -1,0 +1,39 @@
+﻿networks:
+  dietideals24-network: # Define a custom network
+    driver: bridge
+     
+services:
+  dietideals24restapi:
+    image: dietideals24restapi
+    build:
+      context: ./DietiDeals24RestApi
+      dockerfile: DietiDeals24RestApi/Dockerfile
+    ports:
+      - "5029:5029"
+      #- "5030:5030"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 5029
+      #ASPNETCORE_HTTPS_PORTS: 5030
+      DB_CONNECTION_STRING: "Host=${DB_HOST};Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}"
+    networks:
+      - dietideals24-network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    container_name: dietideals24-postgres
+    ports:
+      - "5432:5432" # Expose PostgreSQL on localhost:5432
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persistent volume for data
+    networks:
+      - dietideals24-network
+
+volumes:
+  pgdata: # Define a persistent volume for PostgreSQL data

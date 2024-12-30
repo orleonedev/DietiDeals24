@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\compose.yaml = ..\compose.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24RestApi.Test", "DietiDeals24RestApi.Test\DietiDeals24RestApi.Test.csproj", "{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,5 +19,9 @@ Global
 		{FC2E8FCA-7E3C-4D0D-8A92-F2857C0BCFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC2E8FCA-7E3C-4D0D-8A92-F2857C0BCFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC2E8FCA-7E3C-4D0D-8A92-F2857C0BCFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

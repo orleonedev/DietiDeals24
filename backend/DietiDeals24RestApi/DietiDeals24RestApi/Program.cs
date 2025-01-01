@@ -1,4 +1,6 @@
 using System.Reflection;
+using DietiDeals24RestApi.Workers;
+using DietiDeals24RestApi.Workers.Impl;
 using Microsoft.EntityFrameworkCore;
 
 namespace DietiDeals24RestApi;
@@ -14,6 +16,7 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        builder.Services.AddScoped<ICheckWorker, CheckWorker>();
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

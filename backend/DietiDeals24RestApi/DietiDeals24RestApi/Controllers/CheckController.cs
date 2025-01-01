@@ -1,4 +1,5 @@
 using System.Reflection;
+using DietiDeals24RestApi.Workers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +13,17 @@ namespace DietiDeals24RestApi.Controllers;
 public class CheckController : ControllerBase
 {
     private readonly ILogger<CheckController> _logger;
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ICheckWorker _checkWorker;
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="CheckController"/> class.
     /// </summary>
     /// <param name="logger">The logger instance for logging operations.</param>
-    /// <param name="dbContext">The database context for performing the database check.</param>
-    public CheckController(ILogger<CheckController> logger, ApplicationDbContext dbContext )
+    /// <param name="checkWorker">The worker instance for performing checks</param>
+    public CheckController(ILogger<CheckController> logger, ICheckWorker checkWorker )
     {
         _logger = logger;
-        _dbContext = dbContext;
+        _checkWorker = checkWorker;
     }
 
     /// <summary>
@@ -33,10 +35,11 @@ public class CheckController : ControllerBase
     /// <response code="200">Returns the current environment.</response>
     [HttpGet("environment", Name = "CheckEnvironment")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetEnvironment()
+    public async Task<IActionResult> GetEnvironment()
     {
         _logger.LogInformation("Checking Environment");
-        return Ok(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"));
+        var env = await _checkWorker.GetEnvironmentValue();
+        return Ok(env);
     }
     
     /// <summary>
@@ -46,18 +49,10 @@ public class CheckController : ControllerBase
     /// <response code="200">Returns the system information.</response>
     [HttpGet("system-info", Name = "GetSystemInfo")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetSystemInfo()
+    public async Task<IActionResult> GetSystemInfo()
     {
         _logger.LogInformation("Checking System Info");
-        var systemInfo = new
-        {
-            ApplicationVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString(),
-            MachineName = Environment.MachineName,
-            OSVersion = Environment.OSVersion.ToString(),
-            CurrentDateTime = DateTime.Now
-        };
-
-        return Ok(systemInfo);
+        return Ok( await _checkWorker.GetSystemInfos());
     }
     
     /// <summary>
@@ -73,68 +68,18 @@ public class CheckController : ControllerBase
     }
 
     /// <summary>
-    /// Checks if the critical external services are available.
-    /// </summary>
-    /// <returns>Returns a 200 OK response if all services are available.</returns>
-    /// <response code="200">External services are available.</response>
-    /// <response code="503">One or more external services are unavailable.</response>
-    [HttpGet("service-dependencies", Name = "CheckServiceDependencies")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult CheckServiceDependencies()
-    {
-        // Helper method to check external services
-        bool CheckExternalServices()
-        {
-            // Implement logic to check external services (e.g., HTTP requests to APIs, etc.)
-            return true; // Assume services are available
-        }
-
-        bool areServicesAvailable = CheckExternalServices(); // Implement this method
-
-        if (areServicesAvailable)
-        {
-            return Ok("All external services are available");
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "One or more external services are unavailable");
-        }
-    }
-
-    /// <summary>
     /// Checks if the database connection is working.
     /// </summary>
     /// <returns>Returns a 200 OK response if the database is reachable.</returns>
     /// <response code="200">Database is reachable.</response>
-    /// <response code="503">Database is not reachable.</response>
+    /// <response code="500">Database is not reachable.</response>
     [HttpGet("db-connection", Name = "CheckDbConnection")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public IActionResult CheckDatabaseConnection()
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> CheckDatabaseConnection()
     {
-        try
-        {
-            // Perform a lightweight query to check if the database connection is working
-            var canConnect = _dbContext.Database.CanConnect();
-            var connectionString = _dbContext.Database.GetConnectionString();
-            _logger.LogInformation(connectionString);
-            if (canConnect)
-            {
-                _logger.LogInformation("Database connection is successful.");
-                return Ok("Database is connected.");
-            }
-            else
-            {
-                _logger.LogError("Database connection failed.");
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, "Database is unreachable.");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while checking database connection.");
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, "Database check failed.");
-        }
+        var result = await _checkWorker.CheckDatabaseConnection();
+        return result ? Ok("Database is connected.") : StatusCode(StatusCodes.Status500InternalServerError, "Database is unavailable.");
     }
 
 }

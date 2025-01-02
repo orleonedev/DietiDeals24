@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DietiDeals24RestApi\DietiDeals24RestApi.csproj" />
+      <ProjectReference Include="..\DietiDeals24.RestApi\DietiDeals24.RestApi.csproj" />
     </ItemGroup>
 
 </Project>

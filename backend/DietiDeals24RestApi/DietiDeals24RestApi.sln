@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24RestApi", "DietiDeals24RestApi\DietiDeals24RestApi.csproj", "{FC2E8FCA-7E3C-4D0D-8A92-F2857C0BCFB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.RestApi", "DietiDeals24.RestApi\DietiDeals24.RestApi.csproj", "{FC2E8FCA-7E3C-4D0D-8A92-F2857C0BCFB0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5C112172-F55F-45C7-8C60-710311E64264}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.dockerignore = .dockerignore
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24RestApi.Test", "DietiDeals24RestApi.Test\DietiDeals24RestApi.Test.csproj", "{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.RestApi.Test", "DietiDeals24.RestApi.Test\DietiDeals24.RestApi.Test.csproj", "{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.DataAccessLayer", "DietiDeals24.DataAccessLayer\DietiDeals24.DataAccessLayer.csproj", "{3AD995E4-793A-44F9-94AE-C5762CA812BC}"
 EndProject

@@ -1,4 +1,4 @@
-namespace DietiDeals24RestApi.Test;
+namespace DietiDeals24.RestApi.Test;
 
 public class UnitTest1
 {

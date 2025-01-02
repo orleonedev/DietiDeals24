@@ -1,8 +1,8 @@
 using System.Reflection;
 using DietiDeals24.DataAccessLayer.Services;
-using DietiDeals24RestApi.Models;
+using DietiDeals24.RestApi.Models;
 
-namespace DietiDeals24RestApi.Workers.Impl;
+namespace DietiDeals24.RestApi.Workers;
 
 public class CheckWorker: ICheckWorker
 {

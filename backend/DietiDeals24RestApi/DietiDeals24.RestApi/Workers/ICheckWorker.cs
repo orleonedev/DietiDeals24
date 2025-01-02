@@ -1,6 +1,6 @@
-using DietiDeals24RestApi.Models;
+using DietiDeals24.RestApi.Models;
 
-namespace DietiDeals24RestApi.Workers;
+namespace DietiDeals24.RestApi.Workers;
 
 public interface ICheckWorker
 {

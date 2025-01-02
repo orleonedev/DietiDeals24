@@ -1,9 +1,9 @@
 using System.Reflection;
-using DietiDeals24RestApi.Workers;
+using DietiDeals24.RestApi.Workers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DietiDeals24RestApi.Controllers;
+namespace DietiDeals24.RestApi.Controllers;
 
 /// <summary>
 /// Controller for performing system checks.

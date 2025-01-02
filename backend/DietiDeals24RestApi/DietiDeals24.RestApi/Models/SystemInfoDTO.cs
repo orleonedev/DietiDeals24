@@ -1,4 +1,4 @@
-namespace DietiDeals24RestApi.Models;
+namespace DietiDeals24.RestApi.Models;
 
 public class SystemInfoDTO
 {

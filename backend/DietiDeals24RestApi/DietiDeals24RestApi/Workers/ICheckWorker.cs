@@ -8,6 +8,6 @@ public interface ICheckWorker
 
     Task<SystemInfoDTO> GetSystemInfos();
     
-    Task<Boolean> CheckDatabaseConnection();
+    Task<bool> CheckDatabaseConnection();
     
 }

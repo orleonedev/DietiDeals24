@@ -1,8 +1,9 @@
 using System.Reflection;
+using DietiDeals24.DataAccessLayer.Extensions;
 using DietiDeals24RestApi.Workers;
 using DietiDeals24RestApi.Workers.Impl;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Configuration;
 namespace DietiDeals24RestApi;
 
 public class Program
@@ -12,9 +13,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        var connectionString = builder.Configuration["DB_CONNECTION_STRING"];
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString));
+        // var connectionString = builder.Configuration["DB_CONNECTION_STRING"];
+        
+        builder.Services.AddDietiDeals24DataAccessLayer(builder.Configuration);
+        // builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        //     options.UseNpgsql(connectionString));
 
         builder.Services.AddScoped<ICheckWorker, CheckWorker>();
         builder.Services.AddControllers();

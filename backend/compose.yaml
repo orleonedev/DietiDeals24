@@ -7,7 +7,7 @@ services:
     image: dietideals24restapi
     build:
       context: ./DietiDeals24RestApi
-      dockerfile: DietiDeals24RestApi/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "5029:5029"
       #- "5030:5030"

@@ -1,15 +1,16 @@
 using System.Reflection;
+using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24RestApi.Models;
 
 namespace DietiDeals24RestApi.Workers.Impl;
 
 public class CheckWorker: ICheckWorker
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ICheckService _checkService;
 
-    public CheckWorker(ApplicationDbContext context)
+    public CheckWorker(ICheckService checkService)
     {
-        _context = context;
+        _checkService = checkService;
     }
 
     public async Task<string?> GetEnvironmentValue()
@@ -33,7 +34,7 @@ public class CheckWorker: ICheckWorker
 
     public async Task<bool> CheckDatabaseConnection()
     {
-        var canConnect = await _context.Database.CanConnectAsync();
+        var canConnect = await _checkService.CheckDatabaseConnection();
         return canConnect;
     }
 }

@@ -5,9 +5,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5C112172-F55F-45C7-8C60-710311E64264}"
 	ProjectSection(SolutionItems) = preProject
 		..\compose.yaml = ..\compose.yaml
+		Dockerfile = Dockerfile
+		.dockerignore = .dockerignore
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24RestApi.Test", "DietiDeals24RestApi.Test\DietiDeals24RestApi.Test.csproj", "{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.DataAccessLayer", "DietiDeals24.DataAccessLayer\DietiDeals24.DataAccessLayer.csproj", "{3AD995E4-793A-44F9-94AE-C5762CA812BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,5 +27,9 @@ Global
 		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA8E1EE3-DD25-4309-A3D7-DCC9000B599D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

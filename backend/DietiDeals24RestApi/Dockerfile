@@ -26,6 +26,16 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "DietiDeals24.RestApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Migration 
+#FROM build AS migration
+#WORKDIR "/src/DietiDeals24.RestApi/"
+#RUN dotnet tool install --global dotnet-ef
+#ENV PATH="$PATH:/root/.dotnet/tools"
+#RUN dotnet ef --version
+#ARG DB_CONNECTION_STRING
+#RUN echo "$DB_CONNECTION_STRING"
+#RUN dotnet ef database update --project "../DietiDeals24.DataAccessLayer/DietiDeals24.DataAccessLayer.csproj" --startup-project "DietiDeals24.RestApi.csproj" --connection "$DB_CONNECTION_STRING"
+
 # Use the runtime image for the final app
 FROM base AS final
 WORKDIR /app

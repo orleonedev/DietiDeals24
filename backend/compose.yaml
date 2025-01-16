@@ -3,6 +3,21 @@
     driver: bridge
      
 services:
+  
+  db:
+    image: postgres:latest
+    container_name: dietideals24-postgres
+    ports:
+      - "5432:5432" # Expose PostgreSQL on localhost:5432
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persistent volume for data
+    networks:
+      - dietideals24-network
+  
   dietideals24restapi:
     image: dietideals24restapi
     build:
@@ -21,19 +36,22 @@ services:
     depends_on:
       - db
 
-  db:
-    image: postgres:latest
-    container_name: dietideals24-postgres
-    ports:
-      - "5432:5432" # Expose PostgreSQL on localhost:5432
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - pgdata:/var/lib/postgresql/data # Persistent volume for data
-    networks:
-      - dietideals24-network
+#  migrations:
+#    build:
+#      context: ./DietiDeals24RestApi
+#      dockerfile: Dockerfile
+#      target: migration
+#      args:
+#        DB_CONNECTION_STRING: "Host=${DB_HOST};Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}"
+#    networks:
+#      - dietideals24-network
+#    depends_on:
+#      - db
+
+        
+  
+        
+  
 
 volumes:
   pgdata: # Define a persistent volume for PostgreSQL data

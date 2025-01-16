@@ -1,6 +1,7 @@
 using System.Data;
 using System.Threading.Tasks;
 using DietiDeals24.DataAccessLayer.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DietiDeals24.DataAccessLayer.Services.Impl;

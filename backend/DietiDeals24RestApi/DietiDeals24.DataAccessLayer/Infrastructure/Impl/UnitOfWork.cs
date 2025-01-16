@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 
 namespace DietiDeals24.DataAccessLayer.Infrastructure;
 
@@ -11,16 +12,20 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     private IDbContextTransaction _transaction;
     private bool _disposed = false;
 
-    // private readonly IRepository<Assets, int> assetsRepository;
-    // private readonly IRepository<ProductAccessoriesShape, object[]> productAccessoriesShapeRepository;
-    public UnitOfWork(DietiDeals24DbContext context)
+    private readonly IRepository<User, Guid> _userRepository;
+    private readonly IRepository<Vendor, Guid> _vendorRepository;
+    public UnitOfWork(DietiDeals24DbContext context,
+        IRepository<User, Guid> userRepository,
+        IRepository<Vendor, Guid> vendorRepository)
     {
         this._context = context;
+        _userRepository = userRepository;
+        _vendorRepository = vendorRepository;
     }
 
-    // public IRepository<Assets, int> AssetsRepository { get => assetsRepository; }
-    // public IRepository<ProductAccessoriesShape, object[]> ProductAccessoriesShapeRepository { get => productAccessoriesShapeRepository; }
-
+    public IRepository<User, Guid> UserRepository { get => _userRepository; }
+    public IRepository<Vendor, Guid> VendorRepository { get => _vendorRepository; }
+    
     public IExecutionStrategy CreateExecutionStrategy()
     {
         return _context.Database.CreateExecutionStrategy();

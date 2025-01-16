@@ -1,12 +1,14 @@
+using System;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DietiDeals24.DataAccessLayer.Infrastructure;
 
 public interface IUnitOfWork
 {
-    // IRepository<Assets, int> AssetsRepository { get; }
-    // IRepository<ProductAccessoriesShape, object[]> ProductAccessoriesShapeRepository { get; }
+    public IRepository<User, Guid> UserRepository { get; }
+    public IRepository<Vendor, Guid> VendorRepository { get; }
     Task<int> Save();
     IExecutionStrategy CreateExecutionStrategy();
     void BeginTransaction();

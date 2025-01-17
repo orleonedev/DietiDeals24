@@ -15,6 +15,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data # Persistent volume for data
+      - ./sql-scripts/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     networks:
       - dietideals24-network
   

@@ -1,3 +1,4 @@
+using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24.DataAccessLayer.Services.Impl;
@@ -17,6 +18,7 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<ICheckService, CheckService>();
+        serviceCollection.AddScoped<IAuctionService, AuctionService>();
         return serviceCollection;
     }
     

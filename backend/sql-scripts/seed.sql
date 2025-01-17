@@ -59,7 +59,6 @@ CREATE TABLE "Auction" (
     "StartingDate" timestamp without time zone NOT NULL DEFAULT (CURRENT_TIMESTAMP),
     "EndingDate" timestamp without time zone NOT NULL,
     CONSTRAINT "PK_Auction" PRIMARY KEY ("Id"),
-    CONSTRAINT "CK_CurrentPrice" CHECK ("CurrentPrice" >= "StartingPrice"),
     CONSTRAINT "CK_SecretPrice" CHECK ("SecretPrice" < "StartingPrice"),
     CONSTRAINT "CK_StartingPrice" CHECK ("StartingPrice" >= 0),
     CONSTRAINT "CK_Threshold" CHECK ("Threshold" >= 1),
@@ -146,6 +145,7 @@ START TRANSACTION;
 -- Insert sample data for Category
 INSERT INTO "Category" ("Id", "Name", "Description") 
 VALUES 
+(gen_random_uuid(), 'Services', 'Everything that is not a physical object you offer'),
 (gen_random_uuid(), 'Electronics', 'Devices, gadgets, and technology products'),
 (gen_random_uuid(), 'Furniture', 'Various types of furniture including chairs, tables, and more'),
 (gen_random_uuid(), 'Clothing', 'Fashionable clothing and accessories for all genders');
@@ -153,8 +153,9 @@ VALUES
 -- Insert sample data for User
 INSERT INTO "User" ("Id", "CognitoSub", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
 VALUES 
+(gen_random_uuid(), 'sub-12344', 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
 (gen_random_uuid(), 'sub-12345', 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
-(gen_random_uuid(), 'sub-12346', 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', false),
+(gen_random_uuid(), 'sub-12346', 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
 (gen_random_uuid(), 'sub-12347', 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
 (gen_random_uuid(), 'sub-12348', 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
 
@@ -167,18 +168,22 @@ VALUES
 -- Insert sample data for Auction
 INSERT INTO "Auction" ("Id", "Title", "AuctionDescription", "StartingPrice", "CurrentPrice", "AuctionType", "Threshold", "Timer", "SecretPrice", "VendorId", "CategoryId", "AuctionState", "StartingDate", "EndingDate") 
 VALUES 
-(gen_random_uuid(), 'Laptop Auction', 'Brand new laptop, starting price $500', 500.00, 500.00, 0, 1, 30, NULL, 
+(gen_random_uuid(), 'Laptop Auction', 'Brand new laptop, starting price $350', 350.00, 430.00, 0, 25, 48, NULL, 
  (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
  (SELECT "Id" FROM "Category" WHERE "Name" = 'Electronics'), 
- 0, '2025-01-01 00:00:00', '2025-02-01 00:00:00'),
-(gen_random_uuid(), 'Vintage Chair', 'Antique chair from the 1800s', 100.00, 100.00, 1, 1, 20, NULL, 
+ 0, '2025-01-17 10:00:00', '2025-01-19 23:00:00'),
+(gen_random_uuid(), 'Vintage Chair', 'Antique chair from the 1800s', 300.00, 250.00, 1, 25, 12, 80.00, 
  (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
  (SELECT "Id" FROM "Category" WHERE "Name" = 'Furniture'), 
- 0, '2025-01-10 00:00:00', '2025-02-10 00:00:00'),
-(gen_random_uuid(), 'T-Shirt Auction', 'Limited edition t-shirts', 10.00, 10.00, 0, 1, 15, 8.00, 
+ 1, '2025-01-18 00:00:00', '2025-01-19 12:00:00'),
+ (gen_random_uuid(), 'Modern Table', 'An elegant modern table', 600.00, 600.00, 0, 50, 72, NULL, 
+ (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
+ (SELECT "Id" FROM "Category" WHERE "Name" = 'Furniture'), 
+ 2, '2025-01-10 12:00:00', '2025-01-13 12:00:00'),
+(gen_random_uuid(), 'T-Shirt Auction', 'Limited edition t-shirts', 10.00, 25.00, 0, 5, 24, NULL, 
  (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
  (SELECT "Id" FROM "Category" WHERE "Name" = 'Clothing'), 
- 0, '2025-01-15 00:00:00', '2025-02-15 00:00:00');
+ 0, '2025-01-17 09:00:00', '2025-01-19 06:00:00');
 
 -- Insert sample data for AuctionImage
 INSERT INTO "AuctionImage" ("Id", "AuctionId", "Url") 
@@ -186,6 +191,7 @@ VALUES
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Vintage Chair'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
+(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Modern Table'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI');
 
@@ -193,14 +199,14 @@ VALUES
 INSERT INTO "Bid" ("Id", "AuctionId", "BuyerId", "Price", "OfferDate") 
 VALUES 
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 450.00, '2025-01-01 10:00:00'),
+ (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 375.00, '2025-01-17 14:00:00'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 470.00, '2025-01-02 11:00:00'),
+ (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 430.00, '2025-01-17 23:00:00'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Vintage Chair'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 120.00, '2025-01-11 14:00:00'),
+ (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 250.00, '2025-01-19 08:00:00'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 12.00, '2025-01-16 09:00:00'),
+ (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 16.00, '2025-01-17 13:00:00'),
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 15.00, '2025-01-17 13:00:00');
+ (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 25.00, '2025-01-18 06:00:00');
 
 COMMIT;

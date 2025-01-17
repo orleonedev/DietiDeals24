@@ -12,7 +12,6 @@ public class AuctionConfiguration : IEntityTypeConfiguration<Auction>
             tableBuilder =>
             {
                 tableBuilder.HasCheckConstraint("CK_StartingPrice", "\"StartingPrice\" >= 0");
-                tableBuilder.HasCheckConstraint("CK_CurrentPrice", "\"CurrentPrice\" >= \"StartingPrice\"");
                 tableBuilder.HasCheckConstraint("CK_Threshold", "\"Threshold\" >= 1");
                 tableBuilder.HasCheckConstraint("CK_Timer", "\"Timer\" >= 1");
                 tableBuilder.HasCheckConstraint("CK_SecretPrice", "\"SecretPrice\" < \"StartingPrice\"");

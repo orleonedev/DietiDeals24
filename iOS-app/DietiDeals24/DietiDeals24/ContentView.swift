@@ -22,6 +22,7 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, \(env)!")
+            Text("This is the start of cognito setup")
         }
         .padding()
     }

@@ -20,7 +20,7 @@ struct ContentView: View {
         VStack {
             Image(systemName: "globe")
                 .imageScale(.large)
-                .foregroundStyle(.tint)
+                .foregroundStyle(.dietiYellow)
             Text("Hello, \(env)!")
             Text("This is the start of cognito setup")
         }

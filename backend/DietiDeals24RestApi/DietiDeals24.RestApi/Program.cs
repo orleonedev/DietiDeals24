@@ -1,9 +1,7 @@
 using System.Reflection;
+using Amazon.CognitoIdentityProvider;
 using DietiDeals24.DataAccessLayer.Extensions;
 using DietiDeals24.RestApi.Extensions;
-using DietiDeals24.RestApi.Workers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 namespace DietiDeals24.RestApi;
 
 public class Program

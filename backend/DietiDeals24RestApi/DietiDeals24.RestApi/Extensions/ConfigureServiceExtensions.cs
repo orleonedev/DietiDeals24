@@ -1,4 +1,5 @@
 using DietiDeals24.RestApi.Workers;
+using DietiDeals24.RestApi.Workers.Impl;
 
 namespace DietiDeals24.RestApi.Extensions;
 
@@ -8,6 +9,7 @@ public static class ConfigureServiceExtensions
     {
         services.AddScoped<ICheckWorker, CheckWorker>();
         services.AddScoped<IAuctionWorker, AuctionWorker>();
+        services.AddScoped<IAuthenticationWorker, AuthenticationWorker>();
         return services;
     }
 }

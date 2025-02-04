@@ -6,31 +6,62 @@
 //
 
 final class CognitoAuthService: AuthService {
-
+    
     let rest: RESTDataSource
     init(rest: RESTDataSource) {
         self.rest = rest
     }
     
-    func loginAsync<T>(username: String, password: String) async throws -> AuthServiceResponse<T> {
-        let response: T = try await rest.getCodable(at: CognitoEndpoint.login(username: username, password: password).endpoint)
-        return AuthServiceResponse(authResponse: response)
+    func signIn(username: String, password: String) async throws -> AuthTokenSession {
+        let response: CognitoAuthResponse = try await rest.getCodable(
+            at: CognitoEndpoint.login(
+                method: .usernamePassword(
+                    username: username,
+                    password: password
+                )
+            ).endpoint
+        )
+        let result: AuthTokenSession = response.authResult
+        return result
     }
     
+    func signIn(withProvider provider: AuthFederatedProvider, thirdPartyToken: String) async throws -> AuthTokenSession {
+        let response: CognitoAuthResponse = try await rest.getCodable(
+            at: CognitoEndpoint.login(
+                method: .provider(provider: provider.rawValue, token: thirdPartyToken)
+            ).endpoint
+        )
+        let result: AuthTokenSession = response.authResult
+        return result
+    }
     
+    func refreshAccessToken(refreshToken: String) async throws -> AuthTokenSession {
+        let response: CognitoAuthResponse = try await rest.getCodable(
+            at: CognitoEndpoint.login(
+                method: .refreshToken(refreshToken: refreshToken)
+            ).endpoint
+        )
+        let result: AuthTokenSession = response.authResult
+        return result
+    }
+    
+    func signOut() async throws {
+        
+    }
     
 }
 
-
-class useCase {
+class AuthenticationUseCase {
     
     let authService: AuthService
-    init(authService: AuthService) {
+    let credService: CredentialService
+    init(authService: AuthService, credService: CredentialService) {
         self.authService = authService
+        self.credService = credService
     }
     
-    func login() async throws {
-        let response : AuthServiceResponse<AuthResult> = try await authService.loginAsync(username: "", password: "")
-        let result : AuthResult = response.authResponse
+    func getCredentials() async throws -> String {
+        return try await self.credService.getAccessTokenAsync()
     }
+    
 }

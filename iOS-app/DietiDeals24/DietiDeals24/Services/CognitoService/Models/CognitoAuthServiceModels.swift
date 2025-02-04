@@ -13,18 +13,18 @@ struct CognitoAuthRequestBody: Codable, BodyParameters {
     let clientId: String
 }
 
-struct CognitoAuthResponse: Codable {
-    let authenticationResult: AuthResult?
+enum CognitoLoginMethods {
+    case usernamePassword(username: String, password: String)
+    case provider(provider: String, token: String)
+    case refreshToken(refreshToken: String)
 }
 
-struct AuthResult: Codable {
-    let idToken: String?
-    let accessToken: String?
-    let refreshToken: String?
+struct CognitoAuthResponse: AuthServiceResponse {
+    var authResult: AuthTokenSession
 }
 
-enum CognitoEndpoint: Codable {
-    case login(username: String, password: String)
+enum CognitoEndpoint {
+    case login(method: CognitoLoginMethods)
     case signUp
     case confirmSignUp
     case forgotPassword
@@ -36,8 +36,15 @@ enum CognitoEndpoint: Codable {
 extension CognitoEndpoint {
     var endpoint: EndpointConvertible {
         switch self {
-            case .login(let username, let pswrd):
-                return Self.getLoginEndpoint(username: username, password: pswrd)
+            case .login(let method):
+                switch method {
+                    case .usernamePassword(let username, let pswrd):
+                        return Self.getLoginEndpoint(username: username, password: pswrd)
+                    case .provider(let provider, let token):
+                        return Self.getLoginEndpoint(provider: provider, token: token)
+                    case .refreshToken(let refreshToken):
+                        return Self.getLoginEndpoint(refreshToken: refreshToken)
+                }
 //            case .signUp:
 //                break
 //            case .confirmSignUp:
@@ -67,6 +74,63 @@ extension CognitoEndpoint {
             authParameters: [
                 "USERNAME" : username,
                 "PASSWORD" : password
+            ],
+            clientId: clientId
+        ).jsonObject
+        
+        return CodableEndpoint<CognitoAuthResponse>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: httpMethod,
+                headers: headers
+            )
+        )
+    }
+    
+    static func getLoginEndpoint(provider: String, token: String) -> CodableEndpoint<CognitoAuthResponse> {
+        let clientId = CognitoConfiguration.clientId
+        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.json
+        let headers: [String: String] = [
+            "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
+        ]
+        let body = CognitoAuthRequestBody(
+            authFlow: "USER_SRP_AUTH",
+            authParameters: [
+                "USERNAME": provider + "_" + UUID().uuidString,  // Unique identifier for federated login
+                "IDP_TOKEN": token
+            ],
+            clientId: clientId
+        ).jsonObject
+        
+        return CodableEndpoint<CognitoAuthResponse>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: httpMethod,
+                headers: headers
+            )
+        )
+    }
+    
+    static func getLoginEndpoint(refreshToken: String) -> CodableEndpoint<CognitoAuthResponse> {
+        let clientId = CognitoConfiguration.clientId
+        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.json
+        let headers: [String: String] = [
+            "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
+        ]
+        let body = CognitoAuthRequestBody(
+            authFlow: "REFRESH_TOKEN_AUTH",
+            authParameters: [
+                "REFRESH_TOKEN": refreshToken
             ],
             clientId: clientId
         ).jsonObject

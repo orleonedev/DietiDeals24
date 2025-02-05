@@ -10,7 +10,7 @@ public interface IAuthenticationService
 
     public Task<TokenResponseDTO> LoginUserAsync(string email, string password);
     public Task LogoutUserAsync(string accessToken);
-    public Task<HttpStatusCode> ConfirmUserAsync(string email, string confirmationCode);
+    public Task ConfirmUserAsync(string email, string confirmationCode);
     public Task ResendConfirmationCodeAsync(string email);
     public Task<UserResponseDTO> GetUserAsync(string email);
     public Task<string> GetCognitoSub(string email);

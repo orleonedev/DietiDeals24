@@ -98,10 +98,6 @@ public class AuthenticationService: IAuthenticationService
                 _logger.LogWarning($"Attempt {attempt} failed: {ex.Message}. Retrying in {delayMilliseconds}ms...");
                 await Task.Delay(delayMilliseconds); // Wait before retrying
             }
-            catch
-            {
-                throw; // Let the exception propagate if retries are exhausted
-            }
         }
     }
 
@@ -210,7 +206,7 @@ public class AuthenticationService: IAuthenticationService
     /// <param name="email"></param>
     /// <param name="confirmationCode"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<HttpStatusCode> ConfirmUserAsync(string email, string confirmationCode)
+    public async Task ConfirmUserAsync(string email, string confirmationCode)
     {
         try
         {
@@ -222,16 +218,8 @@ public class AuthenticationService: IAuthenticationService
                 ConfirmationCode = confirmationCode
             };
 
-            var response = await ExecuteWithRetryAsync(() => _cognitoClient.ConfirmSignUpAsync(request));
-            if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-            {
-                _logger.LogInformation($"User {email} confirmed successfully.");
-            }
-            else
-            {
-                _logger.LogError($"User {email} confirmation code {confirmationCode} failed.");
-            }
-            return response.HttpStatusCode;
+            await ExecuteWithRetryAsync(() => _cognitoClient.ConfirmSignUpAsync(request));
+            _logger.LogInformation($"User {email} confirmed successfully.");
         }
         catch (Exception ex)
         {
@@ -316,6 +304,7 @@ public class AuthenticationService: IAuthenticationService
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<UserResponseDTO> GetUserAsync(string email)
     {
         try
@@ -328,22 +317,17 @@ public class AuthenticationService: IAuthenticationService
                 UserPoolId = secrets["USER_POOL_ID"]
             });
 
+            var attributes = user.Result.UserAttributes
+                .ToDictionary(attr => attr.Name, attr => attr.Value, StringComparer.OrdinalIgnoreCase);
+
             return new UserResponseDTO
             {
-                FullName = user.Result.UserAttributes.FirstOrDefault(attr =>
-                    string.Equals(attr.Name, "name", StringComparison.OrdinalIgnoreCase))?.Value,
-                Username = user.Result.UserAttributes.FirstOrDefault(attr =>
-                    string.Equals(attr.Name, "nickname", StringComparison.OrdinalIgnoreCase))?.Value,
-                Email = user.Result.UserAttributes.FirstOrDefault(attr =>
-                    string.Equals(attr.Name, "email", StringComparison.OrdinalIgnoreCase))?.Value,
-                IsEmailVerified = Convert.ToBoolean(user.Result.UserAttributes
-                    .FirstOrDefault(attr =>
-                        string.Equals(attr.Name, "email_verified", StringComparison.OrdinalIgnoreCase))
-                    ?.Value),
-                BirthDate = user.Result.UserAttributes.FirstOrDefault(attr =>
-                    string.Equals(attr.Name, "birthdate", StringComparison.OrdinalIgnoreCase))?.Value,
-                Gender = user.Result.UserAttributes.FirstOrDefault(attr =>
-                    string.Equals(attr.Name, "gender", StringComparison.OrdinalIgnoreCase))?.Value
+                FullName = attributes.GetValueOrDefault("name"),
+                Username = attributes.GetValueOrDefault("nickname"),
+                Email = attributes.GetValueOrDefault("email"),
+                IsEmailVerified = bool.TryParse(attributes.GetValueOrDefault("email_verified"), out var isVerified) && isVerified,
+                BirthDate = attributes.GetValueOrDefault("birthdate"),
+                Gender = attributes.GetValueOrDefault("gender")
             };
         }
         catch (UserNotFoundException ex)
@@ -379,9 +363,9 @@ public class AuthenticationService: IAuthenticationService
             return subAttribute?.Value ?? throw new Exception("Cognito sub attribute not found.");
         }
         catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching user: {ex.Message}");
-            throw;
+        { 
+            _logger.LogError(ex, "Failed to get cognito sub.");
+            throw new InvalidOperationException($"Cognito sub attribute not found: {ex.Message}");
         }
     }
 }

@@ -40,23 +40,19 @@ public class AuthenticationService: IAuthenticationService
     }
 
     /// <summary>
-    /// Validates input parameters for user registration.
+    /// Validates input parameters
     /// </summary>
-    /// <param name="fullName"></param>
-    /// <param name="username"></param>
-    /// <param name="password"></param>
-    /// <param name="email"></param>
-    /// <param name="birthDate"></param>
-    /// <param name="gender"></param>
+    /// <param name="inputs"></param>
     /// <exception cref="ArgumentException"></exception>
-    private void ValidateRegistrationInput(string fullName, string username, string password, string email, string birthDate, string gender)
+    private void ValidateRegistrationInput(params (string Value, string Name)[] inputs)
     {
-        if (string.IsNullOrWhiteSpace(fullName)) throw new ArgumentException("Full name is required.", nameof(fullName));
-        if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("Username is required.", nameof(username));
-        if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Password is required.", nameof(password));
-        if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Email is required.", nameof(email));
-        if (string.IsNullOrWhiteSpace(birthDate)) throw new ArgumentException("Birth date is required.", nameof(birthDate));
-        if (string.IsNullOrWhiteSpace(gender)) throw new ArgumentException("Gender is required.", nameof(gender));
+        foreach (var (value, name) in inputs)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException($"{name} is required.", name);
+            }
+        }
     }
 
     /// <summary>
@@ -120,39 +116,30 @@ public class AuthenticationService: IAuthenticationService
     /// <param name="gender"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<AdminGetUserResponse> RegisterUserAsync(string fullName, string username, string password, string email, string birthDate, string gender)
+    public async Task<UserResponseDTO> RegisterUserAsync(RegistrationDTO registrationDto)
     {
-        ValidateRegistrationInput(fullName, username, password, email, birthDate, gender);
+        ValidateRegistrationInput(
+            (registrationDto.FullName, nameof(registrationDto.FullName)),
+            (registrationDto.Username, nameof(registrationDto.Username)),
+            (registrationDto.Password, nameof(registrationDto.Password)),
+            (registrationDto.Email, nameof(registrationDto.Email)),
+            (registrationDto.BirthDate, nameof(registrationDto.BirthDate)),
+            (registrationDto.Gender, nameof(registrationDto.Gender))
+        );
+        
+        var userPool = await GetCognitoUserPoolAsync();
+        var attributes = new Dictionary<string, string>
+        {
+            { "name", registrationDto.FullName },
+            { "nickname", registrationDto.Username },
+            { "email", registrationDto.Email },
+            { "birthdate", registrationDto.BirthDate },
+            { "gender", registrationDto.Gender }
+        };
 
-        try
-        {
-            var userPool = await GetCognitoUserPoolAsync();
-            var attributes = new Dictionary<string, string>
-            {
-                { "name", fullName },
-                { "nickname", username },
-                { "email", email },
-                { "birthdate", birthDate },
-                { "gender", gender }
-            };
-
-            await ExecuteWithRetryAsync(() => userPool.SignUpAsync(username, password, attributes, null));
-            _logger.LogInformation($"User {username} registered successfully.");
-            return GetUserAsync(email).Result;
-        }
-        catch (UsernameExistsException)
-        {
-            throw new InvalidOperationException("The username is already taken. Please try a different one.");
-        }
-        catch (InvalidPasswordException)
-        {
-            throw new InvalidOperationException("The password does not meet the complexity requirements.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to register user.");
-            throw new InvalidOperationException($"Registration failed: {ex.Message}", ex);
-        }
+        await ExecuteWithRetryAsync(() => userPool.SignUpAsync(registrationDto.Username, registrationDto.Password, attributes, null));
+        _logger.LogInformation($"User {registrationDto.Username} registered successfully.");
+        return GetUserAsync(registrationDto.Email).Result;
     }
 
     /// <summary>
@@ -263,17 +250,9 @@ public class AuthenticationService: IAuthenticationService
         try
         {
             var user = await GetUserAsync(email);
-            if (user == null)
-            {
-                throw new InvalidOperationException("No user found.");
-            }
 
             // Check if the email is already verified
-            var isEmailVerified = user.UserAttributes
-                .FirstOrDefault(attr => string.Equals(attr.Name, "email_verified", StringComparison.OrdinalIgnoreCase))
-                ?.Value;
-
-            if (string.Equals(isEmailVerified, "true", StringComparison.OrdinalIgnoreCase))
+            if (user.IsEmailVerified)
             {
                 throw new InvalidOperationException("Email is already verified.");
             }
@@ -295,23 +274,83 @@ public class AuthenticationService: IAuthenticationService
             throw new InvalidOperationException($"Error resending confirmation code: {ex.Message}", ex);
         }
     }
+    
+    /// <summary>
+    /// Refresh token task
+    /// </summary>
+    /// <param name="refreshToken"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public async Task<TokenResponseDTO> RefreshTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var secrets = await _secretsService.GetSecretsAsync();
+            var authRequest = new InitiateAuthRequest
+            {
+                AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
+                ClientId = secrets["COGNITO_CLIENT_ID"],
+                AuthParameters = new Dictionary<string, string>
+                {
+                    { "REFRESH_TOKEN", refreshToken }
+                }
+            };
+
+            var response = await _cognitoClient.InitiateAuthAsync(authRequest);
+            return new TokenResponseDTO
+            {
+                IdToken = response.AuthenticationResult.IdToken,
+                AccessToken = response.AuthenticationResult.AccessToken,
+                RefreshToken = response.AuthenticationResult.RefreshToken
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh token.");
+            throw new InvalidOperationException($"Refresh Token failed: {ex.Message}", ex);
+        }
+    }
 
     /// <summary>
     /// Gets single user from email
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    public async Task<AdminGetUserResponse> GetUserAsync(string email)
+    public async Task<UserResponseDTO> GetUserAsync(string email)
     {
-        var secrets = await _secretsService.GetSecretsAsync();
-        
-        var response = _cognitoClient.AdminGetUserAsync(new AdminGetUserRequest
+        try
         {
-            Username = email,
-            UserPoolId = secrets["USER_POOL_ID"]
-        });
+            var secrets = await _secretsService.GetSecretsAsync();
 
-        return response.Result;
+            var user = _cognitoClient.AdminGetUserAsync(new AdminGetUserRequest
+            {
+                Username = email,
+                UserPoolId = secrets["USER_POOL_ID"]
+            });
+
+            return new UserResponseDTO
+            {
+                FullName = user.Result.UserAttributes.FirstOrDefault(attr =>
+                    string.Equals(attr.Name, "name", StringComparison.OrdinalIgnoreCase))?.Value,
+                Username = user.Result.UserAttributes.FirstOrDefault(attr =>
+                    string.Equals(attr.Name, "nickname", StringComparison.OrdinalIgnoreCase))?.Value,
+                Email = user.Result.UserAttributes.FirstOrDefault(attr =>
+                    string.Equals(attr.Name, "email", StringComparison.OrdinalIgnoreCase))?.Value,
+                IsEmailVerified = Convert.ToBoolean(user.Result.UserAttributes
+                    .FirstOrDefault(attr =>
+                        string.Equals(attr.Name, "email_verified", StringComparison.OrdinalIgnoreCase))
+                    ?.Value),
+                BirthDate = user.Result.UserAttributes.FirstOrDefault(attr =>
+                    string.Equals(attr.Name, "birthdate", StringComparison.OrdinalIgnoreCase))?.Value,
+                Gender = user.Result.UserAttributes.FirstOrDefault(attr =>
+                    string.Equals(attr.Name, "gender", StringComparison.OrdinalIgnoreCase))?.Value
+            };
+        }
+        catch (UserNotFoundException ex)
+        {
+            _logger.LogError(ex, "User not found.");
+            throw new InvalidOperationException($"User {email} not found.");
+        }
     }
     
     /// <summary>
@@ -343,41 +382,6 @@ public class AuthenticationService: IAuthenticationService
         {
             Console.WriteLine($"Error fetching user: {ex.Message}");
             throw;
-        }
-    }
-    
-    /// <summary>
-    /// Refresh token task
-    /// </summary>
-    /// <param name="refreshToken"></param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
-    public async Task<TokenResponseDTO> RefreshTokenAsync(string refreshToken)
-    {
-        try
-        {
-            var secrets = await _secretsService.GetSecretsAsync();
-            var authRequest = new InitiateAuthRequest
-            {
-                AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
-                ClientId = secrets["COGNITO_CLIENT_ID"],
-                AuthParameters = new Dictionary<string, string>
-                {
-                    { "REFRESH_TOKEN", refreshToken }
-                }
-            };
-
-            var response = await _cognitoClient.InitiateAuthAsync(authRequest);
-            return new TokenResponseDTO
-            {
-                IdToken = response.AuthenticationResult.IdToken,
-                RefreshToken = refreshToken
-            };
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to refresh token.");
-            throw new InvalidOperationException($"Refresh Token failed: {ex.Message}", ex);
         }
     }
 }

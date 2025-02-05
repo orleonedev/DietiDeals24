@@ -1,19 +1,23 @@
 using System.Net;
+using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider.Model;
 using DietiDeals24.DataAccessLayer.Services;
-using DietiDeals24.RestApi.Models;
+using DietiDeals24.DataAccessLayer.Models;
 
 namespace DietiDeals24.RestApi.Workers.Impl;
 
 public class AuthenticationWorker: IAuthenticationWorker
 {
+    private readonly ILogger<AuthenticationWorker> _logger; // Logger for tracking events and errors
     private readonly IAuthenticationService _authenticationService; // Interfaccia per Cognito
     //private readonly IRepository<> _repository; // Repository per il database locale
 
     public AuthenticationWorker(
+        ILogger<AuthenticationWorker> logger,
         IAuthenticationService authenticationService/*,
         UserRepository repository*/)
     {
+        _logger = logger;
         _authenticationService = authenticationService;
         //_repository = repository;
     }
@@ -22,30 +26,41 @@ public class AuthenticationWorker: IAuthenticationWorker
     /// Registers user and the save the data in the repository
     /// </summary>
     /// <param name="registrationDto"></param>
-    public async Task<AdminGetUserResponse> RegisterUserAsync(RegistrationDTO registrationDto)
+    public async Task<UserResponseDTO> RegisterUserAsync(RegistrationDTO registrationDto)
     {
-        // Step 1: Registra l'utente in Cognito
-        var user = await _authenticationService.RegisterUserAsync(
-            registrationDto.FullName,
-            registrationDto.Username,
-            registrationDto.Password,
-            registrationDto.Email,
-            registrationDto.BirthDate,
-            registrationDto.Gender
-        );
-
-        // Step 2: Salva i dettagli dell'utente nel database locale
-        /*await _repository.SaveUserAsync(new User
+        try
         {
-            FullName = registrationDto.FullName,
-            Username = registrationDto.Username,
-            Email = registrationDto.Email,
-            BirthDate = registrationDto.BirthDate,
-            Gender = registrationDto.Gender,
-            CreatedAt = DateTime.UtcNow
-        });*/
+            // Step 1: Registra l'utente in Cognito
+            var user = await _authenticationService.RegisterUserAsync(registrationDto);
 
-        return user;
+            var cognitoSub = await _authenticationService.GetCognitoSub(registrationDto.Email);
+            if (string.IsNullOrEmpty(cognitoSub.ToString()))
+            {
+                throw new AmazonCognitoIdentityException("Cognito sub is missing.");
+            }
+
+            return user;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, $"Failed to register user. Argument exception: {ex.Message}");
+            throw new ArgumentException(ex.Message);
+        }
+        catch (UsernameExistsException ex)
+        {
+            _logger.LogError(ex, "Failed to register user. Username already exists.");
+            throw new UsernameExistsException(ex.Message);
+        }
+        catch (InvalidPasswordException ex)
+        {
+            _logger.LogError(ex, "Failed to register user. Password does not meet the complexity requirements.");
+            throw new InvalidPasswordException(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to register user. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
+        }
     }
 
     /// <summary>
@@ -54,45 +69,83 @@ public class AuthenticationWorker: IAuthenticationWorker
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <returns></returns>
-    public async Task<TokenResponseDTO> LoginUserAsync(string email, string password)
+    public async Task<TokenResponseDTO> LoginUserAsync(LoginDTO loginDto)
     {
-        // Step 1: Esegui il login
-        var token = await _authenticationService.LoginUserAsync(email, password);
-
-        // Step 2: Recupera il CognitoSub dall'account
-        var cognitoSub = await _authenticationService.GetCognitoSub(email);
-
-        // Step 3: Aggiorna il database locale con il CognitoSub (se non esistente)
-        /*var user = await _userRepository.GetUserByEmailAsync(email);
-        if (user != null && string.IsNullOrEmpty(user.CognitoSub))
+        try
         {
-            user.CognitoSub = cognitoSub;
-            await _userRepository.UpdateUserAsync(user);
-        }*/
+            // Step 1: Esegui il login
+            var token = await _authenticationService.LoginUserAsync(loginDto.Email, loginDto.Password);
 
-        return new TokenResponseDTO
+            // Step 2: Recupera il CognitoSub dall'account
+            var cognitoSub = await _authenticationService.GetCognitoSub(loginDto.Email);
+
+            return new TokenResponseDTO
+            {
+                IdToken = token.IdToken,
+                AccessToken = token.AccessToken,
+                RefreshToken = token.RefreshToken
+            };
+        }
+        catch (Exception ex)
         {
-            IdToken = token.IdToken,
-            AccessToken = token.AccessToken,
-            RefreshToken = token.RefreshToken
-        };
+            _logger.LogError(ex, $"Failed to login user. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Logout user from api
+    /// </summary>
+    /// <param name="logoutDto"></param>
+    /// <returns></returns>
+    public async Task LogoutUserAsync(LogoutDTO logoutDto)
+    {
+        try
+        {
+            // Call the CognitoService to log out the user
+            await _authenticationService.LogoutUserAsync(logoutDto.AccessToken);
+            _logger.LogInformation($"User logged out successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to log out user. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
+        }
     }
 
     /// <summary>
     /// Confirms User with confirmation code
     /// </summary>
     /// <param name="confirmUserDto"></param>
-    public async Task<string> ConfirmUserAsync(ConfirmUserDTO confirmUserDto)
+    public async Task ConfirmUserAsync(ConfirmUserDTO confirmUserDto)
     {
-        var response = await _authenticationService.ConfirmUserAsync(confirmUserDto.Email, confirmUserDto.ConfirmationCode);
-
-        if (response == HttpStatusCode.OK)
+        try
         {
-            return ($"User {confirmUserDto.Email} confirmed successfully.");
+            await _authenticationService.ConfirmUserAsync(confirmUserDto.Email, confirmUserDto.ConfirmationCode);
+            _logger.LogInformation($"User {confirmUserDto.Email} confirmed successfully.");
         }
-        else
+        catch (Exception ex)
         {
-            return ($"User {confirmUserDto.Email} confirmation code {confirmUserDto.ConfirmationCode} failed.");
+            _logger.LogError(ex, $"Failed to confirm user email. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Resends confirmation code to confirm user email
+    /// </summary>
+    /// <param name="resendCodeDto"></param>
+    public async Task ResendConfirmationCodeAsync(ResendCodeDTO resendCodeDto)
+    {
+        try
+        {
+            await _authenticationService.ResendConfirmationCodeAsync(resendCodeDto.Email);
+            _logger.LogInformation($"User {resendCodeDto.Email} resent successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to resend confirmation code. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
         }
     }
 
@@ -101,15 +154,16 @@ public class AuthenticationWorker: IAuthenticationWorker
     /// </summary>
     /// <param name="refreshToken"></param>
     /// <returns></returns>
-    public async Task<TokenResponseDTO> RefreshTokenAsync(string refreshToken)
+    public async Task<TokenResponseDTO> RefreshTokenAsync(RefreshTokenDTO refreshTokenDto)
     {
-        var token = await _authenticationService.RefreshTokenAsync(refreshToken);
-
-        return new TokenResponseDTO
+        try
         {
-            IdToken = token.IdToken,
-            AccessToken = token.AccessToken,
-            RefreshToken = token.RefreshToken
-        };
+            return await _authenticationService.RefreshTokenAsync(refreshTokenDto.RefreshToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to refresh token. Exception occurred: {ex.Message}");
+            throw new Exception(ex.Message);
+        }
     }
 }

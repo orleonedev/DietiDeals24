@@ -16,10 +16,25 @@ public class RegistrationDTO
     public string Gender { get; set; }
 }
 
-public class ServiceConfirmUserDTO
+public class UserResponseDTO
+{
+    public string FullName { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public bool IsEmailVerified { get; set; }
+    public string BirthDate { get; set; }
+    public string Gender { get; set; }
+}
+
+public class ConfirmUserDTO
 {
     public string Email { get; set; }
     public string ConfirmationCode { get; set; }
+}
+
+public class ResendCodeDTO
+{
+    public string Email { get; set; }
 }
 
 public class TokenResponseDTO

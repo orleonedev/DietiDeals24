@@ -1,6 +1,6 @@
 namespace DietiDeals24.RestApi.Models;
 
-public class LoginDTO
+/*public class LoginDTO
 {
     public string Email { get; set; }
     public string Password { get; set; }
@@ -12,6 +12,16 @@ public class RegistrationDTO
     public string Username { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
+    public string BirthDate { get; set; }
+    public string Gender { get; set; }
+}
+
+public class UserResponseDTO
+{
+    public string FullName { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public bool IsEmailVerified { get; set; }
     public string BirthDate { get; set; }
     public string Gender { get; set; }
 }
@@ -37,4 +47,4 @@ public class RefreshTokenDTO
 public class LogoutDTO
 {
     public string AccessToken { get; set; }
-}
+}*/

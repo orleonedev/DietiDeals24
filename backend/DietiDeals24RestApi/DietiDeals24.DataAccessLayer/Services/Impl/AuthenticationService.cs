@@ -360,7 +360,7 @@ public class AuthenticationService: IAuthenticationService
 
             // Extract the CognitoSub (sub) attribute
             var subAttribute = response.UserAttributes.FirstOrDefault(attr => attr.Name == "sub");
-            return subAttribute?.Value ?? throw new Exception("Cognito sub attribute not found.");
+            return subAttribute?.Value;
         }
         catch (Exception ex)
         { 

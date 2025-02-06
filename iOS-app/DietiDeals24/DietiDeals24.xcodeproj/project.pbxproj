@@ -44,24 +44,24 @@
 		512DF9E02CFE29930039DC6C /* DietiDeals24-DEV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DietiDeals24-DEV.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5166D0592D5020B70049F386 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Secrets-DEV.xcconfig"; sourceTree = "<group>"; };
-		5166D0602D5022FA0049F386 /* DietiDeals24-DEV-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DietiDeals24-DEV-Info.plist"; sourceTree = "<group>"; };
-		5166D0612D5023300049F386 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		51C535392D4C053300911A37 /* Exceptions for "DietiDeals24" folder in "DietiDeals24Tests" target */ = {
+		5166D0902D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Colors.xcassets,
+				"DietiDeals24-DEV-Info.plist",
+				Info.plist,
 			);
-			target = 51244D092CF62CD4003AA070 /* DietiDeals24Tests */;
+			target = 51244CF92CF62CD3003AA070 /* DietiDeals24 */;
 		};
-		51C5353A2D4C053300911A37 /* Exceptions for "DietiDeals24" folder in "DietiDeals24UITests" target */ = {
+		5166D0912D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24-DEV" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Colors.xcassets,
+				"DietiDeals24-DEV-Info.plist",
+				Info.plist,
 			);
-			target = 51244D132CF62CD4003AA070 /* DietiDeals24UITests */;
+			target = 512DF9D92CFE29930039DC6C /* DietiDeals24-DEV */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -69,8 +69,8 @@
 		51244CFC2CF62CD3003AA070 /* DietiDeals24 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				51C535392D4C053300911A37 /* Exceptions for "DietiDeals24" folder in "DietiDeals24Tests" target */,
-				51C5353A2D4C053300911A37 /* Exceptions for "DietiDeals24" folder in "DietiDeals24UITests" target */,
+				5166D0902D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24" target */,
+				5166D0912D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24-DEV" target */,
 			);
 			path = DietiDeals24;
 			sourceTree = "<group>";
@@ -122,8 +122,6 @@
 		51244CF12CF62CD3003AA070 = {
 			isa = PBXGroup;
 			children = (
-				5166D0602D5022FA0049F386 /* DietiDeals24-DEV-Info.plist */,
-				5166D0612D5023300049F386 /* Info.plist */,
 				51244CFC2CF62CD3003AA070 /* DietiDeals24 */,
 				51244D0D2CF62CD4003AA070 /* DietiDeals24Tests */,
 				51244D172CF62CD4003AA070 /* DietiDeals24UITests */,
@@ -505,7 +503,6 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -539,7 +536,6 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -643,11 +639,10 @@
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "DietiDeals24-DEV-Info.plist";
+				INFOPLIST_FILE = "DietiDeals24/DietiDeals24-DEV-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -677,11 +672,10 @@
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "DietiDeals24-DEV-Info.plist";
+				INFOPLIST_FILE = "DietiDeals24/DietiDeals24-DEV-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;

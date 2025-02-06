@@ -6,5 +6,12 @@
 	<string>$(COGNITO_CLIENTID)</string>
 	<key>COGNITO_URL</key>
 	<string>$(COGNITO_URL)</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>#263952</string>
+		<key>UIImageName</key>
+		<string>AppIcon-DEV</string>
+	</dict>
 </dict>
 </plist>

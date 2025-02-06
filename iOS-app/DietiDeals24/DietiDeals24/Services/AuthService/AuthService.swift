@@ -33,9 +33,4 @@ protocol AuthService {
     func signOut() async throws
 }
 
-protocol CredentialService {
-    func getAccessTokenAsync() async throws -> String
-    func getRefreshTokenAsync() async throws -> String
-    func setAccessTokenAsync(_ accessToken: String) async throws -> Void
-    func setRefreshTokenAsync(_ refreshToken: String) async throws -> Void
-}
+

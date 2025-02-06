@@ -50,18 +50,3 @@ final class CognitoAuthService: AuthService {
     }
     
 }
-
-class AuthenticationUseCase {
-    
-    let authService: AuthService
-    let credService: CredentialService
-    init(authService: AuthService, credService: CredentialService) {
-        self.authService = authService
-        self.credService = credService
-    }
-    
-    func getCredentials() async throws -> String {
-        return try await self.credService.getAccessTokenAsync()
-    }
-    
-}

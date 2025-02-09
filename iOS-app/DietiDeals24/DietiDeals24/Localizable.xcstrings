@@ -1,0 +1,51 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "authStatus: %@" : {
+
+    },
+    "Create your account" : {
+
+    },
+    "Creating an account means you agree to our" : {
+
+    },
+    "Dieti Deals 24" : {
+
+    },
+    "Don't have an account?" : {
+
+    },
+    "Email" : {
+
+    },
+    "Hello, %@!" : {
+
+    },
+    "Hello, World!" : {
+
+    },
+    "Or sign in with" : {
+
+    },
+    "Password" : {
+
+    },
+    "Sign In" : {
+
+    },
+    "Sign Up" : {
+
+    },
+    "Skip Sign In" : {
+
+    },
+    "Terms and Conditions" : {
+
+    },
+    "This is the start of cognito setup" : {
+
+    }
+  },
+  "version" : "1.0"
+}

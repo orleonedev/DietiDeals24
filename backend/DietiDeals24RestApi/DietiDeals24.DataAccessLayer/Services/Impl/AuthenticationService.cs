@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
+using DietiDeals24.DataAccessLayer.Entities;
+using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Models;
 using Microsoft.Extensions.Logging;
 
@@ -13,17 +15,20 @@ namespace DietiDeals24.DataAccessLayer.Services.Impl;
 
 public class AuthenticationService: IAuthenticationService
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IAmazonCognitoIdentityProvider _cognitoClient; // Cognito client for interacting with AWS Cognito
     private readonly ISecretsService _secretsService; // Service class to fetch secrets from AWS Secrets Manager
     private readonly ILogger<AuthenticationService> _logger; // Logger for tracking events and errors
 
     // Constructor to initialize the service dependencies
     public AuthenticationService(
+        IUnitOfWork unitOfWork,
         IAmazonCognitoIdentityProvider cognitoClient,
         ISecretsService secretsService,
         ILogger<AuthenticationService> logger
     )
     {
+        _unitOfWork = unitOfWork;
         _cognitoClient = cognitoClient;
         _secretsService = secretsService;
         _logger = logger;
@@ -114,28 +119,71 @@ public class AuthenticationService: IAuthenticationService
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<UserResponseDTO> RegisterUserAsync(RegistrationDTO registrationDto)
     {
-        ValidateRegistrationInput(
-            (registrationDto.FullName, nameof(registrationDto.FullName)),
-            (registrationDto.Username, nameof(registrationDto.Username)),
-            (registrationDto.Password, nameof(registrationDto.Password)),
-            (registrationDto.Email, nameof(registrationDto.Email)),
-            (registrationDto.BirthDate, nameof(registrationDto.BirthDate)),
-            (registrationDto.Gender, nameof(registrationDto.Gender))
-        );
-        
-        var userPool = await GetCognitoUserPoolAsync();
-        var attributes = new Dictionary<string, string>
-        {
-            { "name", registrationDto.FullName },
-            { "nickname", registrationDto.Username },
-            { "email", registrationDto.Email },
-            { "birthdate", registrationDto.BirthDate },
-            { "gender", registrationDto.Gender }
-        };
 
-        await ExecuteWithRetryAsync(() => userPool.SignUpAsync(registrationDto.Username, registrationDto.Password, attributes, null));
-        _logger.LogInformation($"User {registrationDto.Username} registered successfully.");
-        return GetUserAsync(registrationDto.Email).Result;
+        try
+        {
+            ValidateRegistrationInput(
+                (registrationDto.FullName, nameof(registrationDto.FullName)),
+                (registrationDto.Username, nameof(registrationDto.Username)),
+                (registrationDto.Password, nameof(registrationDto.Password)),
+                (registrationDto.Email, nameof(registrationDto.Email)),
+                (registrationDto.BirthDate.ToString("yyyy-MM-dd"), nameof(registrationDto.BirthDate)),
+                (registrationDto.Gender, nameof(registrationDto.Gender))
+            );
+
+            var dbUser = _unitOfWork.UserRepository.Get(u => u.Email == registrationDto.Email).FirstOrDefault();
+            if (dbUser != null)
+            {
+                throw new UsernameExistsException("User already exists.");
+            }
+            
+            var userPool = await GetCognitoUserPoolAsync();
+            var attributes = new Dictionary<string, string>
+            {
+                { "name", registrationDto.FullName },
+                { "nickname", registrationDto.Username },
+                { "email", registrationDto.Email },
+                { "birthdate", registrationDto.BirthDate.ToString("yyyy-MM-dd") }, //MM months, mm minutes
+                { "gender", registrationDto.Gender }
+            };
+            
+            await ExecuteWithRetryAsync(() =>
+                userPool.SignUpAsync(registrationDto.Username, registrationDto.Password, attributes, null));
+                
+            var user = new User
+            {
+                CognitoSub = GetCognitoSub(registrationDto.Email).Result,
+                Username = registrationDto.Username,
+                Fullname = registrationDto.FullName,
+                Email = registrationDto.Email,
+                Role = UserRole.Buyer,
+                BirthDate = registrationDto.BirthDate,
+                HasVerifiedEmail = false
+            };
+
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.UserRepository.Add(user);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+            
+            _logger.LogInformation($"User {registrationDto.Username} registered successfully.");
+            return GetUserAsync(registrationDto.Email).Result;
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex,$"Argument exception occured: {ex.Message}");
+            throw new InvalidOperationException($"Argument exception occured: {ex.Message}");
+        }
+        catch (UsernameExistsException ex)
+        {
+            _logger.LogError($"Username {registrationDto.Username} already exists.", ex);
+            throw new InvalidOperationException($"Username {registrationDto.Username} already exists.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Failed to register user {registrationDto.Email}. {ex.Message}");
+            throw new InvalidOperationException($"Failed to register user {registrationDto.Email}. {ex.Message}");
+        }
     }
 
     /// <summary>

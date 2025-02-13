@@ -1,6 +1,7 @@
 using System.Net;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider.Model;
+using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24.DataAccessLayer.Models;
 
@@ -10,16 +11,16 @@ public class AuthenticationWorker: IAuthenticationWorker
 {
     private readonly ILogger<AuthenticationWorker> _logger; // Logger for tracking events and errors
     private readonly IAuthenticationService _authenticationService; // Interfaccia per Cognito
-    //private readonly IRepository<> _repository; // Repository per il database locale
+    private readonly IUnitOfWork _repository; // Repository per il database locale
 
     public AuthenticationWorker(
         ILogger<AuthenticationWorker> logger,
-        IAuthenticationService authenticationService/*,
-        UserRepository repository*/)
+        IAuthenticationService authenticationService,
+        IUnitOfWork repository)
     {
         _logger = logger;
         _authenticationService = authenticationService;
-        //_repository = repository;
+        _repository = repository;
     }
 
     /// <summary>

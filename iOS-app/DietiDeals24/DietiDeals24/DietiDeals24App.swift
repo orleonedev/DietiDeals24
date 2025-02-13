@@ -11,23 +11,22 @@ import SwiftUI
 struct DietiDeals24App: App {
     
     @State var launchScreenIsEnded = false
-    @StateObject var authVM: MainAuthenticationViewModel = .init()
+    @State var authFlow: AuthenticationFlow = AuthenticationFlow()
     var body: some Scene {
         WindowGroup {
             ZStack{
                 if !launchScreenIsEnded {
                     LaunchScreenView(isEnded: $launchScreenIsEnded)
                 } else {
-                    if authVM.isAuthenticated{
+                    if authFlow.isAuthenticated {
                         ContentView()
                     } else {
-                        MainAuthenticationView(viewModel: authVM)
+                        authFlow.root
                     }
-                    
                 }
             }
             .animation(.easeInOut, value: launchScreenIsEnded)
-            .animation(.easeInOut, value: authVM.isAuthenticated)
+            .animation(.easeInOut, value: authFlow.isAuthenticated)
             
         }
     }

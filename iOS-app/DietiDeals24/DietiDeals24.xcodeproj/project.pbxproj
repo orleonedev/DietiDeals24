@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		51052F1B2D5E3876004CB0BC /* RoutingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 51052F1A2D5E3876004CB0BC /* RoutingKit */; };
+		51052F1D2D5E387B004CB0BC /* RoutingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 51052F1C2D5E387B004CB0BC /* RoutingKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		51244D0B2CF62CD4003AA070 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -92,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51052F1B2D5E3876004CB0BC /* RoutingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,12 +119,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51052F1D2D5E387B004CB0BC /* RoutingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		51052F192D5E3876004CB0BC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		51244CF12CF62CD3003AA070 = {
 			isa = PBXGroup;
 			children = (
@@ -128,6 +142,7 @@
 				51244CFB2CF62CD3003AA070 /* Products */,
 				5166D0592D5020B70049F386 /* Secrets.xcconfig */,
 				5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */,
+				51052F192D5E3876004CB0BC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -162,6 +177,7 @@
 			);
 			name = DietiDeals24;
 			packageProductDependencies = (
+				51052F1A2D5E3876004CB0BC /* RoutingKit */,
 			);
 			productName = DietiDeals24;
 			productReference = 51244CFA2CF62CD3003AA070 /* DietiDeals24.app */;
@@ -232,6 +248,7 @@
 			);
 			name = "DietiDeals24-DEV";
 			packageProductDependencies = (
+				51052F1C2D5E387B004CB0BC /* RoutingKit */,
 			);
 			productName = DietiDeals24;
 			productReference = 512DF9E02CFE29930039DC6C /* DietiDeals24-DEV.app */;
@@ -270,6 +287,9 @@
 			);
 			mainGroup = 51244CF12CF62CD3003AA070;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 51244CFB2CF62CD3003AA070 /* Products */;
 			projectDirPath = "";
@@ -753,6 +773,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orleonedev/RoutingKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		51052F1A2D5E3876004CB0BC /* RoutingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */;
+			productName = RoutingKit;
+		};
+		51052F1C2D5E387B004CB0BC /* RoutingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */;
+			productName = RoutingKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 51244CF22CF62CD3003AA070 /* Project object */;
 }

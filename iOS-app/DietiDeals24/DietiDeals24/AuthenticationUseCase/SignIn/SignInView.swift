@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  SignInView.swift
 //  DietiDeals24
 //
 //  Created by Oreste Leone on 2/6/25.
@@ -7,36 +7,35 @@
 
 import SwiftUI
 import AuthenticationServices
+import RoutingKit
 
-struct MainAuthenticationView: View {
+struct SignInView: View {
     
-    @ObservedObject var viewModel: MainAuthenticationViewModel
-    
-    init(viewModel: MainAuthenticationViewModel) {
-        self.viewModel = viewModel
-    }
+    @StateObject var viewModel: SignInViewModel = SignInViewModel()
     
     var body: some View {
         ScrollView {
-                VStack(spacing: 24) {
-                    Image("AppIconImage")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 128, height: 128)
-                        .clipShape(.rect(cornerRadius: 128/6.4))
-                    Text("authStatus: \(viewModel.isAuthenticated ? "authenticated" : "not authenticated")")
-                    loginView()
-                    noAccountView()
-                    socialLoginStack()
-                }
-                .padding()
+            VStack(spacing: 24) {
+                Spacer()
+                Image("AppIconImage")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 128, height: 128)
+                    .clipShape(.rect(cornerRadius: 128/6.4))
+                Spacer()
+                loginView()
+                noAccountView()
+                socialLoginStack()
+            }
+            .padding()
         }
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
+        
     }
 }
 
-extension MainAuthenticationView {
+extension SignInView {
     
     @ViewBuilder
     func loginView() -> some View {
@@ -50,27 +49,19 @@ extension MainAuthenticationView {
     func loginForm() -> some View {
         VStack(alignment: .leading, spacing: 16 ){
             VStack(alignment: .leading, spacing: 4){
-                ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, label: "Email")
+                ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email")
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
-                    .onSubmit(of: .text) {
-                        let result = viewModel.loginEmail.isValidEmail
-                        if !result {
-                            print("invalid email format")
-                            self.viewModel.invalidLoginEmail = true
-                        }
-                    }
             }
-            VStack(alignment: .leading, spacing: 4){
-                Text("Password")
-                    .font(.caption)
-                    .foregroundStyle(.primary)
-                    .padding(.horizontal, 4)
-                SecureField("Password", text: $viewModel.loginPassword)
-                .autocorrectionDisabled(true)
-                .textContentType(.password)
-                .textFieldStyle( TextFieldRoundedCornerStyleClear())
-            }
+            
+            SecureValidableTextField(
+                validationError: self.$viewModel.validationPasswordError,
+                text: self.$viewModel.loginPassword,
+                validation: self.viewModel.validatePassword, label: "Password"
+            )
+            .textContentType(.password)
+            .autocorrectionDisabled(true)
+            
         }
         
     }
@@ -104,9 +95,8 @@ extension MainAuthenticationView {
     func noAccountView() -> some View {
         HStack(alignment: .center, spacing: 8){
             Text("Don't have an account?")
-                
             Button {
-                
+                AuthenticationFlow.authRouter.navigate(to: AuthDestination.SignUp, type: .push)
             } label: {
                 Text("Sign Up")
                     .foregroundStyle(.accent)
@@ -131,11 +121,11 @@ extension MainAuthenticationView {
             }
             VStack {
                 signInWithApple()
+                    .frame(height: 44)
                // signInWithGoogle()
                // signInWithFacebook()
             }
             .padding(.horizontal)
-            Spacer()
             VStack{
                 HStack(alignment: .top) {
                     Text("Creating an account means you agree to our")
@@ -163,11 +153,10 @@ extension MainAuthenticationView {
             
         }
         .signInWithAppleButtonStyle(.whiteOutline)
-        .frame(maxHeight: 44)
     }
 }
 
-extension MainAuthenticationView {
+extension SignInView {
         
     func onTermsAndConditions() {
         
@@ -175,8 +164,7 @@ extension MainAuthenticationView {
 }
 
 #Preview {
-    @Previewable @State var vm: MainAuthenticationViewModel = .init()
-    MainAuthenticationView(viewModel: vm )
+    SignInView()
 }
 
 

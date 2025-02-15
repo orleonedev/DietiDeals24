@@ -17,7 +17,7 @@ public class AuthenticationService: IAuthenticationService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAmazonCognitoIdentityProvider _cognitoClient; // Cognito client for interacting with AWS Cognito
-    private readonly ISecretsService _secretsService; // Service class to fetch secrets from AWS Secrets Manager
+    private readonly ISecretsService _secretsService; // Service class to fetch secrets
     private readonly ILogger<AuthenticationService> _logger; // Logger for tracking events and errors
 
     // Constructor to initialize the service dependencies
@@ -114,7 +114,6 @@ public class AuthenticationService: IAuthenticationService
     /// <param name="password"></param>
     /// <param name="email"></param>
     /// <param name="birthDate"></param>
-    /// <param name="gender"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public async Task<UserResponseDTO> RegisterUserAsync(RegistrationDTO registrationDto)
@@ -127,8 +126,7 @@ public class AuthenticationService: IAuthenticationService
                 (registrationDto.Username, nameof(registrationDto.Username)),
                 (registrationDto.Password, nameof(registrationDto.Password)),
                 (registrationDto.Email, nameof(registrationDto.Email)),
-                (registrationDto.BirthDate.ToString("yyyy-MM-dd"), nameof(registrationDto.BirthDate)),
-                (registrationDto.Gender, nameof(registrationDto.Gender))
+                (registrationDto.BirthDate.ToString("yyyy-MM-dd"), nameof(registrationDto.BirthDate))
             );
 
             var dbUser = _unitOfWork.UserRepository.Get(u => u.Email == registrationDto.Email).FirstOrDefault();
@@ -143,8 +141,7 @@ public class AuthenticationService: IAuthenticationService
                 { "name", registrationDto.FullName },
                 { "nickname", registrationDto.Username },
                 { "email", registrationDto.Email },
-                { "birthdate", registrationDto.BirthDate.ToString("yyyy-MM-dd") }, //MM months, mm minutes
-                { "gender", registrationDto.Gender }
+                { "birthdate", registrationDto.BirthDate.ToString("yyyy-MM-dd") } //MM months, mm minutes
             };
             
             await ExecuteWithRetryAsync(() =>
@@ -167,7 +164,16 @@ public class AuthenticationService: IAuthenticationService
             await _unitOfWork.Save();
             
             _logger.LogInformation($"User {registrationDto.Username} registered successfully.");
-            return GetUserAsync(registrationDto.Email).Result;
+            
+            return new UserResponseDTO
+            {
+                CognitoSub = user.CognitoSub,
+                FullName = user.Fullname,
+                Username = user.Username,
+                Email = user.Email,
+                IsEmailVerified = user.HasVerifiedEmail,
+                BirthDate = user.BirthDate.ToString("yyyy-MM-dd")
+            };
         }
         catch (ArgumentException ex)
         {
@@ -267,6 +273,19 @@ public class AuthenticationService: IAuthenticationService
             };
 
             await ExecuteWithRetryAsync(() => _cognitoClient.ConfirmSignUpAsync(request));
+            
+            var dbUser = _unitOfWork.UserRepository.Get(u => u.Email == email).FirstOrDefault();
+            if (dbUser == null)
+            {
+                throw new InvalidOperationException("User does not exists.");
+            }
+            dbUser.HasVerifiedEmail = true;
+            
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.UserRepository.Update(dbUser);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+            
             _logger.LogInformation($"User {email} confirmed successfully.");
         }
         catch (Exception ex)
@@ -375,7 +394,6 @@ public class AuthenticationService: IAuthenticationService
                 Email = attributes.GetValueOrDefault("email"),
                 IsEmailVerified = bool.TryParse(attributes.GetValueOrDefault("email_verified"), out var isVerified) && isVerified,
                 BirthDate = attributes.GetValueOrDefault("birthdate"),
-                Gender = attributes.GetValueOrDefault("gender")
             };
         }
         catch (UserNotFoundException ex)

@@ -6,91 +6,65 @@ using Microsoft.Extensions.Logging;
 
 namespace DietiDeals24.DataAccessLayer.Services.Impl;
 
-public class SecretsService: ISecretsService
+public class SecretsService : ISecretsService
 {
     private readonly ILogger<SecretsService> _logger;
-    private Dictionary<string, string> _secretsCache;
-    private DateTime _secretsCacheExpiry;
     private readonly List<string> _requiredSecrets;
 
-    // Constructor that ensures the requiredSecrets is never null
-    public SecretsService(ILogger<SecretsService> logger, List<string> requiredSecrets = null)
+    public SecretsService(ILogger<SecretsService> logger, List<string>? requiredSecrets = null)
     {
         _logger = logger;
-        _secretsCache = new Dictionary<string, string>();
-        // Ensure the requiredSecrets is initialized to an empty list if not provided
-        _requiredSecrets = requiredSecrets ?? new List<string>(); 
+        _requiredSecrets = requiredSecrets ?? new List<string>();
     }
 
     /// <summary>
-    /// Fetches secrets from environment variables and caches them for better performance.
+    /// Retrieves all the secrets and then validates them
     /// </summary>
-    public async Task<Dictionary<string, string>> GetSecretsAsync()
+    /// <returns></returns>
+    public Task<Dictionary<string, string>> GetSecretsAsync()
     {
-        // If cache is valid, return it
-        if (_secretsCache != null && DateTime.UtcNow <= _secretsCacheExpiry)
-        {
-            return _secretsCache;
-        }
-
         _logger.LogInformation("Fetching secrets from environment variables...");
 
-        // Fetch all secrets from environment variables dynamically
-        var secrets = new Dictionary<string, string>();
+        var secrets = Environment.GetEnvironmentVariables()
+            .Cast<System.Collections.DictionaryEntry>()
+            .ToDictionary(entry => entry.Key.ToString(), entry => entry.Value?.ToString());
 
-        foreach (var key in Environment.GetEnvironmentVariables().Keys)
-        {
-            var keyString = key.ToString();
-            var value = Environment.GetEnvironmentVariable(keyString);
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                secrets[keyString] = value;
-            }
-        }
-
-        // Validate the fetched secrets
         ValidateSecrets(secrets);
 
-        // Cache the secrets for 15 minutes
-        _secretsCache = secrets;
-        _secretsCacheExpiry = DateTime.UtcNow.AddMinutes(15);
-
-        return await Task.FromResult(_secretsCache);
+        return Task.FromResult(secrets);
     }
 
     /// <summary>
-    /// Fetches a specific secret value by key.
+    /// Retrieves a single secret
     /// </summary>
-    public async Task<string> GetSecretValueAsync(string key)
+    /// <param name="key"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public Task<string> GetSecretValueAsync(string key)
     {
-        var secrets = await GetSecretsAsync();
+        var value = Environment.GetEnvironmentVariable(key);
 
-        if (!secrets.TryGetValue(key, out var value) || string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
         {
             throw new Exception($"Secret '{key}' is missing or invalid.");
         }
 
-        return value;
+        return Task.FromResult(value);
     }
 
-    /// <summary>
-    /// Validates the presence of required keys in the secrets dictionary (if any).
-    /// </summary>
     private void ValidateSecrets(Dictionary<string, string> secrets)
     {
-        // Only validate if requiredSecrets is not empty (the list is never null)
         if (_requiredSecrets.Count == 0)
         {
             _logger.LogInformation("No specific secrets to validate.");
+            return;
         }
-        else
+
+        foreach (var key in _requiredSecrets)
         {
-            foreach (var key in _requiredSecrets)
+            if (!secrets.TryGetValue(key, out var value) || string.IsNullOrWhiteSpace(value))
             {
-                if (!secrets.TryGetValue(key, out var value) || string.IsNullOrWhiteSpace(value))
-                {
-                    throw new InvalidOperationException($"Missing or invalid secret: {key}");
-                }
+                throw new InvalidOperationException($"Missing or invalid secret: {key}");
             }
         }
     }

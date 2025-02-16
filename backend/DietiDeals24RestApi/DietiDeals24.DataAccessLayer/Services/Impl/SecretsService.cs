@@ -52,6 +52,11 @@ public class SecretsService : ISecretsService
         return Task.FromResult(value);
     }
 
+    /// <summary>
+    /// Validates secrets values
+    /// </summary>
+    /// <param name="secrets"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     private void ValidateSecrets(Dictionary<string, string> secrets)
     {
         if (_requiredSecrets.Count == 0)

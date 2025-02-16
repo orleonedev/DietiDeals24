@@ -1,10 +1,11 @@
-using DietiDeals24.DataAccessLayer.Entities;
+using Amazon.CognitoIdentityProvider;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24.DataAccessLayer.Services.Impl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+
 namespace DietiDeals24.DataAccessLayer.Extensions;
 
 public static class ConfigureServiceExtensions
@@ -19,6 +20,9 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<ICheckService, CheckService>();
         serviceCollection.AddScoped<IAuctionService, AuctionService>();
+        serviceCollection.AddAWSService<IAmazonCognitoIdentityProvider>();
+        serviceCollection.AddSingleton<ISecretsService, SecretsService>();
+        serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();
         return serviceCollection;
     }
     

@@ -30,25 +30,6 @@ public class Repository<TEntity,TKey> : IRepository<TEntity,TKey> where TEntity 
     {
         await _dbSet.AddAsync(entity).ConfigureAwait(false);
     }
-    // public async Task BulkInsert(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkDelete(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkDeleteAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkInsertOrUpdate(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertOrUpdateAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkInsertOrUpdateOrDelete(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertOrUpdateOrDeleteAsync<TEntity>(entities, bulkConfig);
-    // }
 
     public Task AddRange(IEnumerable<TEntity> entities)
     {

@@ -79,7 +79,7 @@ public class CheckController : ControllerBase
     public async Task<IActionResult> CheckDatabaseConnection()
     {
         var result = await _checkWorker.CheckDatabaseConnection();
-        return result ? Ok("Database is connected.") : StatusCode(StatusCodes.Status500InternalServerError, "Database is unavailable.");
+        return result ? Ok($"Database is connected.") : StatusCode(StatusCodes.Status500InternalServerError, "Database is unavailable.");
     }
 
 }

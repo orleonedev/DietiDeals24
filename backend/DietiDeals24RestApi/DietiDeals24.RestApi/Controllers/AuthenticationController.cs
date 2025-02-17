@@ -9,10 +9,10 @@ namespace DietiDeals24.RestApi.Controllers;
 [Route("api/[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly ILogger<AuctionController> _logger;
+    private readonly ILogger<AuthenticationController> _logger;
     private readonly IAuthenticationWorker _authenticationWorker;
 
-    public AuthenticationController(ILogger<AuctionController> logger, IAuthenticationWorker authenticationWorker)
+    public AuthenticationController(ILogger<AuthenticationController> logger, IAuthenticationWorker authenticationWorker)
     {
         _logger = logger;
         _authenticationWorker = authenticationWorker;

@@ -139,7 +139,7 @@ public class AuthenticationService: IAuthenticationService
             var attributes = new Dictionary<string, string>
             {
                 { "name", registrationDto.FullName },
-                { "preffered_username", registrationDto.Username },
+                { "preferred_username", registrationDto.Username },
                 { "email", registrationDto.Email },
                 { "birthdate", registrationDto.BirthDate.ToString("yyyy-MM-dd") } //MM months, mm minutes
             };
@@ -390,7 +390,7 @@ public class AuthenticationService: IAuthenticationService
             return new UserResponseDTO
             {
                 FullName = attributes.GetValueOrDefault("name"),
-                Username = attributes.GetValueOrDefault("preffered_username"),
+                Username = attributes.GetValueOrDefault("preferred_username"),
                 Email = attributes.GetValueOrDefault("email"),
                 IsEmailVerified = bool.TryParse(attributes.GetValueOrDefault("email_verified"), out var isVerified) && isVerified,
                 BirthDate = attributes.GetValueOrDefault("birthdate"),

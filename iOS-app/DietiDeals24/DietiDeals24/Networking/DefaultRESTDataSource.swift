@@ -33,8 +33,13 @@ public class DefaultRESTDataSource: RESTDataSource {
     
     private var requestCache: RequestCache = .init()
     
-    public required init(session: URLSession? = nil) {
+    private var credentialService: CredentialService?
+    private var authService: AuthService?
+    
+    required init(session: URLSession? = nil, credentialService: CredentialService? = nil, authService: AuthService? = nil ) {
         self.session = session ?? Self.defaultSession
+        self.credentialService = credentialService
+        self.authService = authService
     }
     
     func response(at endpoint: EndpointConvertible) async throws -> Response {
@@ -79,8 +84,8 @@ extension DefaultRESTDataSource {
             let base64 = "\(username):\(password)".data(using: .utf8)?.base64EncodedString() ?? ""
             headers["Authorization"] = "Basic \(base64)"
         case .bearer:
-            // implement here automatic access token logic - out of scope for this project :)
-            throw NetworkingError(.httpUnauthorized)
+                guard let token = self.credentialService?.getIdToken() else {throw NetworkingError(.httpUnauthorized)}
+                headers["Authorization"] = "Bearer \(token)"
         case let .custom(string): headers["Authorization"] = string
         case .none: break
         }
@@ -110,7 +115,7 @@ extension DefaultRESTDataSource {
             })
             .map { .init(name: $0.key, value: $0.value.description) }
         
-        components.queryItems = queryItems
+        components.queryItems = queryItems.isEmpty ? nil : queryItems
         
         guard let url = components.url else { return nil }
         var urlRequest = URLRequest(url: url)
@@ -118,24 +123,29 @@ extension DefaultRESTDataSource {
         
         if endpoint.httpMethod != .get {
             switch endpoint.encoding {
-            case .form:
-                var components = URLComponents()
-                components.queryItems = endpoint.parameters.jsonObject?
-                    .map { key, value in
-                        URLQueryItem(name: key, value: "\(value)")
+                case .form:
+                    var components = URLComponents()
+                    components.queryItems = endpoint.parameters.jsonObject?
+                        .map { key, value in
+                            URLQueryItem(name: key, value: "\(value)")
+                        }
+                    if let body = components.percentEncodedQuery?.data(using: .utf8) {
+                        urlRequest.httpBody = body
+                        headers["Content-Type"] = "application/x-www-form-urlencoded"
                     }
-                if let body = components.percentEncodedQuery?.data(using: .utf8) {
-                    urlRequest.httpBody = body
-                    headers["Content-Type"] = "application/x-www-form-urlencoded"
-                }
-                
-            case .json:
-                if let body: Any = (endpoint.parameters.jsonObject ?? endpoint.parameters.jsonArray) {
-                    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
-                    headers["Content-Type"] = "application/json"
-                }
-            case let .custom(encoding):
-                headers["Content-Type"] = encoding
+                    
+                case .json:
+                    if let body: Any = (endpoint.parameters.jsonObject ?? endpoint.parameters.jsonArray) {
+                        urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+                        headers["Content-Type"] = "application/json"
+                    }
+                case let .custom(encoding):
+                    headers["Content-Type"] = encoding
+                case .customWithBody(let encoding):
+                    if let body: Any = (endpoint.parameters.jsonObject ?? endpoint.parameters.jsonArray) {
+                        urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
+                        headers["Content-Type"] = encoding
+                    }
             }
         }
         urlRequest.allHTTPHeaderFields = headers
@@ -150,7 +160,7 @@ private extension DefaultRESTDataSource {
         guard let request = try? dataRequest(for: endpoint) else {
             throw NetworkingError.generic
         }
-
+        Logger.log(String(data: request.httpBody ?? Data(), encoding: .utf8) ?? "", level: .network)
         let task = Task(priority: .utility) {
             
             do {
@@ -173,7 +183,15 @@ private extension DefaultRESTDataSource {
     }
     
     private func refreshToken() async throws {
-        // implement here any custom refresh token logic
-        throw NetworkingError.cancelled
+        guard let rfToken = self.credentialService?.getRefreshToken() else {
+            Logger.log("Refresh token missing", tag: .appState)
+            throw AuthServiceError.RefreshTokenMissing
+        }
+        do {
+            let sessionToken = try await self.authService?.refreshAccessToken(refreshToken: rfToken)
+            self.credentialService?.store(credentials: TokenCredentials(accessToken: sessionToken?.accessToken, idToken: sessionToken?.idToken, refreshToken: sessionToken?.refreshToken))
+        } catch {
+            throw error
+        }
     }
 }

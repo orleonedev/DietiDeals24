@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct LaunchScreenView: View {
-    @Binding var isEnded: Bool
     @State private var opacity: CGFloat = 0
     var body: some View {
         ZStack {
@@ -31,10 +30,6 @@ struct LaunchScreenView: View {
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.opacity = 1
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.opacity = 0
-                        isEnded = true
-                    }
                 }
             }
             .animation(.easeInOut, value: opacity)
@@ -43,5 +38,5 @@ struct LaunchScreenView: View {
 }
 
 #Preview {
-    LaunchScreenView(isEnded: .constant(false))
+    LaunchScreenView()
 }

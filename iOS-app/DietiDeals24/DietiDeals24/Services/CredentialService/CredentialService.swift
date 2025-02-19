@@ -6,7 +6,7 @@
 //
 
 
-protocol CredentialService: Actor {
+protocol CredentialService: AnyObject {
     
     func store(credentials: TokenCredentials)
     func getAccessToken() -> String?
@@ -14,4 +14,8 @@ protocol CredentialService: Actor {
     func getIdToken() -> String?
     func clearCredentials()
     
+}
+
+extension Logger.Tag {
+    static var credentialService: Self { "CredentialService" }
 }

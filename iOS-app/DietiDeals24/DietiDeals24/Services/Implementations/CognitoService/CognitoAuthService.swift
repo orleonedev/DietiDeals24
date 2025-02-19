@@ -21,7 +21,7 @@ final class CognitoAuthService: AuthService {
                 )
             ).endpoint
         )
-        let result: AuthTokenSession = response.authResult
+        let result: AuthTokenSession = response.authResult.generateSessionToken()
         return result
     }
     
@@ -31,7 +31,7 @@ final class CognitoAuthService: AuthService {
                 method: .provider(provider: provider.rawValue, token: thirdPartyToken)
             ).endpoint
         )
-        let result: AuthTokenSession = response.authResult
+        let result: AuthTokenSession = response.authResult.generateSessionToken()
         return result
     }
     
@@ -41,7 +41,7 @@ final class CognitoAuthService: AuthService {
                 method: .refreshToken(refreshToken: refreshToken)
             ).endpoint
         )
-        let result: AuthTokenSession = response.authResult
+        let result: AuthTokenSession = response.authResult.generateSessionToken()
         return result
     }
     

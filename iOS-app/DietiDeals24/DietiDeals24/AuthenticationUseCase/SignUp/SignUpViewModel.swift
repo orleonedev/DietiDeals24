@@ -7,18 +7,34 @@
 
 import Foundation
 
-class SignUpViewModel: ObservableObject {
+@Observable
+class SignUpViewModel {
     
-    @Published var email: String = ""
-    @Published var password: String = ""
-    @Published var fullName: String = ""
-    @Published var username: String = ""
-    @Published var birthdate: Date? = nil
-    @Published var validationEmailError: Bool = false
-    @Published var validationPasswordError: Bool = false
-    @Published var validationFullNameError: Bool = false
-    @Published var validationUserNameError: Bool = false
-    @Published var validationBirthDateError: Bool = false
+    var email: String = ""
+    var password: String = ""
+    var fullName: String = ""
+    var username: String = ""
+    var birthdate: Date = .now
+    var validationEmailError: Bool = false
+    var validationPasswordError: Bool = false
+    var validationFullNameError: Bool = false
+    var validationUserNameError: Bool = false
+    var validationBirthDateError: Bool = false
+    
+    let dateRange: ClosedRange<Date> = {
+        let calendar = Calendar.current
+        let startComponents = Calendar.current.dateComponents([.year, .month, .day], from: .distantPast)
+        let endComponents = Calendar.current.dateComponents([.year, .month, .day], from: .now)
+        return calendar.date(from:startComponents)!
+            ...
+            calendar.date(from:endComponents)!
+    }()
+    
+    var coordinator: AuthFlowCoordinator
+    
+    init(coordinator: AuthFlowCoordinator) {
+        self.coordinator = coordinator
+    }
     
     private var isFormValid: Bool {
         self.validateFields()
@@ -30,7 +46,7 @@ class SignUpViewModel: ObservableObject {
         validationPasswordError = !self.validatePassword(self.password)
         validationFullNameError = self.fullName.isEmpty
         validationUserNameError = self.username.isEmpty
-        validationBirthDateError = self.birthdate == nil
+        self.validateBirthDate()
     }
     
     func validateEmail() {
@@ -50,7 +66,7 @@ class SignUpViewModel: ObservableObject {
     }
     
     func validateBirthDate() {
-        validationBirthDateError = self.birthdate == nil || !self.isValidBirthdate(self.birthdate ?? .now)
+        validationBirthDateError = !self.isValidBirthdate(self.birthdate)
     }
     
     private func isValidBirthdate(_ birthdate: Date) -> Bool {
@@ -71,4 +87,16 @@ class SignUpViewModel: ObservableObject {
     }
     
     
+    public func signUp() async throws {
+        
+    }
+    
+    public func skipSignUp() async throws {
+        
+    }
+    
+    @MainActor
+    public func dismiss() {
+        coordinator.goBack()
+    }
 }

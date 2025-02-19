@@ -7,10 +7,63 @@
 
 import Foundation
 
+// MARK: - CognitoSignUpRequest
+struct CognitoSignUpRequest: Codable {
+    let clientID: String?
+    let password, secretHash: String?
+    let userAttributes: [CognitoUserAttribute]?
+    let username: String?
+    let validationData: [CognitoUserAttribute]?
+
+    enum CodingKeys: String, CodingKey {
+        case clientID = "ClientId"
+        case password = "Password"
+        case secretHash = "SecretHash"
+        case userAttributes = "UserAttributes"
+        case username = "Username"
+        case validationData = "ValidationData"
+    }
+}
+
+// MARK: - UserAttribute
+struct CognitoUserAttribute: Codable {
+    let name, value: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name = "Name"
+        case value = "Value"
+    }
+}
+
+// MARK: - CognitoSignUpResponse
+struct CognitoSignUpResponse: Codable {
+    let codeDeliveryDetails: CognitoCodeDeliveryDetails?
+    let userConfirmed: Bool?
+    let session, userSub: String?
+
+    enum CodingKeys: String, CodingKey {
+        case codeDeliveryDetails = "CodeDeliveryDetails"
+        case session = "Session"
+        case userConfirmed = "UserConfirmed"
+        case userSub = "UserSub"
+    }
+}
+
+// MARK: - CodeDeliveryDetails
+struct CognitoCodeDeliveryDetails: Codable {
+    let attributeName, deliveryMedium, destination: String?
+
+    enum CodingKeys: String, CodingKey {
+        case attributeName = "AttributeName"
+        case deliveryMedium = "DeliveryMedium"
+        case destination = "Destination"
+    }
+}
+
 struct CognitoAuthRequestBody: Codable, BodyParameters {
-    let authFlow: String
-    let authParameters: [String: String]
-    let clientId: String
+    let AuthFlow: String
+    let AuthParameters: [String: String]
+    let ClientId: String
 }
 
 enum CognitoLoginMethods {
@@ -20,7 +73,30 @@ enum CognitoLoginMethods {
 }
 
 struct CognitoAuthResponse: AuthServiceResponse {
-    var authResult: AuthTokenSession
+    var authResult: CognitoTokenResult
+    
+    enum CodingKeys: String, CodingKey {
+        case authResult = "AuthenticationResult"
+    }
+}
+
+struct CognitoTokenResult: Codable, AuthTokenSessionGenerator {
+    
+    let accessToken: String?
+    let expiresIn: Int?
+    let idToken, refreshToken, tokenType: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "AccessToken"
+        case expiresIn = "ExpiresIn"
+        case idToken = "IdToken"
+        case refreshToken = "RefreshToken"
+        case tokenType = "TokenType"
+    }
+    
+    func generateSessionToken() -> AuthTokenSession {
+        return .init(accessToken: accessToken, idToken: idToken, refreshToken: refreshToken)
+    }
 }
 
 enum CognitoEndpoint {
@@ -65,17 +141,17 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.json
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
         let body = CognitoAuthRequestBody(
-            authFlow: "USER_PASSWORD_AUTH",
-            authParameters: [
+            AuthFlow: "USER_PASSWORD_AUTH",
+            AuthParameters: [
                 "USERNAME" : username,
                 "PASSWORD" : password
             ],
-            clientId: clientId
+            ClientId: clientId
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(
@@ -94,17 +170,17 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.json
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
         let body = CognitoAuthRequestBody(
-            authFlow: "USER_SRP_AUTH",
-            authParameters: [
+            AuthFlow: "USER_SRP_AUTH",
+            AuthParameters: [
                 "USERNAME": provider + "_" + UUID().uuidString,  // Unique identifier for federated login
                 "IDP_TOKEN": token
             ],
-            clientId: clientId
+            ClientId: clientId
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(
@@ -123,16 +199,16 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.json
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
         let body = CognitoAuthRequestBody(
-            authFlow: "REFRESH_TOKEN_AUTH",
-            authParameters: [
+            AuthFlow: "REFRESH_TOKEN_AUTH",
+            AuthParameters: [
                 "REFRESH_TOKEN": refreshToken
             ],
-            clientId: clientId
+            ClientId: clientId
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(

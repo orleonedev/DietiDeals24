@@ -5,7 +5,7 @@
 //  Created by Oreste Leone on 05/02/25.
 //
 
-actor KeychainCredentialService: CredentialService {
+class KeychainCredentialService: CredentialService {
     
     private enum KeychainKeys: String, CaseIterable {
         case accessToken
@@ -14,6 +14,7 @@ actor KeychainCredentialService: CredentialService {
     }
     
     func store(credentials: TokenCredentials) {
+        Logger.log("Storing credentials in keychain -> \(credentials)", level: .verbose, tag: .credentialService)
         self._accessToken = credentials.accessToken
         self._idToken = credentials.idToken
         if let accessToken = credentials.accessToken {
@@ -30,26 +31,34 @@ actor KeychainCredentialService: CredentialService {
     func getAccessToken() -> String? {
         guard let accessToken = self._accessToken, !accessToken.isEmpty else {
             self._accessToken = getTokenInKeychain(.accessToken)
+            Logger.log("Access Token -> \(self._accessToken ?? "")", level: .verbose, tag: .credentialService)
             return self._accessToken
         }
+        Logger.log("Access Token -> \(accessToken)", level: .verbose, tag: .credentialService)
         return accessToken
     }
     
     func getRefreshToken() -> String? {
-        return self.getTokenInKeychain(.refreshToken)
+        let rf = self.getTokenInKeychain(.refreshToken)
+        Logger.log("refresh Token -> \(rf ?? "")", level: .verbose, tag: .credentialService)
+        return rf
     }
     
     func getIdToken() -> String? {
         guard let idToken = self._idToken, !idToken.isEmpty else {
             self._idToken = getTokenInKeychain(.idToken)
+            Logger.log("ID Token -> \(self._idToken ?? "")", level: .verbose, tag: .credentialService)
             return self._idToken
         }
+        Logger.log("ID Token -> \(idToken)", level: .verbose, tag: .credentialService)
         return idToken
     }
     
     func clearCredentials() {
+        Logger.log("clearCredentials", level: .verbose, tag: .credentialService)
         KeychainKeys.allCases.forEach { key in
             KeychainWrapper.removeData(key: key.rawValue)
+            Logger.log("\(key) removed", level: .verbose, tag: .credentialService)
         }
     }
     

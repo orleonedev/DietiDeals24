@@ -8,21 +8,31 @@
 import Foundation
 import SwiftUI
 
-class SignInViewModel: ObservableObject {
+@Observable
+class SignInViewModel {
     
-    @Published var isAuthenticated: Bool = false
-    @Published var loginEmail: String = ""
-    @Published var loginPassword: String = ""
-    @Published var invalidLoginEmail: Bool = false
-    @Published var validationPasswordError: Bool = false
+    var loginEmail: String = ""
+    var loginPassword: String = ""
+    var invalidLoginEmail: Bool = false
+    var validationPasswordError: Bool = false
     
-    func tryAuthentication() {
+    var coordinator: AuthFlowCoordinator
+    
+    init(coordinator: AuthFlowCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    func skipAuth() async throws {
+        try await coordinator.SignInInteractively(email: "orleone.dev+Test01@gmail.com", password: "Test123@")
+    }
+    
+    func tryAuthentication() async throws {
         guard !loginEmail.isEmpty,
               !loginPassword.isEmpty
         else {
             return
         }
-        isAuthenticated = true
+        try await coordinator.SignInInteractively(email: loginEmail, password: loginPassword)
     }
     
     func validateEmail() {
@@ -39,11 +49,14 @@ class SignInViewModel: ObservableObject {
             print("invalid password format")
             self.validationPasswordError = true
         }
-
     }
     
     private func validatePasswordPattern(_ password: String) -> Bool {
         let passwordRegex = #"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$"#
         return NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password)
+    }
+    
+    @MainActor func goToSignUp() {
+        coordinator.goToSignUp()
     }
 }

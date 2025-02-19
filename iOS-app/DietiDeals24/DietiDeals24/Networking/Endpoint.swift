@@ -12,6 +12,7 @@ public struct Endpoint {
         case json
         case form
         case custom(String)
+        case customWithBody(String)
     }
 
     public let baseURL: URL

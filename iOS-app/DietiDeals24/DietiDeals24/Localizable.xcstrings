@@ -1,10 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Create your account" : {
+    "" : {
 
     },
-    "Creating an account means you agree to our" : {
+    "Cancel" : {
+
+    },
+    "Create your account" : {
 
     },
     "Dieti Deals 24" : {
@@ -28,13 +31,22 @@
     "Password" : {
 
     },
+    "Revoke Cred" : {
+
+    },
     "Sign In" : {
 
     },
     "Sign Up" : {
 
     },
+    "Signing up means you agree to our" : {
+
+    },
     "Skip Sign In" : {
+
+    },
+    "Skip Sign Up" : {
 
     },
     "Terms and Conditions" : {

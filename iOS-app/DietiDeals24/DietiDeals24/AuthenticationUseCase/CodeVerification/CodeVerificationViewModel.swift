@@ -7,7 +7,8 @@
 
 import Foundation
 
-class CodeVerificationViewModel: ObservableObject {
-    @Published var confimationCode: String? = nil
+@Observable
+class CodeVerificationViewModel {
+    var confimationCode: String? = nil
     
 }

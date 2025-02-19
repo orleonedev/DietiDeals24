@@ -11,7 +11,7 @@ import RoutingKit
 
 struct SignInView: View {
     
-    @StateObject var viewModel: SignInViewModel = SignInViewModel()
+    @State var viewModel: SignInViewModel
     
     var body: some View {
         ScrollView {
@@ -70,7 +70,13 @@ extension SignInView {
     func loginButton() -> some View {
         VStack {
             Button(action: {
-                viewModel.tryAuthentication()
+                Task{
+                    do {
+                        try await viewModel.tryAuthentication()
+                    } catch {
+                        print(error)
+                    }
+                }
             }) {
                 Text("Sign In")
                     .font(.headline)
@@ -84,7 +90,13 @@ extension SignInView {
             .padding(.horizontal)
 #if DEV && DEBUG
             Button("Skip Sign In") {
-                viewModel.isAuthenticated = true
+                Task{
+                    do {
+                        try await viewModel.skipAuth()
+                    } catch {
+                        print(error)
+                    }
+                }
             }
             .padding()
 #endif
@@ -96,7 +108,7 @@ extension SignInView {
         HStack(alignment: .center, spacing: 8){
             Text("Don't have an account?")
             Button {
-                AuthenticationFlow.authRouter.navigate(to: AuthDestination.SignUp, type: .push)
+                self.viewModel.goToSignUp()
             } label: {
                 Text("Sign Up")
                     .foregroundStyle(.accent)
@@ -126,9 +138,9 @@ extension SignInView {
                // signInWithFacebook()
             }
             .padding(.horizontal)
-            VStack{
+            VStack(alignment: .center){
                 HStack(alignment: .top) {
-                    Text("Creating an account means you agree to our")
+                    Text("Signing up means you agree to our")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         
@@ -140,6 +152,7 @@ extension SignInView {
                     }
                 }
             }
+            .frame(maxWidth: .infinity)
             
         }
     }
@@ -164,7 +177,11 @@ extension SignInView {
 }
 
 #Preview {
-    SignInView()
+    SignInView(
+        viewModel: .init(
+            coordinator: .init(container: .init())
+        )
+    )
 }
 
 

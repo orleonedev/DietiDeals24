@@ -6,28 +6,16 @@
 //
 
 import SwiftUI
+import RoutingKit
 
 @main
 struct DietiDeals24App: App {
     
-    @State var launchScreenIsEnded = false
-    @State var authFlow: AuthenticationFlow = AuthenticationFlow()
+    @State var appContainer: AppContainer = AppContainer()
     var body: some Scene {
         WindowGroup {
-            ZStack{
-                if !launchScreenIsEnded {
-                    LaunchScreenView(isEnded: $launchScreenIsEnded)
-                } else {
-                    if authFlow.isAuthenticated {
-                        ContentView()
-                    } else {
-                        authFlow.root
-                    }
-                }
-            }
-            .animation(.easeInOut, value: launchScreenIsEnded)
-            .animation(.easeInOut, value: authFlow.isAuthenticated)
-            
+            AppRootView(appContainer: appContainer)
         }
     }
 }
+

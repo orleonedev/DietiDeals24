@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 
 namespace DietiDeals24.DataAccessLayer.Infrastructure;
 
@@ -21,4 +22,6 @@ public interface IRepository<TEntity, TKey> where TEntity : class
     Task<TEntity> Get(TKey id);
     Task Delete(Expression<Func<TEntity, bool>> predicate);
     Task Delete(TKey id);
+    public Task<int> CountAsync();
+    public Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate);
 }

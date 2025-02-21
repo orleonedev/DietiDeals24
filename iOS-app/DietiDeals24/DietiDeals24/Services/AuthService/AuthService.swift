@@ -28,7 +28,10 @@ protocol AuthService {
     /// This method can be invoked by the network layer when the access token expires.
     /// - Returns: A new AuthSession with updated tokens.
     func refreshAccessToken(refreshToken: String) async throws -> AuthTokenSession
-
+    
+    
+    func signUp(model: UserSignUpAttributes) async throws -> AuthServiceSignUpResponse
+    
     /// Signs out the current user, clearing any stored credentials.
     func signOut() async throws
 }

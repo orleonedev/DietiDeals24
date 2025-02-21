@@ -7,6 +7,8 @@
 
 final class CognitoAuthService: AuthService {
     
+    
+    
     let rest: RESTDataSource
     init(rest: RESTDataSource) {
         self.rest = rest
@@ -43,6 +45,16 @@ final class CognitoAuthService: AuthService {
         )
         let result: AuthTokenSession = response.authResult.generateSessionToken()
         return result
+    }
+    
+    func signUp(model: UserSignUpAttributes) async throws -> any AuthServiceSignUpResponse {
+        let response: CognitoSignUpResponse = try await rest.getCodable(
+            at: CognitoEndpoint.signUp(
+                model: model
+            ).endpoint
+        )
+        
+        return response
     }
     
     func signOut() async throws {

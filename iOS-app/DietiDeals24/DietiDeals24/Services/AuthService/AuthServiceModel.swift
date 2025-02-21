@@ -16,6 +16,10 @@ protocol AuthServiceResponse<AuthResultType> : Codable {
     var authResult: AuthResultType { get }
 }
 
+protocol AuthServiceSignUpResponse {
+    
+}
+
 struct AuthTokenSession: Codable, AuthTokenSessionGenerator {
     
     let accessToken: String?
@@ -50,4 +54,13 @@ enum AuthServiceError: LocalizedError {
         }
     }
     
+}
+
+struct UserSignUpAttributes {
+    let username: String
+    let email: String
+    let password: String
+    let preferredUsername: String
+    let name: String
+    let birthdate: Date
 }

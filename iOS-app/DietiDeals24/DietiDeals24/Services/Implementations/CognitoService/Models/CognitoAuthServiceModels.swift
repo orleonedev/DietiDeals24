@@ -8,20 +8,17 @@
 import Foundation
 
 // MARK: - CognitoSignUpRequest
-struct CognitoSignUpRequest: Codable {
+struct CognitoSignUpRequest: Codable, BodyParameters {
     let clientID: String?
-    let password, secretHash: String?
+    let password: String?
     let userAttributes: [CognitoUserAttribute]?
     let username: String?
-    let validationData: [CognitoUserAttribute]?
 
     enum CodingKeys: String, CodingKey {
         case clientID = "ClientId"
         case password = "Password"
-        case secretHash = "SecretHash"
         case userAttributes = "UserAttributes"
         case username = "Username"
-        case validationData = "ValidationData"
     }
 }
 
@@ -35,8 +32,27 @@ struct CognitoUserAttribute: Codable {
     }
 }
 
+enum CognitoUserAttributeFields {
+    case birthdate, preferredUsername, email, name, role
+    
+    func asCognitoUserAttribute(value: String? = nil) -> CognitoUserAttribute {
+        switch self {
+            case .birthdate:
+                return CognitoUserAttribute(name: "birthdate", value: value)
+            case .preferredUsername:
+                return CognitoUserAttribute(name: "preferred_username", value: value)
+            case .email:
+                return CognitoUserAttribute(name: "email", value: value)
+            case .name:
+                return CognitoUserAttribute(name: "name", value: value)
+            case .role:
+                return CognitoUserAttribute(name: "custom:role", value: value)
+        }
+    }
+}
+
 // MARK: - CognitoSignUpResponse
-struct CognitoSignUpResponse: Codable {
+struct CognitoSignUpResponse: Codable, AuthServiceSignUpResponse {
     let codeDeliveryDetails: CognitoCodeDeliveryDetails?
     let userConfirmed: Bool?
     let session, userSub: String?
@@ -101,7 +117,7 @@ struct CognitoTokenResult: Codable, AuthTokenSessionGenerator {
 
 enum CognitoEndpoint {
     case login(method: CognitoLoginMethods)
-    case signUp
+    case signUp(model: UserSignUpAttributes)
     case confirmSignUp
     case forgotPassword
     case confirmForgotPassword
@@ -121,8 +137,8 @@ extension CognitoEndpoint {
                     case .refreshToken(let refreshToken):
                         return Self.getLoginEndpoint(refreshToken: refreshToken)
                 }
-//            case .signUp:
-//                break
+            case .signUp( let model):
+                return Self.getSignUpEndpoint(model: model)
 //            case .confirmSignUp:
 //                break
 //            case .forgotPassword:
@@ -218,6 +234,40 @@ extension CognitoEndpoint {
                 parameters: body ?? [:],
                 encoding: encoding,
                 method: httpMethod,
+                headers: headers
+            )
+        )
+    }
+    
+    static func getSignUpEndpoint(model: UserSignUpAttributes) -> CodableEndpoint<CognitoSignUpResponse> {
+        let clientId = CognitoConfiguration.clientId
+        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let headers: [String: String] = [
+            "X-Amz-Target": "AWSCognitoIdentityProviderService.SignUp"
+        ]
+        
+        let body = CognitoSignUpRequest(
+            clientID: clientId,
+            password: model.password,
+            userAttributes: [
+                CognitoUserAttributeFields.email.asCognitoUserAttribute(value: model.email),
+                CognitoUserAttributeFields.name.asCognitoUserAttribute(value: model.name),
+                CognitoUserAttributeFields.preferredUsername.asCognitoUserAttribute(value: model.preferredUsername),
+                CognitoUserAttributeFields.birthdate.asCognitoUserAttribute(value: model.birthdate.formattedString("YYYY-MM-DD")),
+                CognitoUserAttributeFields.role.asCognitoUserAttribute(value: "0")
+            ],
+            username: model.preferredUsername
+        ).jsonObject
+        
+        return CodableEndpoint<CognitoSignUpResponse>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: .post,
                 headers: headers
             )
         )

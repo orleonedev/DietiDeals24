@@ -76,6 +76,10 @@ class AppState {
         self.isAuthenticated = true
     }
     
+    public func signUp(model: UserSignUpAttributes) async throws {
+        let response = try await self.authService.signUp(model: model)
+    }
+    
     public func revokeCredentials() {
         self.credentialService.clearCredentials()
         self.isAuthenticated = false

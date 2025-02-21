@@ -54,6 +54,10 @@ class AuthFlowCoordinator {
         try await appState.SignInInteractively(email: email, password: password)
     }
     
+    public func signUp(model: UserSignUpAttributes) async throws {
+        try await appState.signUp(model: model)
+    }
+    
     @MainActor @ViewBuilder
     func rootView() -> some View {
         RoutingKit.RoutableRootView(router: router) {

@@ -88,11 +88,29 @@ class SignUpViewModel {
     
     
     public func signUp() async throws {
-        
+        try await coordinator.signUp(
+            model: UserSignUpAttributes(
+                username: self.username,
+                email: self.email,
+                password: self.password,
+                preferredUsername: self.username,
+                name: self.fullName,
+                birthdate: self.birthdate
+            )
+        )
     }
     
     public func skipSignUp() async throws {
-        
+        try await coordinator.signUp(
+            model: UserSignUpAttributes(
+                username: "signUpSkip",
+                email: "orleone.dev+SignUpSkip@gmail.com",
+                password: "Test123@",
+                preferredUsername: "signUpSkip",
+                name: "signUpSkip Name",
+                birthdate: Calendar.current.date(byAdding: .year, value: -19, to: .now) ?? .distantPast
+            )
+        )
     }
     
     @MainActor

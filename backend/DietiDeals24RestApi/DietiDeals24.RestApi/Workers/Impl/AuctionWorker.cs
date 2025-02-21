@@ -1,6 +1,7 @@
 using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Models;
 using DietiDeals24.DataAccessLayer.Services;
+using Microsoft.EntityFrameworkCore;
 using AuctionType = DietiDeals24.DataAccessLayer.Models.AuctionType;
 
 namespace DietiDeals24.RestApi.Workers;
@@ -25,23 +26,30 @@ public class AuctionWorker: IAuctionWorker
         return auction;
     }
 
-    public async Task<PaginatedResult<HomePageAuctionDTO>> GetHomePageAuctions(int pageNumber, int pageSize)
+    public async Task<List<Auction>> GetAllAuctions()
     {
-        _logger.LogInformation("[WORKER] Getting home page auctions");
+        _logger.LogInformation("[WORKER] Getting all auctions");
 
         try
         {
-            var auctions = await _auctionService.GetAllAuctionsAsync(pageNumber, pageSize);
+            var auctions = await _auctionService.GetAllAuctionsAsync();
 
-            foreach (HomePageAuctionDTO auction in auctions.Results)
-            {
-                if(auction.Type == AuctionType.EnglishLike){
-                    var offers = _auctionService.GetOffersForAuctionAsync(auction.Id).Result;
-                    auction.Offers = offers;
-                }
-            }
+            return auctions.ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Getting all auctions failed: {ex.Message}");
+            throw new Exception("[WORKER] Getting all auctions failed.", ex);
+        }
+    }
 
-            return auctions;
+    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(int pageNumber, int pageSize)
+    {
+        _logger.LogInformation("[WORKER] Getting paginated auctions");
+
+        try
+        {
+            return await _auctionService.GetPaginatedAuctionsAsync(pageNumber, pageSize);
         }
         catch (Exception ex)
         {

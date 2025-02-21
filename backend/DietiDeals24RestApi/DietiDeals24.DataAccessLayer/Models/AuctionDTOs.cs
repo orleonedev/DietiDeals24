@@ -20,7 +20,6 @@ public class PaginatedResult<T>
     }
 }
 
-
 public enum AuctionStatus
 {
     Active,
@@ -34,7 +33,7 @@ public enum AuctionType {
 
 public class HomePageAuctionDTO
 {
-    //public Image Image { get; set; }
+    public string MainImageUrl { get; set; }
     public Guid Id { get; set; }
     public string Title { get; set; }
     public AuctionType Type { get; set; }
@@ -47,7 +46,7 @@ public class HomePageAuctionDTO
 public class DetailedAuctionDTO
 {
     public string Title { get; set; }
-    //public List<Image> Images { get; set; }
+    public List<string> ImagesUrls { get; set; }
     public string Category { get; set; }
     public string AuctionType { get; set; }
     public decimal CurrentPrice { get; set; }

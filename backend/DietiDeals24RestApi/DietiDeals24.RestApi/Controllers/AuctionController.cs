@@ -36,7 +36,28 @@ public class AuctionController : ControllerBase
         }
     }
 
-    [HttpGet("get-auctions", Name = "GetAuctions")]
+    [HttpGet("get-all-auctions", Name = "GetAllAuctions")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllAuctions()
+    {
+        try
+        {
+            _logger.LogInformation("[CONTROLLER] Getting all auctions");
+            var result = await _auctionWorker.GetAllAuctions();
+
+            if (result.Any()) return Ok(result);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] Failed to get all the auctions. Exception occurred: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("get-paginated-auctions", Name = "GetPaginatedAuctions")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -44,15 +65,15 @@ public class AuctionController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("[CONTROLLER] Getting all auctions");
-            var result = await _auctionWorker.GetHomePageAuctions(pageNumber, pageSize);
+            _logger.LogInformation("[CONTROLLER] Getting paginated auctions");
+            var result = await _auctionWorker.GetPaginatedAuctions(pageNumber, pageSize);
 
             if (result.Results.Any()) return Ok(result);
             return NotFound();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[CONTROLLER] Failed to get all the auctions. Exception occurred: {ex.Message}");
+            _logger.LogError(ex, $"[CONTROLLER] Failed to get paginated auctions. Exception occurred: {ex.Message}");
             return BadRequest(ex.Message);
         }
     }

@@ -95,42 +95,56 @@ public class AuctionService : IAuctionService
         };
     }
 
-    public async Task<PaginatedResult<HomePageAuctionDTO>> GetAllAuctionsAsync(int pageNumber, int pageSize, string? predicate = null, params object[] parameters)
+    public async Task<IQueryable<Auction>> GetAllAuctionsAsync(string? predicate = null, params object[] parameters)
     {
         try
         {
             var auctions = _unitOfWork.AuctionRepository.Get(predicate, parameters);
-            var totalRecords = await auctions.CountAsync();
-            
-            var paginatedAuctions = await auctions
-                .OrderBy(auction => auction.EndingDate) 
-                .Skip((pageNumber - 1) * pageSize) // Permits to skip pages
-                .Take(pageSize)
-                .Select(auction => new HomePageAuctionDTO
-                {
-                    Id = auction.Id,
-                    Title = auction.Title,
-                    Type = (AuctionType)auction.AuctionType,
-                    CurrentPrice = auction.CurrentPrice,
-                    Threshold = auction.Threshold,
-                    ThresholdTimer = auction.Timer
-                })
-                .ToListAsync();
 
-            return new PaginatedResult<HomePageAuctionDTO>(paginatedAuctions, totalRecords);
+            return auctions
+                .OrderBy(auction => auction.EndingDate);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[SERVICE] Getting home page auctions failed: {ex.Message}");
-            throw new Exception("[SERVICE] Getting home page auctions failed.", ex);
+            _logger.LogError(ex, $"[SERVICE] Getting all auctions failed: {ex.Message}");
+            throw new Exception("[SERVICE] Getting all auctions failed.", ex);
         }
     }
 
-    public Task<int> GetOffersForAuctionAsync(Guid auctionId)
+    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int pageNumber, int pageSize,
+        string? predicate = null, params object[] parameters)
     {
         try
         {
-            return _unitOfWork.BidRepository.Get(bid => bid.AuctionId == auctionId).CountAsync();
+            var query = _unitOfWork.AuctionRepository.Get(predicate, parameters);
+
+            var totalRecords = await query.CountAsync();
+
+            var paginatedAuctions = await query
+                .OrderBy(a => a.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var auctionIds = paginatedAuctions.Select(a => a.Id).ToList();
+            var auctionImageUrls = await GetImagesUrlsForAuctionAsync(auctionIds);
+            var offerCounts = await GetOffersForAuctionAsync(auctionIds);
+
+            var result = paginatedAuctions.Select(a => new HomePageAuctionDTO
+            {
+                Id = a.Id,
+                MainImageUrl = auctionImageUrls.ContainsKey(a.Id) && auctionImageUrls[a.Id].Any()
+                    ? auctionImageUrls[a.Id].First()  // Extract the first image
+                    : "No Image",
+                Title = a.Title,
+                Type = (AuctionType)a.AuctionType,
+                CurrentPrice = a.CurrentPrice,
+                Threshold = a.Threshold,
+                ThresholdTimer = a.Timer,
+                Offers = offerCounts.ContainsKey(a.Id) ? offerCounts[a.Id] : 0
+            }).ToList();
+
+            return new PaginatedResult<HomePageAuctionDTO>(result, totalRecords);
         }
         catch (Exception ex)
         {
@@ -138,4 +152,46 @@ public class AuctionService : IAuctionService
             throw new Exception("[SERVICE] Getting home page auctions failed.", ex);
         }
     }
+
+    private async Task<Dictionary<Guid, int>> GetOffersForAuctionAsync(List<Guid> auctionIds)
+    {
+        if (auctionIds == null || !auctionIds.Any())
+            return new Dictionary<Guid, int>();
+
+        try
+        {
+            return await _unitOfWork.BidRepository
+                .Get(bid => auctionIds.Contains(bid.AuctionId))
+                .GroupBy(bid => bid.AuctionId)
+                .ToDictionaryAsync(group => group.Key, group => group.Count());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[SERVICE] Getting offer counts failed: {Message}", ex.Message);
+            throw new Exception("[SERVICE] Getting offer counts failed.", ex);
+        }
+    }
+    
+    private async Task<Dictionary<Guid, List<string>>> GetImagesUrlsForAuctionAsync(List<Guid> auctionIds)
+    {
+        if (auctionIds == null || !auctionIds.Any())
+            return new Dictionary<Guid, List<string>>();
+
+        try
+        {
+            return await _unitOfWork.AuctionImageRepository
+                .Get(image => auctionIds.Contains(image.AuctionId))
+                .GroupBy(image => image.AuctionId)
+                .ToDictionaryAsync(
+                    group => group.Key,  // Auction ID as key
+                    group => group.Select(image => image.Url).ToList() // List of image URLs as value
+                );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[SERVICE] Getting image URLs failed: {Message}", ex.Message);
+            throw new Exception("[SERVICE] Getting image URLs failed.", ex);
+        }
+    }
+
 }

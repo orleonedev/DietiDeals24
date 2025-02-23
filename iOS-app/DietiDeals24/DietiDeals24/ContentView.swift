@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+    @State var appState: AppState
     var env: String {
 #if DEV
         return "dev"
@@ -17,17 +17,29 @@ struct ContentView: View {
 #endif
     }
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, \(env)!")
-            Text("This is the start of cognito setup")
-        }
-        .padding()
+        
+            ZStack(alignment: .topLeading){
+                Color.clear
+                Button("Revoke Cred") {
+                    appState.revokeCredentials()
+                }
+                .buttonStyle(.bordered)
+                VStack(alignment: .center) {
+                    Spacer()
+                    Image(systemName: "globe")
+                        .imageScale(.large)
+                        .foregroundStyle(.dietiYellow)
+                    Text("Hello, \(env)!")
+                    Text("This is the start of cognito setup")
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            }
+            .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(appState: .init(credentialService: KeychainCredentialService(), authService: CognitoAuthService(rest: DefaultRESTDataSource())))
 }

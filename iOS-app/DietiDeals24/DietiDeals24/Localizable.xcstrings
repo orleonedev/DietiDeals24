@@ -1,0 +1,96 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Create your account" : {
+
+    },
+    "Dieti Deals 24" : {
+
+    },
+    "Don't have an account?" : {
+
+    },
+    "Email" : {
+
+    },
+    "Explore" : {
+
+    },
+    "Hello, %@!" : {
+
+    },
+    "load" : {
+
+    },
+    "notification Tab" : {
+
+    },
+    "Notifications" : {
+
+    },
+    "Or sign in with" : {
+
+    },
+    "Password" : {
+
+    },
+    "Personal Area" : {
+
+    },
+    "Revoke Cred" : {
+
+    },
+    "Search" : {
+
+    },
+    "Search Items Tab" : {
+
+    },
+    "Sell" : {
+
+    },
+    "Sell Tab" : {
+
+    },
+    "Sign In" : {
+
+    },
+    "Sign Up" : {
+
+    },
+    "Signing up means you agree to our" : {
+
+    },
+    "Skip Sign In" : {
+
+    },
+    "Skip Sign Up" : {
+
+    },
+    "Terms and Conditions" : {
+
+    },
+    "This is the start of cognito setup" : {
+
+    },
+    "UserArea Tab" : {
+
+    },
+    "Verify" : {
+
+    },
+    "Verify your email address" : {
+
+    }
+  },
+  "version" : "1.0"
+}

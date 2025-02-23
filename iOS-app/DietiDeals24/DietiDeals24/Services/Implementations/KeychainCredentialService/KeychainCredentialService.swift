@@ -5,7 +5,15 @@
 //  Created by Oreste Leone on 05/02/25.
 //
 
+import Foundation
+
 class KeychainCredentialService: CredentialService {
+    
+    func getAccountModel() -> UserAccount? {
+        guard let idToken = self.getIdToken() else {return nil}
+        return self.decodeJWT(idToken, model: UserAccount.self)
+    }
+    
     func setSessionCredentials(session: SessionCredential?) {
         _sessionCredentials = session
     }
@@ -86,5 +94,28 @@ class KeychainCredentialService: CredentialService {
     
     private func setTokenInKeychain(_ key: KeychainKeys, value: String) {
         KeychainWrapper.saveData(key: key.rawValue, value: value)
+    }
+    
+    private func decodeJWT<T: Decodable>(_ jwt: String, model: T.Type) -> T? {
+        let segments = jwt.components(separatedBy: ".")
+        guard segments.count > 1 else { return nil }
+
+        let payloadSegment = segments[1]
+        var base64 = payloadSegment
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+
+        // Padding if needed
+        while base64.count % 4 != 0 {
+            base64.append("=")
+        }
+
+        // Decode Base64URL
+        guard let data = Data(base64Encoded: base64),
+              let payload = try? JSONDecoder().decode(T.self, from: data) else {
+            return nil
+        }
+        
+        return payload
     }
 }

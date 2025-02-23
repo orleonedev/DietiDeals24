@@ -48,13 +48,14 @@ extension AppContainer {
     func setupRouting() {
         
         self.registerAuthFlow()
-        self.registerMainFlows()
+        self.registerUserArea()
+        self.registerMainTab()
 
         
     }
     
     private func registerAuthFlow() {
-        register(for: AuthFlowCoordinator.AuthRouter.self, scope: .singleton) { @MainActor [self] in
+        register(for: AuthFlowCoordinator.AuthRouter.self) { @MainActor [self] in
             AuthFlowCoordinator.AuthRouter()
         }
         register(for: AuthFlowCoordinator.self, scope: .singleton) {
@@ -71,9 +72,34 @@ extension AppContainer {
         }
     }
     
-    private func registerMainFlows() {
+    private func registerMainTab() {
+        
+        register(for: MainTabCoordinator.self, scope: .singleton) {
+            MainTabCoordinator(appContainer: self)
+        }
+        
+        register(for: MainTabCoordinator.TabRouter.self) { @MainActor [self] in
+            MainTabCoordinator.TabRouter()
+        }
+        
         register(for: MainTabViewModel.self) { [self] in
-            MainTabViewModel()
+            MainTabViewModel(mainCoordinator: self.unsafeResolve())
+        }
+        
+        
+    }
+    
+    private func registerUserArea() {
+        register(for: UserAreaCoordinator.self, scope: .singleton) {
+            UserAreaCoordinator(appContainer: self)
+        }
+        
+        register(for: UserAreaCoordinator.UserAreaRouter.self) { @MainActor [self] in
+            UserAreaCoordinator.UserAreaRouter()
+        }
+        
+        register(for: UserAreaMainViewModel.self) {
+            UserAreaMainViewModel(coordinator: self.unsafeResolve())
         }
     }
     

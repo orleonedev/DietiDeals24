@@ -6,6 +6,18 @@
 //
 
 class KeychainCredentialService: CredentialService {
+    func setSessionCredentials(session: SessionCredential?) {
+        _sessionCredentials = session
+    }
+    
+    func getSessionCredentials() -> SessionCredential? {
+        _sessionCredentials
+    }
+    
+    func clearSessionCredentials() {
+        _sessionCredentials = nil
+    }
+    
     
     private enum KeychainKeys: String, CaseIterable {
         case accessToken
@@ -13,7 +25,7 @@ class KeychainCredentialService: CredentialService {
         case refreshToken
     }
     
-    func store(credentials: TokenCredentials) {
+    func storeToken(credentials: TokenCredentials) {
         Logger.log("Storing credentials in keychain -> \(credentials)", level: .verbose, tag: .credentialService)
         self._accessToken = credentials.accessToken
         self._idToken = credentials.idToken
@@ -56,6 +68,7 @@ class KeychainCredentialService: CredentialService {
     
     func clearCredentials() {
         Logger.log("clearCredentials", level: .verbose, tag: .credentialService)
+        _sessionCredentials = nil
         KeychainKeys.allCases.forEach { key in
             KeychainWrapper.removeData(key: key.rawValue)
             Logger.log("\(key) removed", level: .verbose, tag: .credentialService)
@@ -64,7 +77,8 @@ class KeychainCredentialService: CredentialService {
     
     private var _accessToken: String?
     private var _idToken: String?
-
+    
+    private var _sessionCredentials: SessionCredential?
     
     private func getTokenInKeychain(_ key: KeychainKeys) -> String? {
         return KeychainWrapper.getData(key: key.rawValue)

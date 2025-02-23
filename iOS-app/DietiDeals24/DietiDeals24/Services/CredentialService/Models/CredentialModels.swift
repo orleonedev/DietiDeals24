@@ -10,3 +10,8 @@ struct TokenCredentials {
     let idToken: String?
     let refreshToken: String?
 }
+
+struct SessionCredential {
+    let session: String?
+    let username: String?
+}

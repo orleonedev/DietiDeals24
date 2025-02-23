@@ -8,10 +8,14 @@
 
 protocol CredentialService: AnyObject {
     
-    func store(credentials: TokenCredentials)
+    func storeToken(credentials: TokenCredentials)
     func getAccessToken() -> String?
     func getRefreshToken() -> String?
     func getIdToken() -> String?
+    
+    func setSessionCredentials(session: SessionCredential?)
+    func getSessionCredentials() -> SessionCredential?
+    func clearSessionCredentials()
     func clearCredentials()
     
 }

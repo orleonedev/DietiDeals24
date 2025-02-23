@@ -8,7 +8,9 @@
 import Foundation
 
 @Observable
-class SignUpViewModel {
+class SignUpViewModel: LoadableViewModel {
+    
+    var isLoading: Bool = false
     
     var email: String = ""
     var password: String = ""
@@ -24,7 +26,8 @@ class SignUpViewModel {
     let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
         let startComponents = Calendar.current.dateComponents([.year, .month, .day], from: .distantPast)
-        let endComponents = Calendar.current.dateComponents([.year, .month, .day], from: .now)
+        let eighteenYearsAgo = calendar.date(byAdding: .year, value: -18, to: .now)!
+        let endComponents = Calendar.current.dateComponents([.year, .month, .day], from: eighteenYearsAgo)
         return calendar.date(from:startComponents)!
             ...
             calendar.date(from:endComponents)!
@@ -88,6 +91,7 @@ class SignUpViewModel {
     
     
     public func signUp() async throws {
+        isLoading = true
         try await coordinator.signUp(
             model: UserSignUpAttributes(
                 username: self.username,
@@ -98,9 +102,11 @@ class SignUpViewModel {
                 birthdate: self.birthdate
             )
         )
+        isLoading = false
     }
     
     public func skipSignUp() async throws {
+        isLoading = true
         try await coordinator.signUp(
             model: UserSignUpAttributes(
                 username: "signUpSkip",
@@ -111,6 +117,7 @@ class SignUpViewModel {
                 birthdate: Calendar.current.date(byAdding: .year, value: -19, to: .now) ?? .distantPast
             )
         )
+        isLoading = false
     }
     
     @MainActor

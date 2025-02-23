@@ -8,35 +8,6 @@
 import RoutingKit
 import SwiftUI
 
-//typealias AuthDestination = Destination
-//
-//@Observable
-//class AuthenticationFlow {
-//    
-//    var isAuthenticated: Bool = false
-//    var authenticationBinding: Binding<Bool> { .init(get: { self.isAuthenticated }, set: { self.isAuthenticated = $0 }) }
-//    @MainActor static let authRouter = SwiftUIRouter()
-//    
-//    @MainActor var root: some View {
-//        RoutableRootView(router: Self.authRouter) {
-//            SignInView()
-//        }
-//        
-//    }
-//}
-//
-//extension AuthDestination {
-//    static let SignIn = Destination { SignInView() }
-//    static let SignUp = Destination { SignUpView() }
-//    static let CodeConfirmation = Destination { CodeVerificationView() }
-//}
-
-//struct AuthFlow {
-//    struct SignInRouteDefinition: EquatableRouteDefinition {
-//        
-//    }
-//}
-
 class AuthFlowCoordinator {
     typealias AuthRouter = RoutingKit.Router
     
@@ -55,7 +26,22 @@ class AuthFlowCoordinator {
     }
     
     public func signUp(model: UserSignUpAttributes) async throws {
-        try await appState.signUp(model: model)
+        let response = try await appState.signUp(model: model)
+        await self.gotoCodeConfirmation(email: response.codeDeliveryDetails?.destination)
+    }
+    
+    public func sendConfirmationCode(code: String) async throws {
+        let _ = try await appState.confirmSignUp(code: code)
+        
+        //FIXME: AUTO SIGN IN DOES NOT WORK
+//        if success {
+//            do {
+//                try await appState.trySessionAuthentication()
+//            } catch {
+//                print(error)
+//                throw error
+//            }
+//        }
     }
     
     @MainActor @ViewBuilder
@@ -71,8 +57,8 @@ class AuthFlowCoordinator {
     }
     
     @MainActor
-    public func gotoCodeConfirmation() {
-        self.router.navigate(to: self.codeConfirmationDestination(), type: .push)
+    public func gotoCodeConfirmation(email: String?) {
+        self.router.navigate(to: self.codeConfirmationDestination(email: email), type: .push)
     }
     
     @MainActor
@@ -86,10 +72,24 @@ class AuthFlowCoordinator {
         }
     }
     
-    private func codeConfirmationDestination() -> RoutingKit.Destination {
+    @MainActor
+    private func restart() {
+        self.router.dismiss(option: .toRoot)
+    }
+    
+    private func codeConfirmationDestination(email: String?) -> RoutingKit.Destination {
         .init {
-            CodeVerificationView(viewModel: self.container.unsafeResolve())
+            let viewModel = self.container.unsafeResolve(CodeVerificationViewModel.self)
+            viewModel.setFromSignUpResponse( email: email)
+            return CodeVerificationView(viewModel: viewModel)
         }
     }
     
+    @MainActor
+    func showSignupStatus(status: Bool) {
+        let title = status ? "Sign Up verified" : "Verification Failed"
+        let message = status ? "You can now sign in with your credentials" : "An error occurred while verifying your email. Please try again later."
+        let actions = status ? [TextAlertAction(title: "Sign In", role: .cancel, action: { self.restart()})] : [TextAlertAction(title: "OK", role: .cancel, action: {self.router.dismiss()})]
+        self.router.showAlert(title: title, message: message, actions: actions)
+    }
 }

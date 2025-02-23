@@ -9,7 +9,7 @@ import SwiftUI
 import AuthenticationServices
 import RoutingKit
 
-struct SignInView: View {
+struct SignInView: View, LoadableView {
     
     @State var viewModel: SignInViewModel
     
@@ -31,7 +31,10 @@ struct SignInView: View {
         }
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
-        
+        .overlay {
+            self.loaderView()
+        }
+        .animation(.easeInOut, value: viewModel.isLoading)
     }
 }
 

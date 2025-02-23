@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignUpView: View {
+struct SignUpView: View, LoadableView {
     
     @State var viewModel: SignUpViewModel
     
@@ -32,6 +32,9 @@ struct SignUpView: View {
                     self.viewModel.dismiss()
                 }
             }
+        }
+        .overlay {
+            self.loaderView()
         }
         
         

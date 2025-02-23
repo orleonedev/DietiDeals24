@@ -65,6 +65,9 @@ extension AppContainer {
         register(for: SignUpViewModel.self) { [self] in
             SignUpViewModel(coordinator: unsafeResolve())
         }
+        register(for: CodeVerificationViewModel.self) { [self] in
+            CodeVerificationViewModel(coordinator: unsafeResolve())
+        }
     }
     
 }

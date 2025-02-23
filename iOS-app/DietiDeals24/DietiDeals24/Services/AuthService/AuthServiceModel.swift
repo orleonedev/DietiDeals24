@@ -41,6 +41,7 @@ enum AuthFederatedProvider: String {
 enum AuthServiceError: LocalizedError {
     case RefreshTokenMissing
     case RefreshTokenExpired
+    case SessionCredentialsMissing
     case UnknownError(String)
     
     var errorDescription: String? {
@@ -51,7 +52,13 @@ enum AuthServiceError: LocalizedError {
                 return "Refresh token is expired."
             case .UnknownError(let message):
                 return message
+            case .SessionCredentialsMissing:
+                return "Session token is missing"
         }
+    }
+    
+    var notificationName: String {
+        String(describing: self)
     }
     
 }
@@ -63,4 +70,8 @@ struct UserSignUpAttributes {
     let preferredUsername: String
     let name: String
     let birthdate: Date
+}
+
+struct ConfirmSignUpModel {
+    
 }

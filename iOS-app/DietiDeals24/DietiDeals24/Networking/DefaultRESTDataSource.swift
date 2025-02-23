@@ -51,7 +51,12 @@ public class DefaultRESTDataSource: RESTDataSource {
             if error.code == .httpUnauthorized,
                !endpoint.endpoint.isRefreshEndpoint,
                endpoint.endpoint.authorization == .bearer {
-                try await refreshToken()
+                do {
+                    try await refreshToken()
+                } catch {
+                    NotificationCenter.default.post(name: .init(AuthServiceError.RefreshTokenExpired.notificationName), object: self)
+                    throw error
+                }
                 return try await response(at: endpoint)
             }
             throw error
@@ -189,7 +194,7 @@ private extension DefaultRESTDataSource {
         }
         do {
             let sessionToken = try await self.authService?.refreshAccessToken(refreshToken: rfToken)
-            self.credentialService?.store(credentials: TokenCredentials(accessToken: sessionToken?.accessToken, idToken: sessionToken?.idToken, refreshToken: sessionToken?.refreshToken))
+            self.credentialService?.storeToken(credentials: TokenCredentials(accessToken: sessionToken?.accessToken, idToken: sessionToken?.idToken, refreshToken: sessionToken?.refreshToken))
         } catch {
             throw error
         }

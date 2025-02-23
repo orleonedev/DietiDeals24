@@ -23,6 +23,9 @@ protocol AuthService {
     /// - Returns: An AuthSession containing tokens upon successful login.
     func signIn(withProvider provider: AuthFederatedProvider, thirdPartyToken: String) async throws -> AuthTokenSession
 
+    
+    func signIn(withSessionCredentials sessionCredentials: SessionCredential) async throws -> AuthTokenSession
+    
     /// Refreshes the access token using a stored refresh token.
     ///
     /// This method can be invoked by the network layer when the access token expires.
@@ -31,6 +34,8 @@ protocol AuthService {
     
     
     func signUp(model: UserSignUpAttributes) async throws -> AuthServiceSignUpResponse
+    
+    func confirmSignUp(session: SessionCredential, code: String) async throws -> SessionCredential
     
     /// Signs out the current user, clearing any stored credentials.
     func signOut() async throws

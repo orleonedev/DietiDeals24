@@ -9,8 +9,9 @@ import Foundation
 import SwiftUI
 
 @Observable
-class SignInViewModel {
+class SignInViewModel: LoadableViewModel {
     
+    var isLoading: Bool = false
     var loginEmail: String = ""
     var loginPassword: String = ""
     var invalidLoginEmail: Bool = false
@@ -23,7 +24,9 @@ class SignInViewModel {
     }
     
     func skipAuth() async throws {
+        self.isLoading = true
         try await coordinator.SignInInteractively(email: "orleone.dev+Test01@gmail.com", password: "Test123@")
+        self.isLoading = false
     }
     
     func tryAuthentication() async throws {

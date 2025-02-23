@@ -7,6 +7,27 @@
 
 import Foundation
 
+//MARK: - ConfirmSingUp
+struct CognitoConfirmSignUpRequest: Codable, BodyParameters {
+    let clientID: String?
+    let confirmationCode: String?
+    let username: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case clientID = "ClientId"
+        case confirmationCode = "ConfirmationCode"
+        case username = "Username"
+    }
+}
+
+struct CognitoConfirmSignUpResponse: Codable {
+    let session: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case session = "Session"
+    }
+}
+
 // MARK: - CognitoSignUpRequest
 struct CognitoSignUpRequest: Codable, BodyParameters {
     let clientID: String?
@@ -80,12 +101,14 @@ struct CognitoAuthRequestBody: Codable, BodyParameters {
     let AuthFlow: String
     let AuthParameters: [String: String]
     let ClientId: String
+    let Session: String?
 }
 
 enum CognitoLoginMethods {
     case usernamePassword(username: String, password: String)
     case provider(provider: String, token: String)
     case refreshToken(refreshToken: String)
+    case session(credentials: SessionCredential)
 }
 
 struct CognitoAuthResponse: AuthServiceResponse {
@@ -118,10 +141,10 @@ struct CognitoTokenResult: Codable, AuthTokenSessionGenerator {
 enum CognitoEndpoint {
     case login(method: CognitoLoginMethods)
     case signUp(model: UserSignUpAttributes)
-    case confirmSignUp
-    case forgotPassword
-    case confirmForgotPassword
-    case resendConfirmationCode
+    case confirmSignUp(username: String, code: String)
+//    case forgotPassword
+//    case confirmForgotPassword
+//    case resendConfirmationCode
     
 }
 
@@ -136,11 +159,13 @@ extension CognitoEndpoint {
                         return Self.getLoginEndpoint(provider: provider, token: token)
                     case .refreshToken(let refreshToken):
                         return Self.getLoginEndpoint(refreshToken: refreshToken)
+                    case .session(credentials: let credentials):
+                        return Self.getLoginEndpoint(sessionCredentials: credentials)
                 }
             case .signUp( let model):
                 return Self.getSignUpEndpoint(model: model)
-//            case .confirmSignUp:
-//                break
+            case .confirmSignUp(let username, let code):
+                return Self.getConfirmSignUpEndpoint(code: code, username: username)
 //            case .forgotPassword:
 //                break
 //            case .confirmForgotPassword:
@@ -167,7 +192,7 @@ extension CognitoEndpoint {
                 "USERNAME" : username,
                 "PASSWORD" : password
             ],
-            ClientId: clientId
+            ClientId: clientId, Session: nil
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(
@@ -196,7 +221,7 @@ extension CognitoEndpoint {
                 "USERNAME": provider + "_" + UUID().uuidString,  // Unique identifier for federated login
                 "IDP_TOKEN": token
             ],
-            ClientId: clientId
+            ClientId: clientId, Session: nil
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(
@@ -224,7 +249,37 @@ extension CognitoEndpoint {
             AuthParameters: [
                 "REFRESH_TOKEN": refreshToken
             ],
-            ClientId: clientId
+            ClientId: clientId, Session: nil
+        ).jsonObject
+        
+        return CodableEndpoint<CognitoAuthResponse>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: httpMethod,
+                headers: headers
+            )
+        )
+    }
+    
+    static func getLoginEndpoint(sessionCredentials: SessionCredential) -> CodableEndpoint<CognitoAuthResponse> {
+        let clientId = CognitoConfiguration.clientId
+        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let headers: [String: String] = [
+            "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
+        ]
+        let body = CognitoAuthRequestBody(
+            AuthFlow: "USER_AUTH",
+            AuthParameters: [
+                "USERNAME": sessionCredentials.username ?? "",
+                "PREFERRED_CHALLENGE": "EMAIL_OTP"
+            ],
+            ClientId: clientId,
+            Session: sessionCredentials.session
         ).jsonObject
         
         return CodableEndpoint<CognitoAuthResponse>(
@@ -255,7 +310,7 @@ extension CognitoEndpoint {
                 CognitoUserAttributeFields.email.asCognitoUserAttribute(value: model.email),
                 CognitoUserAttributeFields.name.asCognitoUserAttribute(value: model.name),
                 CognitoUserAttributeFields.preferredUsername.asCognitoUserAttribute(value: model.preferredUsername),
-                CognitoUserAttributeFields.birthdate.asCognitoUserAttribute(value: model.birthdate.formattedString("YYYY-MM-DD")),
+                CognitoUserAttributeFields.birthdate.asCognitoUserAttribute(value: model.birthdate.formattedString("YYYY-MM-dd")),
                 CognitoUserAttributeFields.role.asCognitoUserAttribute(value: "0")
             ],
             username: model.preferredUsername
@@ -267,10 +322,36 @@ extension CognitoEndpoint {
                 path: "",
                 parameters: body ?? [:],
                 encoding: encoding,
-                method: .post,
+                method: httpMethod,
                 headers: headers
             )
         )
     }
     
+    static func getConfirmSignUpEndpoint(code: String, username: String) -> CodableEndpoint<CognitoConfirmSignUpResponse> {
+        let clientId = CognitoConfiguration.clientId
+        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let headers: [String: String] = [
+            "X-Amz-Target": "AWSCognitoIdentityProviderService.ConfirmSignUp"
+        ]
+        
+        let body = CognitoConfirmSignUpRequest(
+            clientID: clientId,
+            confirmationCode: code,
+            username: username
+        ).jsonObject
+        
+        return CodableEndpoint<CognitoConfirmSignUpResponse>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: httpMethod,
+                headers: headers
+            )
+        )
+    }
 }

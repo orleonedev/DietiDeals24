@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
+
+    },
     "Cancel" : {
 
     },
@@ -22,7 +25,7 @@
     "Hello, %@!" : {
 
     },
-    "Hello, World!" : {
+    "load" : {
 
     },
     "Or sign in with" : {
@@ -53,6 +56,12 @@
 
     },
     "This is the start of cognito setup" : {
+
+    },
+    "Verify" : {
+
+    },
+    "Verify your email address" : {
 
     }
   },

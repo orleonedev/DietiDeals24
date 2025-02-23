@@ -24,7 +24,7 @@ struct AppRootView: View, LoadableView {
         Group{
             if hasTriedToAuthenticate {
                 if viewModel.authBinding.wrappedValue {
-                    ContentView(appState: viewModel)
+                    MainTabView(viewModel: appContainer.unsafeResolve(), appState: self.viewModel)
                 } else {
                     authCoordinator.rootView()
                 }

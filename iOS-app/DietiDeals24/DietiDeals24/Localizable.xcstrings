@@ -22,10 +22,19 @@
     "Email" : {
 
     },
+    "Explore" : {
+
+    },
     "Hello, %@!" : {
 
     },
     "load" : {
+
+    },
+    "notification Tab" : {
+
+    },
+    "Notifications" : {
 
     },
     "Or sign in with" : {
@@ -34,7 +43,22 @@
     "Password" : {
 
     },
+    "Personal Area" : {
+
+    },
     "Revoke Cred" : {
+
+    },
+    "Search" : {
+
+    },
+    "Search Items Tab" : {
+
+    },
+    "Sell" : {
+
+    },
+    "Sell Tab" : {
 
     },
     "Sign In" : {
@@ -56,6 +80,9 @@
 
     },
     "This is the start of cognito setup" : {
+
+    },
+    "UserArea Tab" : {
 
     },
     "Verify" : {

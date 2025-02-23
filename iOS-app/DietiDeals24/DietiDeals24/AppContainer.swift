@@ -48,6 +48,7 @@ extension AppContainer {
     func setupRouting() {
         
         self.registerAuthFlow()
+        self.registerMainFlows()
 
         
     }
@@ -67,6 +68,12 @@ extension AppContainer {
         }
         register(for: CodeVerificationViewModel.self) { [self] in
             CodeVerificationViewModel(coordinator: unsafeResolve())
+        }
+    }
+    
+    private func registerMainFlows() {
+        register(for: MainTabViewModel.self) { [self] in
+            MainTabViewModel()
         }
     }
     

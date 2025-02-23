@@ -1,4 +1,5 @@
 using DietiDeals24.RestApi.Workers;
+using DietiDeals24.DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DietiDeals24.RestApi.Controllers;
@@ -61,12 +62,13 @@ public class AuctionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAuctions(int pageNumber = 1, int pageSize = 5)
+    public async Task<IActionResult> GetPaginatedAuctions([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5, 
+        [FromQuery] AuctionFilters filters = null)
     {
         try
         {
             _logger.LogInformation("[CONTROLLER] Getting paginated auctions");
-            var result = await _auctionWorker.GetPaginatedAuctions(pageNumber, pageSize);
+            var result = await _auctionWorker.GetPaginatedAuctions(pageNumber, pageSize, filters);
 
             if (result.Results.Any()) return Ok(result);
             return NotFound();

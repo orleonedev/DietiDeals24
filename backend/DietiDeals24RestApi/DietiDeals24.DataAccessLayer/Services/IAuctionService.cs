@@ -11,5 +11,5 @@ public interface IAuctionService
 {
     public Task<Auction> GetAuctionByIdAsync(Guid id);
     public Task<IQueryable<Auction>> GetAllAuctionsAsync(string? predicate = null, params object[] parameters);
-    public Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int page, int pageSize, string? predicate = null, params object[] parameters);
+    public Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int page, int pageSize, AuctionFilters filters, string? predicate = null, params object[] parameters);
 }

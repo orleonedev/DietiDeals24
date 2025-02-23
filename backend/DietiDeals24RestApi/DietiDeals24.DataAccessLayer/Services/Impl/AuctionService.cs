@@ -9,7 +9,6 @@ using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using AuctionType = DietiDeals24.DataAccessLayer.Models.AuctionType;
 
 namespace DietiDeals24.DataAccessLayer.Services;
 
@@ -111,38 +110,55 @@ public class AuctionService : IAuctionService
         }
     }
 
-    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int pageNumber, int pageSize,
-        string? predicate = null, params object[] parameters)
+    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int pageNumber, int pageSize, 
+        AuctionFilters filters, string? predicate = null, params object[] parameters)
     {
         try
         {
-            var query = _unitOfWork.AuctionRepository.Get(predicate, parameters);
-
+            var query = _unitOfWork.AuctionRepository.Get(
+                auction => /*(filters.Category == null || auction.Category == filters.Category.Value) && */
+                     (filters.Type == null || auction.AuctionType == filters.Type.Value) &&
+                     (auction.CurrentPrice >= filters.MinPrice) &&
+                     (auction.CurrentPrice <= filters.MaxPrice)
+            );
+            
             var totalRecords = await query.CountAsync();
 
             var paginatedAuctions = await query
-                .OrderBy(a => a.Id)
+                //.OrderBy(a => a.Id)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            var auctionIds = paginatedAuctions.Select(a => a.Id).ToList();
+            var auctionIds = paginatedAuctions.Select(auction => auction.Id).ToList();
             var auctionImageUrls = await GetImagesUrlsForAuctionAsync(auctionIds);
             var offerCounts = await GetOffersForAuctionAsync(auctionIds);
 
-            var result = paginatedAuctions.Select(a => new HomePageAuctionDTO
+            var result = paginatedAuctions.Select(auction => new HomePageAuctionDTO
             {
-                Id = a.Id,
-                MainImageUrl = auctionImageUrls.ContainsKey(a.Id) && auctionImageUrls[a.Id].Any()
-                    ? auctionImageUrls[a.Id].First()  // Extract the first image
+                Id = auction.Id,
+                MainImageUrl = auctionImageUrls.ContainsKey(auction.Id) && auctionImageUrls[auction.Id].Any()
+                    ? auctionImageUrls[auction.Id].First()  // Extract the first image
                     : "No Image",
-                Title = a.Title,
-                Type = (AuctionType)a.AuctionType,
-                CurrentPrice = a.CurrentPrice,
-                Threshold = a.Threshold,
-                ThresholdTimer = a.Timer,
-                Offers = offerCounts.ContainsKey(a.Id) ? offerCounts[a.Id] : 0
-            }).ToList();
+                Title = auction.Title,
+                Type = (AuctionType) auction.AuctionType,
+                CurrentPrice = auction.CurrentPrice,
+                StartDate = auction.StartingDate,
+                Threshold = auction.Threshold,
+                ThresholdTimer = auction.Timer,
+                Offers = offerCounts.ContainsKey(auction.Id) ? offerCounts[auction.Id] : 0
+            })
+            .OrderByDescending<HomePageAuctionDTO, object>(auction =>
+            {
+                return filters.Order switch
+                {
+                    AuctionSortOrder.MostBids => auction.Offers,
+                    AuctionSortOrder.PriceHighToLow => auction.CurrentPrice,
+                    AuctionSortOrder.PriceLowToHigh => -auction.CurrentPrice,
+                    AuctionSortOrder.NewestFirst => auction.StartDate
+                };
+            })
+            .ToList();
 
             return new PaginatedResult<HomePageAuctionDTO>(result, totalRecords);
         }

@@ -30,13 +30,27 @@ public class Auction
 
 public enum AuctionType
 {
-    Incremental,
-    Descending
+    Incremental = 0,
+    Descending = 1
 }
 
 public enum AuctionState
 {
-    Open,
-    Closed,
-    Expired
+    Open = 0,
+    Closed = 1,
+    Expired = 2
+}
+
+public enum AuctionCategory
+{
+    Goods = 0,
+    Services = 1
+}
+
+public enum AuctionSortOrder
+{
+    MostBids = 0,
+    NewestFirst = 1,
+    PriceLowToHigh = 2,
+    PriceHighToLow = 3
 }

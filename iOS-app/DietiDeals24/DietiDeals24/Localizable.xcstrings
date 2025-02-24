@@ -7,6 +7,19 @@
     "@%@" : {
 
     },
+    "%@ €" : {
+
+    },
+    "%lld bid%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bid%2$@"
+          }
+        }
+      }
+    },
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
 
     },
@@ -38,9 +51,6 @@
 
     },
     "Hello, %@!" : {
-
-    },
-    "Item %lld" : {
 
     },
     "Joined since %@" : {

@@ -7,17 +7,17 @@
 
 struct SearchFilterModel {
     var serchTerm: String?
-    var activeAuctionTypeFilter: AuctionTypeFilter?
+    var activeAuctionTypeFilter: AuctionType?
     var activeSortOrderFilter: SortOrderFilter = .relevance
-    var activeCategoryFilter: CategoryFilter?
+    var activeCategoryFilter: AuctionCategory?
     var activePriceRangeFilter: PriceRangeFilter?
     
-    var auctionTypes: [AuctionTypeFilter] = AuctionTypeFilter.allCases
+    var auctionTypes: [AuctionType] = AuctionType.allCases
     var sortOrderTypes: [SortOrderFilter] = SortOrderFilter.allCases
-    var categoryTypes: [CategoryFilter] = CategoryFilter.allCases
+    var categoryTypes: [AuctionCategory] = AuctionCategory.allCases
 }
 
-enum AuctionTypeFilter: Int, CaseIterable {
+enum AuctionType: Int, CaseIterable {
     case incremental
     case descending
     
@@ -59,7 +59,7 @@ enum SortOrderFilter: Int, CaseIterable {
     }
 }
 
-enum CategoryFilter: String, CaseIterable {
+enum AuctionCategory: String, CaseIterable {
     case services = "services" //TODO: MAPPARE con UUID
     case Electronics = "Electronics"
     case Furniture = "Furniture"
@@ -101,11 +101,11 @@ enum FilterType {
     var title: String {
         switch self {
             case .auctionType:
-                return AuctionTypeFilter.title
+                return AuctionType.title
             case .sortOrder:
                 return SortOrderFilter.title
             case .category:
-                return CategoryFilter.title
+                return AuctionCategory.title
             case .priceRange:
                 return PriceRangeFilter.title
         }

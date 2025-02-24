@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using System.Timers;
 using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Models;
@@ -116,7 +114,7 @@ public class AuctionService : IAuctionService
         try
         {
             var query = _unitOfWork.AuctionRepository.Get(
-                auction => /*(filters.Category == null || auction.Category == filters.Category.Value) && */
+                auction => /*(filters.Category == null || auction.Category == filters.Category.Value) && */ //need to be fixed
                      (filters.Type == null || auction.AuctionType == filters.Type.Value) &&
                      (auction.CurrentPrice >= filters.MinPrice) &&
                      (auction.CurrentPrice <= filters.MaxPrice)
@@ -146,13 +144,13 @@ public class AuctionService : IAuctionService
                 StartDate = auction.StartingDate,
                 Threshold = auction.Threshold,
                 ThresholdTimer = auction.Timer,
-                Offers = offerCounts.ContainsKey(auction.Id) ? offerCounts[auction.Id] : 0
+                Bids = offerCounts.ContainsKey(auction.Id) ? offerCounts[auction.Id] : 0
             })
             .OrderByDescending<HomePageAuctionDTO, object>(auction =>
             {
                 return filters.Order switch
                 {
-                    AuctionSortOrder.MostBids => auction.Offers,
+                    AuctionSortOrder.MostBids => auction.Bids,
                     AuctionSortOrder.PriceHighToLow => auction.CurrentPrice,
                     AuctionSortOrder.PriceLowToHigh => -auction.CurrentPrice,
                     AuctionSortOrder.NewestFirst => auction.StartDate
@@ -166,6 +164,87 @@ public class AuctionService : IAuctionService
         {
             _logger.LogError(ex, $"[SERVICE] Getting home page auctions failed: {ex.Message}");
             throw new Exception("[SERVICE] Getting home page auctions failed.", ex);
+        }
+    }
+
+    public async Task<DetailedAuctionDTO> CreateAuctionAsync(CreateAuctionDTO auction)
+    {
+        try
+        {
+            if (auction == null) throw new ArgumentNullException(nameof(auction), "[SERVICE] Auction DTO is null.");
+            
+            // Fetch vendor & category in parallel to improve efficiency
+            var vendor = await _unitOfWork.VendorRepository
+                .Get(vendor => vendor.Id == auction.VendorId)
+                .FirstOrDefaultAsync();
+            
+            var category = await _unitOfWork.CategoryRepository
+                .Get(category => category.Name.ToLower() == auction.Category.ToString().ToLower())
+                .FirstOrDefaultAsync();
+
+            if (vendor == null) throw new InvalidOperationException("[SERVICE] Vendor does not exist.");
+            if (category == null) throw new InvalidOperationException("[SERVICE] Category does not exist.");
+
+            var newAuction = new Auction
+            {
+                Title = auction.Title,
+                AuctionDescription = auction.Description,
+                StartingPrice = auction.StartingPrice,
+                CurrentPrice = auction.StartingPrice,
+                AuctionType = auction.Type,
+                Threshold = auction.Threshold,
+                Timer = auction.ThresholdTimer,
+                SecretPrice = auction.SecretPrice,
+                AuctionState = AuctionState.Open,
+                StartingDate = DateTime.Now,
+                Vendor = vendor,
+                Category = category
+            };
+
+            _unitOfWork.BeginTransaction();
+
+            await _unitOfWork.AuctionRepository.Add(newAuction);
+            //await _unitOfWork.Save(); // Save to generate the Auction ID
+
+            // Create images if any exist
+            var imageList = auction.ImagesUrls?
+                .Select(imageUrl => new AuctionImage
+                {
+                    AuctionId = newAuction.Id,
+                    Url = imageUrl,
+                    Auction = newAuction
+                }).ToList() ?? new List<AuctionImage>();
+
+            if (imageList.Any())
+            {
+                await _unitOfWork.AuctionImageRepository.AddRange(imageList);
+            }
+
+            _unitOfWork.Commit(); // Commit only once after all operations
+            await _unitOfWork.Save();
+
+            return new DetailedAuctionDTO
+            {
+                Id = newAuction.Id,
+                MainImageUrl = imageList.FirstOrDefault()?.Url, // Handle case where no images exist
+                Title = newAuction.Title,
+                Description = newAuction.AuctionDescription,
+                Type = newAuction.AuctionType,
+                Category = Enum.TryParse(category.Name, true, out AuctionCategory parsedCategory) 
+                            ? parsedCategory 
+                            : throw new InvalidOperationException("[SERVICE] Invalid category name."),
+                CurrentPrice = newAuction.CurrentPrice,
+                StartDate = newAuction.StartingDate,
+                EndingDate = newAuction.EndingDate,
+                Threshold = newAuction.Threshold,
+                ThresholdTimer = newAuction.Timer,
+                Bids = newAuction.Bids?.Count ?? 0
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Creating new auction failed: {ex.Message}");
+            throw new Exception("[SERVICE] Creating new auction failed.", ex);
         }
     }
 

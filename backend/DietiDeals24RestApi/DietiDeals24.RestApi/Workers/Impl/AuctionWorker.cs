@@ -55,4 +55,19 @@ public class AuctionWorker: IAuctionWorker
             throw new Exception("[WORKER] Getting paginated auctions failed.", ex);
         }
     }
+
+    public async Task<DetailedAuctionDTO> CreateAuction(CreateAuctionDTO auction)
+    {
+        _logger.LogInformation("[WORKER] Creating new auction");
+
+        try
+        {
+            return await _auctionService.CreateAuctionAsync(auction);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Creating new auction failed: {ex.Message}");
+            throw new Exception("[WORKER] Creating new auction failed.", ex);
+        }
+    }
 }

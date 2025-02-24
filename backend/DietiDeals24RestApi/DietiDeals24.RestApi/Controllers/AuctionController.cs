@@ -1,3 +1,4 @@
+using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.RestApi.Workers;
 using DietiDeals24.DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,26 @@ public class AuctionController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, $"[CONTROLLER] Failed to get paginated auctions. Exception occurred: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("create-auction", Name = "CreateAuction")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateAuction([FromBody] CreateAuctionDTO auction)
+    {
+        try
+        {
+            _logger.LogInformation("[CONTROLLER] Creating new auction");
+            
+            var result = await _auctionWorker.CreateAuction(auction);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] Failed to get create new auction. Exception occurred: {ex.Message}");
             return BadRequest(ex.Message);
         }
     }

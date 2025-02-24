@@ -18,7 +18,7 @@ struct UserAreaMainView: View, LoadableView {
     var body: some View {
         ScrollView {
             VStack {
-                UserView(userModel: viewModel.userDataModel)
+                UserDetailView(userModel: viewModel.userDataModel)
             }
         }
         .padding()
@@ -33,12 +33,15 @@ struct UserAreaMainView: View, LoadableView {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu("More", systemImage: "ellipsis.circle") {
                     Button(role: .destructive){
-                        
+                        self.viewModel.logout()
                     } label: {
                         Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
                         }
                 }
             }
+        }
+        .overlay {
+            self.loaderView()
         }
     }
 }

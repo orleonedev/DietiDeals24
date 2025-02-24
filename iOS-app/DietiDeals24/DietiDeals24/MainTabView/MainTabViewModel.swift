@@ -13,8 +13,12 @@ class MainTabViewModel: LoadableViewModel {
     var activeTab: Int = 0 {
         willSet {
             previousTabIndex = self.activeTab
+            if newValue == 2 {
+                self.sellerCheck()
+            }
         }
     }
+    
     var previousTabIndex: Int?
     
     let mainCoordinator: MainTabCoordinator
@@ -23,12 +27,17 @@ class MainTabViewModel: LoadableViewModel {
         self.mainCoordinator = mainCoordinator
     }
     
-    @MainActor
-    func sellCheck() {
-//        mainCoordinator.becomeAVendor(onDismiss: {
-//            self.activeTab = self.previousTabIndex ?? 0
-//            self.previousTabIndex = self.activeTab
-//        })
+    
+    func sellerCheck() {
+        Task {
+            let isSeller = await mainCoordinator.sellerStatusCheck()
+            if !(isSeller ?? false) {
+                await mainCoordinator.becomeAVendor(onDismiss: {
+                    self.activeTab = self.previousTabIndex ?? 0
+                    self.previousTabIndex = self.activeTab
+                })
+            }
+        }
     }
     
 }

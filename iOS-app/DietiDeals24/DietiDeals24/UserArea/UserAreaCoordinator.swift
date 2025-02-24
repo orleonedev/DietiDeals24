@@ -29,9 +29,14 @@ class UserAreaCoordinator: Coordinator {
     func rootView() -> some View {
         RoutingKit.RoutableRootView(router: router) {
             UserAreaMainView(viewModel: self.appContainer.unsafeResolve(UserAreaMainViewModel.self))
-            
         }
     }
+    
+    @MainActor
+    func logout() async {
+        await self.appState.logOut()
+    }
+        
 }
 
 

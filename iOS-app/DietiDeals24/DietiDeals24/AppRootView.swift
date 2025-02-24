@@ -25,7 +25,7 @@ struct AppRootView: View, LoadableView {
     var body: some View {
         Group{
             if hasTriedToAuthenticate {
-                if viewModel.authBinding.wrappedValue {
+                if viewModel.isAuthenticated {
                     mainTabCoordinator.rootView()
                 } else {
                     authCoordinator.rootView()
@@ -39,7 +39,7 @@ struct AppRootView: View, LoadableView {
         }
         .animation(.easeInOut, value: viewModel.isLoading)
         .animation(.easeInOut, value: self.hasTriedToAuthenticate)
-        .animation(.easeInOut, value: viewModel.authBinding.wrappedValue)
+        .animation(.easeInOut, value: viewModel.isAuthenticated)
         .task {
             try? await Task.sleep(for: .seconds(3))
             try? await self.viewModel.trySilentSignIn()
@@ -51,9 +51,7 @@ struct AppRootView: View, LoadableView {
 @Observable
 class AppState: LoadableViewModel {
     var isLoading: Bool = false
-    
     var isAuthenticated: Bool = false
-    var authBinding: Binding<Bool> { .init(get: { self.isAuthenticated }, set: { self.isAuthenticated = $0 }) }
     
     private var credentialService: CredentialService
     private var authService: AuthService
@@ -141,8 +139,14 @@ class AppState: LoadableViewModel {
     }
     
     public func getUserDataModel() async -> UserDataModel? {
-        guard let account = self.credentialService.getAccountModel() else {return nil}
-        return UserDataModel(name: account.name ?? "", username: account.preferredUsername ?? "", email: account.email ?? "")
+        guard let account = self.userAccount else {return nil}
+        let role = Int(account.customRole ?? "0")
+        return UserDataModel(name: account.name ?? "", username: account.preferredUsername ?? "", email: account.email ?? "", role: UserRole(rawValue: role ?? 0) ?? .buyer)
+    }
+    
+    public func logOut() async {
+        self.revokeCredentials()
+        try? await self.authService.signOut()
     }
 }
 

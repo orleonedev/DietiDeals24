@@ -49,9 +49,12 @@ extension AppContainer {
         
         self.registerAuthFlow()
         self.registerUserArea()
+        self.registerSellingTab()
+        self.registerExploreTab()
+        self.registerSearchTab()
+        self.registerNotificationTab()
         self.registerMainTab()
 
-        
     }
     
     private func registerAuthFlow() {
@@ -103,4 +106,50 @@ extension AppContainer {
         }
     }
     
+    private func registerSellingTab() {
+        register(for: SellingCoordinator.self, scope: .singleton) {
+            SellingCoordinator(appContainer: self)
+        }
+        
+        register(for: SellingCoordinator.SellingRouter.self) { @MainActor [self] in
+            SellingCoordinator.SellingRouter()
+        }
+        
+        
+    }
+    
+    private func registerExploreTab() {
+        register(for: ExploreCoordinator.self, scope: .singleton) {
+            ExploreCoordinator(appContainer: self)
+        }
+        
+        register(for: ExploreCoordinator.ExploreRouter.self) { @MainActor [self] in
+            ExploreCoordinator.ExploreRouter()
+        }
+    }
+    
+    private func registerSearchTab() {
+        register(for: SearchCoordinator.self, scope: .singleton) {
+            SearchCoordinator(appContainer: self)
+        }
+        
+        register(for: SearchCoordinator.SearchRouter.self) { @MainActor [self] in
+            SearchCoordinator.SearchRouter()
+        }
+        
+        register(for: SearchMainViewModel.self) {
+            SearchMainViewModel(coordinator: self.unsafeResolve())
+        }
+        
+    }
+    
+    private func registerNotificationTab() {
+        register(for: NotificationCoordinator.self, scope: .singleton) {
+            NotificationCoordinator(appContainer: self)
+        }
+        
+        register(for: NotificationCoordinator.NotificationRouter.self) { @MainActor [self] in
+            NotificationCoordinator.NotificationRouter()
+        }
+    }
 }

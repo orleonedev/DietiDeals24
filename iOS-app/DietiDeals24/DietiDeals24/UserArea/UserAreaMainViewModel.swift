@@ -18,8 +18,17 @@ class UserAreaMainViewModel: LoadableViewModel {
     }
     
     func getUserData() async {
+        isLoading = true
         let user = await coordinator.getUserData()
         self.userDataModel = user
+        isLoading = false
     }
     
+    func logout() {
+        Task {
+            isLoading = true
+            await self.coordinator.logout()
+            isLoading = false
+        }
+    }
 }

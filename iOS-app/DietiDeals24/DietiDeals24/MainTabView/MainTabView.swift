@@ -11,31 +11,38 @@ import RoutingKit
 public struct MainTabView: View, LoadableView {
     
     @State var viewModel: MainTabViewModel
-    let userAreaCoordinator: UserAreaCoordinator
+    private let exploreCoordinator: ExploreCoordinator
+    private let searchCoordinator: SearchCoordinator
+    private let sellingCoordinator: SellingCoordinator
+    private let notificationCoordinator: NotificationCoordinator
+    private let userAreaCoordinator: UserAreaCoordinator
     
-    init(viewModel: MainTabViewModel, userAreaCoordinator: UserAreaCoordinator) {
+    init(viewModel: MainTabViewModel, userAreaCoordinator: UserAreaCoordinator, sellingCoordinator: SellingCoordinator, searchCoordinator: SearchCoordinator, exploreCoordinator: ExploreCoordinator, notificationCoordinator: NotificationCoordinator) {
         self.viewModel = viewModel
         self.userAreaCoordinator = userAreaCoordinator
+        self.sellingCoordinator = sellingCoordinator
+        self.notificationCoordinator = notificationCoordinator
+        self.exploreCoordinator = exploreCoordinator
+        self.searchCoordinator = searchCoordinator
     }
+    
     public var body: some View {
         
         TabView(selection: $viewModel.activeTab) {
             
             Tab("Explore", systemImage: "house", value: 0) {
-                exploreTabView()
+                exploreCoordinator.rootView()
             }
             Tab("Search", systemImage: "magnifyingglass", value: 1) {
-                searchItemsTabView()
+                searchCoordinator.rootView()
             }
+                
             Tab("Sell", systemImage: "plus.circle", value: 2) {
-                sellTabView()
-                    .task {
-                        self.viewModel.sellCheck()
-                    }
+                sellingCoordinator.rootView()
             }
             
             Tab("Notifications", systemImage: "bell", value: 3) {
-                notificationTabView()
+                notificationCoordinator.rootView()
             }
             Tab("Personal Area", systemImage: "person", value: 4) {
                 userAreaCoordinator.rootView()
@@ -44,80 +51,4 @@ public struct MainTabView: View, LoadableView {
         }
     }
     
-}
-
-extension MainTabView {
-    
-    @ViewBuilder
-    func exploreTabView() -> some View {
-        NavigationStack{
-            Text("Explore Tab")
-        }
-    }
-    
-    @ViewBuilder
-    func searchItemsTabView() -> some View {
-        NavigationStack{
-            Text("Search Items Tab")
-        }
-    }
-    
-    @ViewBuilder
-    func sellTabView() -> some View {
-        NavigationStack{
-            Text("Sell Tab")
-            
-        }
-    }
-    
-    @ViewBuilder
-    func notificationTabView() -> some View {
-        NavigationStack{
-            Text("notification Tab")
-        }
-    }
-
-}
-
-class MainTabCoordinator {
-    typealias TabRouter = RoutingKit.Router
-    
-    let router: TabRouter
-    let appContainer: AppContainer
-    let userAreaTabCoordinator: UserAreaCoordinator
-    
-    init(appContainer: AppContainer) {
-        self.router = appContainer.unsafeResolve(TabRouter.self)
-        self.appContainer = appContainer
-        self.userAreaTabCoordinator = appContainer.unsafeResolve()
-    }
-    
-    
-    @MainActor @ViewBuilder
-    func rootView() -> some View {
-        MainTabView(viewModel: self.appContainer.unsafeResolve(), userAreaCoordinator: self.userAreaTabCoordinator)
-        
-    }
-    
-    //FIXME: Non posso usare RoutableRootView altrimenti si scassano gli altri figli router
-//    @MainActor
-//    func becomeAVendor(onDismiss: @escaping () -> Void) {
-//        self.router.navigate(to: becomeAVendorDestination(), type: .sheet, onDismiss: onDismiss)
-//    }
-//    
-//    //MARK: DESTINATIONS
-//    
-//    private func becomeAVendorDestination() -> RoutingKit.Destination {
-//        .init {
-//            Text("Become a Vendor")
-//                .interactiveDismissDisabled()
-//                .toolbar {
-//                    ToolbarItem(placement: .cancellationAction) {
-//                        Button("Cancel") {
-//                            self.router.dismiss()
-//                        }
-//                    }
-//                }
-//        }
-//    }
 }

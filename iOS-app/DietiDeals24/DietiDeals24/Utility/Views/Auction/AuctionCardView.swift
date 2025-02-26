@@ -13,46 +13,47 @@ struct AuctionCardView: View {
     @State private var timer: Timer?
     
     var body: some View {
-        
-            VStack(alignment: .leading, spacing: 8){
+        VStack(alignment: .leading, spacing: 8){
+            GeometryReader { proxy in
                 RemoteImage(urlString: auction.coverUrl)
-                    .aspectRatio(16.0/9.0, contentMode: .fit)
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
                     .clipShape(.rect(cornerRadius: 12))
+            }
+            .aspectRatio(1.77, contentMode: .fit)
+            VStack(alignment: .leading, spacing: 4){
+                Text(auction.name)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                    .multilineTextAlignment(.leading)
+                    .font(.headline)
+                    .fontWeight(.bold)
                 
-                VStack(alignment: .leading, spacing: 4){
-                    Text(auction.name)
-                        .lineLimit(2)
-                        .truncationMode(.tail)
-                        .multilineTextAlignment(.leading)
-                        .font(.headline)
-                        .fontWeight(.bold)
-                    
-                    Text(auction.auctionType.label)
-                        .font(.callout)
+                Text(auction.auctionType.label)
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                
+                Text("\(auction.price) €")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                if auction.auctionType == .incremental {
+                    Text("\(auction.bidsCount) bid\(auction.bidsCount == 1 ? "" : "s")")
+                        .font(.caption)
                         .foregroundColor(.secondary)
-                    
-                    Text("\(auction.price) €")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    
-                    if auction.auctionType == .incremental {
-                        Text("\(auction.bidsCount) bid\(auction.bidsCount == 1 ? "" : "s")")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Text(countdown)
-                        .monospacedDigit()
-                        .font(.subheadline)
-                        .foregroundStyle(.accent)
-                        .contentTransition(.numericText(countsDown: true))
-                    
-                    if auction.auctionType == .descending {
-                        Spacer()
-                    }
-                    
                 }
+                
+                Text(countdown)
+                    .monospacedDigit()
+                    .font(.subheadline)
+                    .foregroundStyle(.accent)
+                    .contentTransition(.numericText(countsDown: true))
+                    .lineLimit(2, reservesSpace: true)
+                
+                    Spacer()
+                
+            }
         }
         .onAppear {
             self.scheduleTimer()

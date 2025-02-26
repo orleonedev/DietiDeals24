@@ -17,7 +17,7 @@ class SearchMainViewModel: LoadableViewModel {
     }
     
     internal var isLoading: Bool = false
-    internal var coordinator: SearchCoordinator
+    private var coordinator: SearchCoordinator
     var viewState: SearchViewState = .idle
     
     var searchText: String = ""
@@ -25,6 +25,8 @@ class SearchMainViewModel: LoadableViewModel {
     let filteringOptions: [FilterType] = [.auctionType, .category, .priceRange, .sortOrder]
     
     var fetchedSearchResults: [AuctionCardModel] = []
+    var isFetchingSearchResults: Bool = false
+    var shouldFetchMoreSearchItem: Bool = true
     
     init(coordinator: SearchCoordinator) {
         self.coordinator = coordinator
@@ -45,17 +47,30 @@ class SearchMainViewModel: LoadableViewModel {
         return isSet
     }
     
+    func makeSearchRequest() {
+        self.fetchedSearchResults.removeAll()
+        //self.resetFilters()
+        self.getSearchResults()
+    }
     
     func getSearchResults() {
         Task {
-            self.viewState = .loading
-            self.isLoading = true
+            guard shouldFetchMoreSearchItem, !isFetchingSearchResults else { return }
+            self.isFetchingSearchResults = true
             defer {
                 self.viewState = .fetched
                 self.isLoading = false
+                self.isFetchingSearchResults = false
             }
             try? await Task.sleep(for: .seconds(2))
-            self.fetchedSearchResults = AuctionCardModel.mockData //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
+            self.fetchedSearchResults.append(contentsOf: AuctionCardModel.mockData) //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
+            self.shouldFetchMoreSearchItem = self.fetchedSearchResults.count < 230
+        }
+    }
+    
+    func getAuctionDetail(_ auctionID: UUID) {
+        Task {
+            print(auctionID)
         }
     }
 }

@@ -61,14 +61,10 @@ struct UserDetailView: View {
                                 .background(.accent)
                                 .clipShape(.rect(cornerRadius: 12))
                         }
-                        
                     }
                 }
             }
-            
-            
         }
-        
     }
 }
 
@@ -117,7 +113,8 @@ extension UserDetailView {
 
 #Preview {
     ScrollView {
-        UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"))
+//        UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"))
+        UserDetailView(userModel: .init(name: "", username: "", email: "", role: .buyer))
     }
     .padding()
 }

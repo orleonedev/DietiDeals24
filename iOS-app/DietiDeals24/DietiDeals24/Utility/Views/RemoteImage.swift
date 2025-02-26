@@ -45,4 +45,5 @@ struct RemoteImage: View {
     let size = 123.0
     RemoteImage(urlString: "https://s.yimg.com/ny/api/res/1.2/Onq1adoghZAHhpsXXmF8Pw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05MzE-/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f")
         .frame(width: size*1.5, height: size)
+        .clipped()
 }

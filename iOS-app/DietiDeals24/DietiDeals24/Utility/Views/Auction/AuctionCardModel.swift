@@ -19,7 +19,7 @@ struct AuctionCardModel: Identifiable {
 
 extension AuctionCardModel {
     
-    static var mockData : [AuctionCardModel] = (0...40).map { (index: Int) in
+    static var mockData : [AuctionCardModel] {(0...40).map { (index: Int) in
         return AuctionCardModel(
             id: UUID(),
             name: "Rick Roll",
@@ -29,6 +29,7 @@ extension AuctionCardModel {
             bidsCount: index % 3 != 0 ? index : 0,
             endTime: .now.advanced(by: 60*15+Double(index*3))
         )
+    }
     }
     
 }

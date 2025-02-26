@@ -20,8 +20,8 @@ class ExploreCoordinator: Coordinator {
     
     @MainActor @ViewBuilder
     func rootView() -> some View {
-        RoutingKit.RoutableRootView(router: router) {
-            Text("Explore Tab")
+        RoutingKit.RoutableRootView(router: router) { [self] in
+            ExploreMainView(viewModel: appContainer.unsafeResolve(ExploreMainViewModel.self))
         }
     }
     

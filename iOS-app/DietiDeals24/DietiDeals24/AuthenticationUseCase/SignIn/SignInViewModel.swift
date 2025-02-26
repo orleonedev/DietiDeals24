@@ -35,7 +35,9 @@ class SignInViewModel: LoadableViewModel {
         else {
             return
         }
+        isLoading = true
         try await coordinator.SignInInteractively(email: loginEmail, password: loginPassword)
+        isLoading = false
     }
     
     func validateEmail() {

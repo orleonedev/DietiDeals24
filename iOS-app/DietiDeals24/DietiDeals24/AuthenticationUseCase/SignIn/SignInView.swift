@@ -78,6 +78,7 @@ extension SignInView {
                         try await viewModel.tryAuthentication()
                     } catch {
                         print(error)
+                        viewModel.isLoading = false
                     }
                 }
             }) {
@@ -98,6 +99,7 @@ extension SignInView {
                         try await viewModel.skipAuth()
                     } catch {
                         print(error)
+                        viewModel.isLoading = false
                     }
                 }
             }

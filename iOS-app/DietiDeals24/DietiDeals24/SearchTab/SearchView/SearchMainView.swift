@@ -17,9 +17,8 @@ struct SearchMainView: View, LoadableView {
                 case .idle:
                     categoryListView()
                 case .fetched:
-                    auctionListView()
+                    auctionListViewWithFilters()
             }
-            
         }
         .searchable(text: self.$viewModel.searchText , placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
         .onChange(of: viewModel.searchText) { old, newValue in
@@ -27,7 +26,7 @@ struct SearchMainView: View, LoadableView {
             viewModel.viewState = newValue.isEmpty ? .idle : .loading
         }
         .onSubmit(of: .search) {
-            viewModel.getSearchResults()
+            viewModel.makeSearchRequest()
         }
     }
     
@@ -36,21 +35,12 @@ struct SearchMainView: View, LoadableView {
 extension SearchMainView {
     
     @ViewBuilder
-    func auctionListView() -> some View {
+    func auctionListViewWithFilters() -> some View {
         VStack {
             filterScrollView()
                 .fixedSize(horizontal: false, vertical: true)
             Divider()
-            ScrollView {
-                let columns = [GridItem(.flexible()), GridItem(.flexible())]
-                LazyVGrid(columns: columns, alignment: .center ,spacing: 32) {
-                    ForEach(viewModel.fetchedSearchResults, id: \.id) { auction in
-                        AuctionCardView(auction: auction)
-                    }
-                }
-                
-            }
-            .padding(.horizontal)
+            AuctionListView(auctionList: viewModel.fetchedSearchResults, additionalInfo: viewModel.fetchedSearchResults.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
             .scrollIndicatorsFlash(onAppear: true)
         }
     }

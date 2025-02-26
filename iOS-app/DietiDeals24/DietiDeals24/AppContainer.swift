@@ -126,6 +126,10 @@ extension AppContainer {
         register(for: ExploreCoordinator.ExploreRouter.self) { @MainActor [self] in
             ExploreCoordinator.ExploreRouter()
         }
+        
+        register(for: ExploreMainViewModel.self) {
+            ExploreMainViewModel(coordinator: self.unsafeResolve())
+        }
     }
     
     private func registerSearchTab() {

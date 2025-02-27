@@ -7,17 +7,30 @@
 
 struct SearchFilterModel {
     var serchTerm: String?
-    var activeAuctionTypeFilter: AuctionType?
+    var activeAuctionTypeFilter: AuctionType = .all
     var activeSortOrderFilter: SortOrderFilter = .relevance
-    var activeCategoryFilter: AuctionCategory?
+    var activeCategoryFilter: AuctionCategory = .all
     var activePriceRangeFilter: PriceRangeFilter?
     
-    var auctionTypes: [AuctionType] = AuctionType.allCases
-    var sortOrderTypes: [SortOrderFilter] = SortOrderFilter.allCases
-    var categoryTypes: [AuctionCategory] = AuctionCategory.allCases
+//    var auctionTypes: [AuctionType] = AuctionType.allCases
+//    var sortOrderTypes: [SortOrderFilter] = SortOrderFilter.allCases
+//    var categoryTypes: [AuctionCategory] = AuctionCategory.allCases
 }
 
-enum AuctionType: Int, CaseIterable {
+enum AuctionType: Int, FilterModelProtocol {
+    //var allCases: [AuctionType] { return Self.allCases}
+    
+    
+    //var title: String {return Self.title}
+    
+    var value: Any {return self.rawValue}
+    
+    var id: Self {self}
+    
+    var description: String {
+        return self.label
+    }
+    case all
     case incremental
     case descending
     
@@ -27,6 +40,8 @@ enum AuctionType: Int, CaseIterable {
                 return "Incremental"
             case .descending:
                 return "Descending"
+            case .all:
+                return "All"
         }
     }
     
@@ -35,7 +50,20 @@ enum AuctionType: Int, CaseIterable {
     }
 }
 
-enum SortOrderFilter: Int, CaseIterable {
+enum SortOrderFilter: Int, FilterModelProtocol {
+    
+    //var allCases: [SortOrderFilter] { return Self.allCases}
+    
+    //var title: String {return Self.title}
+    
+    var value: Any {return self.rawValue}
+    
+    var id: Self {self}
+    
+    var description: String {
+        return self.label
+    }
+    
     case relevance
     case priceAscending
     case priceDescending
@@ -59,7 +87,20 @@ enum SortOrderFilter: Int, CaseIterable {
     }
 }
 
-enum AuctionCategory: String, CaseIterable {
+enum AuctionCategory: String, FilterModelProtocol {
+    
+    //var allCases: [AuctionCategory] { return Self.allCases}
+    
+    //var title: String {return Self.title}
+    
+    var value: Any {return self.rawValue}
+    
+    var id: Self {self}
+    
+    var description: String {
+        return self.label
+    }
+    case all
     case services = "services" //TODO: MAPPARE con UUID
     case Electronics = "Electronics"
     case Furniture = "Furniture"
@@ -75,6 +116,8 @@ enum AuctionCategory: String, CaseIterable {
                 return "Furniture"
             case .Clothing:
                 return "Clothing"
+            case .all:
+                return "All"
         }
     }
     
@@ -82,6 +125,8 @@ enum AuctionCategory: String, CaseIterable {
         "Category"
     }
 }
+
+
 
 struct PriceRangeFilter {
     var min: Double?
@@ -91,6 +136,7 @@ struct PriceRangeFilter {
         "Price Range"
     }
 }
+
 
 enum FilterType {
     case auctionType
@@ -110,4 +156,11 @@ enum FilterType {
                 return PriceRangeFilter.title
         }
     }
+}
+
+protocol FilterModelProtocol: Identifiable, Equatable, CustomStringConvertible, CaseIterable {
+    var label: String { get }
+    static var title: String { get }
+    var value: Any { get }
+    static var allCases: [Self] { get }
 }

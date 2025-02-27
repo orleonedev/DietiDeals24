@@ -23,6 +23,9 @@
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
 
     },
+    "Apply" : {
+
+    },
     "Auctions Created: %@" : {
 
     },
@@ -30,6 +33,9 @@
 
     },
     "Cancel" : {
+
+    },
+    "Close" : {
 
     },
     "Create your account" : {

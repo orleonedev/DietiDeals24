@@ -49,7 +49,7 @@ extension SearchMainView {
     func categoryListView() -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(viewModel.filterModel.categoryTypes, id: \.self) { category in
+                ForEach(AuctionCategory.allCases, id: \.self) { category in
                     Button {
                         
                     } label: {
@@ -78,6 +78,7 @@ extension SearchMainView {
                     let isSet = viewModel.isFilterSet(for: filterOption)
                     Button {
                         print("showModalForFilter: \(filterOption)")
+                        viewModel.openFilterSheet(for: filterOption)
                     } label: {
                         Text(filterOption.title)
                     }

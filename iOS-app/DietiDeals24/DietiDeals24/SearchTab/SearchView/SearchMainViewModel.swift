@@ -36,9 +36,9 @@ class SearchMainViewModel: LoadableViewModel {
         var isSet: Bool = false
         switch type {
             case .auctionType:
-                isSet = filterModel.activeAuctionTypeFilter != nil
+                isSet = filterModel.activeAuctionTypeFilter != .all
             case .category:
-                isSet = filterModel.activeCategoryFilter != nil
+                isSet = filterModel.activeCategoryFilter != .all
             case .priceRange:
                 isSet = filterModel.activePriceRangeFilter != nil
             case .sortOrder:
@@ -47,16 +47,23 @@ class SearchMainViewModel: LoadableViewModel {
         return isSet
     }
     
-    func makeSearchRequest() {
+    func makeSearchRequest(preserveFilters: Bool = false) {
         self.fetchedSearchResults.removeAll()
-        //self.resetFilters()
+        if !preserveFilters {
+            self.resetFilters()
+        }
         self.getSearchResults()
+    }
+    
+    private func resetFilters() {
+        self.filterModel = .init(serchTerm: self.searchText.isEmpty ? nil : self.searchText)
     }
     
     func getSearchResults() {
         Task {
             guard shouldFetchMoreSearchItem, !isFetchingSearchResults else { return }
             self.isFetchingSearchResults = true
+            self.filterModel.serchTerm = self.searchText.isEmpty ? nil : self.searchText
             defer {
                 self.viewState = .fetched
                 self.isLoading = false
@@ -72,5 +79,39 @@ class SearchMainViewModel: LoadableViewModel {
         Task {
             print(auctionID)
         }
+    }
+    
+    @MainActor
+    func openFilterSheet(for filter: FilterType) {
+        switch filter {
+            case .auctionType:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeAuctionTypeFilter) { newValue in
+                    self.filterModel.activeAuctionTypeFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+
+            case .sortOrder:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeSortOrderFilter) { newValue in
+                    self.filterModel.activeSortOrderFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+            case .category:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeCategoryFilter) { newValue in
+                    self.filterModel.activeCategoryFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+            case .priceRange:
+                return
+        }
+        
     }
 }

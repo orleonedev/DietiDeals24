@@ -54,7 +54,7 @@ extension ExploreMainView {
             Divider()
             AuctionListView(auctionList: viewModel.searchItems, additionalInfo: viewModel.searchItems.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
                 .scrollIndicatorsFlash(onAppear: true)
-                .padding(.vertical)
+                .padding(.top)
         }
     }
     
@@ -82,7 +82,7 @@ extension ExploreMainView {
     func exploreView() -> some View {
         AuctionListView(auctionList: viewModel.exploreItems, mainHeader: "Latest Auctions", additionalInfo: viewModel.exploreItems.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
             .scrollIndicatorsFlash(onAppear: true)
-            .padding(.vertical)
+            .padding(.top)
     }
     
     

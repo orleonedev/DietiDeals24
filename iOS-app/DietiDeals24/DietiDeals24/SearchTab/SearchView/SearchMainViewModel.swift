@@ -21,6 +21,7 @@ class SearchMainViewModel: LoadableViewModel {
     var viewState: SearchViewState = .idle
     
     var searchText: String = ""
+    var isSearching: Bool = false
     var filterModel: SearchFilterModel = .init()
     let filteringOptions: [FilterType] = [.auctionType, .category, .sortOrder] //price range halt
     

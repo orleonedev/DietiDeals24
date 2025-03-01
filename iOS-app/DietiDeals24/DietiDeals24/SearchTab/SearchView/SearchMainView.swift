@@ -20,7 +20,7 @@ struct SearchMainView: View, LoadableView {
                     auctionListViewWithFilters()
             }
         }
-        .searchable(text: self.$viewModel.searchText , placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
+        .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
         .onChange(of: viewModel.searchText) { old, newValue in
             viewModel.isLoading = !newValue.isEmpty
             viewModel.viewState = newValue.isEmpty ? .idle : .loading
@@ -28,6 +28,8 @@ struct SearchMainView: View, LoadableView {
         .onSubmit(of: .search) {
             viewModel.makeSearchRequest()
         }
+        
+        .navigationTitle("Search")
     }
     
 }
@@ -88,7 +90,7 @@ extension SearchMainView {
             .padding(.horizontal)
         }
         .scrollIndicators(.never)
-        .padding(.vertical)
+        .padding(.vertical, 8)
     }
     
 }

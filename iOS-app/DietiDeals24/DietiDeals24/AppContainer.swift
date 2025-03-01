@@ -57,6 +57,7 @@ extension AppContainer {
 
     }
     
+    //MARK: - AUTH
     private func registerAuthFlow() {
         register(for: AuthFlowCoordinator.AuthRouter.self) { @MainActor [self] in
             AuthFlowCoordinator.AuthRouter()
@@ -75,6 +76,7 @@ extension AppContainer {
         }
     }
     
+    //MARK: - MAIN
     private func registerMainTab() {
         
         register(for: MainTabCoordinator.self, scope: .singleton) {
@@ -92,6 +94,7 @@ extension AppContainer {
         
     }
     
+    //MARK: - USER AREA TAB
     private func registerUserArea() {
         register(for: UserAreaCoordinator.self, scope: .singleton) {
             UserAreaCoordinator(appContainer: self)
@@ -106,6 +109,7 @@ extension AppContainer {
         }
     }
     
+    //MARK: - SELL TAB
     private func registerSellingTab() {
         register(for: SellingCoordinator.self, scope: .singleton) {
             SellingCoordinator(appContainer: self)
@@ -115,9 +119,16 @@ extension AppContainer {
             SellingCoordinator.SellingRouter()
         }
         
+        register(for: BecomeAVendorViewModel.self) {
+            BecomeAVendorViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        register(for: SellingMainViewModel.self) {
+            SellingMainViewModel(sellingCoordinator: self.unsafeResolve())
+        }
         
     }
     
+    //MARK: - EXPLORE TAB
     private func registerExploreTab() {
         register(for: ExploreCoordinator.self, scope: .singleton) {
             ExploreCoordinator(appContainer: self)
@@ -132,6 +143,7 @@ extension AppContainer {
         }
     }
     
+    //MARK: - SEARCH TAB
     private func registerSearchTab() {
         register(for: SearchCoordinator.self, scope: .singleton) {
             SearchCoordinator(appContainer: self)
@@ -147,6 +159,7 @@ extension AppContainer {
         
     }
     
+    //MARK: - NOTIFICATIONS TAB
     private func registerNotificationTab() {
         register(for: NotificationCoordinator.self, scope: .singleton) {
             NotificationCoordinator(appContainer: self)

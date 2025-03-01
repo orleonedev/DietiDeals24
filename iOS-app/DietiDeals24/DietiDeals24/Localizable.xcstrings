@@ -4,8 +4,24 @@
     "" : {
 
     },
+    "------" : {
+
+    },
+    "@------------" : {
+
+    },
     "@%@" : {
 
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
     },
     "%@ €" : {
 
@@ -38,10 +54,16 @@
     "Close" : {
 
     },
+    "Create Auction" : {
+
+    },
     "Create your account" : {
 
     },
     "Dieti Deals 24" : {
+
+    },
+    "DietiDeals24" : {
 
     },
     "Don't have an account?" : {
@@ -54,6 +76,9 @@
 
     },
     "Hello, %@!" : {
+
+    },
+    "Join our seller community and start listing your items for auction. Tap the button below to begin." : {
 
     },
     "Joined since %@" : {
@@ -83,6 +108,9 @@
     "Personal Area" : {
 
     },
+    "Ready to create your next auction? Tap the button below to get started with listing your items." : {
+
+    },
     "Revoke Cred" : {
 
     },
@@ -93,9 +121,6 @@
 
     },
     "Sell" : {
-
-    },
-    "Selling Tab" : {
 
     },
     "Sign In" : {
@@ -113,6 +138,18 @@
     "Skip Sign Up" : {
 
     },
+    "Skip Submit" : {
+
+    },
+    "Start Selling" : {
+
+    },
+    "Start Selling on \nDietiDeals24" : {
+
+    },
+    "Submit Vendor Details" : {
+
+    },
     "Terms and Conditions" : {
 
     },
@@ -123,6 +160,12 @@
 
     },
     "Verify your email address" : {
+
+    },
+    "We Would love to hear more about you, to enrich the experience for all our users!" : {
+
+    },
+    "Welcome, Seller!" : {
 
     }
   },

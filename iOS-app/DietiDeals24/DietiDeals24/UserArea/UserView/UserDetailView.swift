@@ -30,21 +30,27 @@ struct UserDetailView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(alignment: .leading, spacing: 24){
-                header()
+                let role: UserRole = userModel?.role == .seller ? .seller : .buyer
+                header(role: role)
                 
                 if userModel?.role == .seller {
-                    Text(userModel?.shortBio ?? "")
-                        .font(.body)
-                        .transition(.opacity)
-                    
-                    Button {
+                    if let shortBio = userModel?.shortBio, !shortBio.isEmpty {
+                        Text(userModel?.shortBio ?? "")
+                            .font(.body)
+                            .transition(.opacity)
                         
-                    } label: {
-                        HStack {
-                            Image(systemName: "link")
-                                .font(.headline)
-                            Text(userModel?.url ?? "--")
-                                .font(.headline)
+                    }
+                    
+                    if let url = userModel?.url, !url.isEmpty {
+                        Button {
+                            
+                        } label: {
+                            HStack {
+                                Image(systemName: "link")
+                                    .font(.headline)
+                                Text(userModel?.url ?? "--")
+                                    .font(.headline)
+                            }
                         }
                     }
                     
@@ -70,29 +76,52 @@ struct UserDetailView: View {
 
 extension UserDetailView {
     @ViewBuilder
-    func header() -> some View {
+    func header(role: UserRole) -> some View {
         HStack(spacing: 12) {
-            Image(systemName: "person.circle.fill")
+            Image(systemName: role == .seller ? "person.badge.shield.checkmark.fill" :  "person.fill")
                 .resizable()
+                .padding()
                 .aspectRatio(contentMode: .fit)
-                .foregroundColor(.secondary)
+                .foregroundColor(.white )
+                .background(Color.secondary)
+                .clipShape(Circle())
                 .frame(width: 80, height: 80)
             
+            
             VStack(alignment: .leading, spacing: 4) {
-                Text("@\(userModel?.username ?? "---")")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .transition(.opacity)
+                if let username = userModel?.username {
+                    Text("@\(username)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .transition(.opacity)
+                } else {
+                    Text("@------------")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .redacted(reason: .placeholder)
+                        .transition(.opacity)
+                }
                 
-                Text(userModel?.name ?? "---")
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .transition(.opacity)
+                if let name = userModel?.name {
+                    Text(name)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .transition(.opacity)
+                    
+                } else {
+                    Text("------")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .redacted(reason: .placeholder)
+                        .transition(.opacity)
+                }
                 if userModel?.role == .buyer {
                     Text(userModel?.email ?? "---")
                         .font(.body)
                         .transition(.opacity)
-                } else {
+                } else if userModel?.role == .seller {
                     Text("Joined since \(userModel?.joinedSince?.formatted(date: .abbreviated, time: .omitted) ?? "--")")
                         .font(.callout)
                         .transition(.opacity)
@@ -101,9 +130,11 @@ extension UserDetailView {
                         .font(.callout)
                         .transition(.opacity)
                     
-                    Text(userModel?.geoLocation ?? "---")
-                        .font(.callout)
-                        .transition(.opacity)
+                    if let geoLocation = userModel?.geoLocation, !geoLocation.isEmpty {
+                        Text("\(Image(systemName: "mappin.and.ellipse")) \(geoLocation)")
+                            .font(.callout)
+                            .transition(.opacity)
+                    }
                 }
             }
             Spacer()
@@ -113,8 +144,13 @@ extension UserDetailView {
 
 #Preview {
     ScrollView {
-//        UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"))
-        UserDetailView(userModel: .init(name: "", username: "", email: "", role: .buyer))
+        VStack(spacing: 32){
+            UserDetailView(userModel: .init(name: "Empty", username: "empty_empty", email: "empty@empty.com", role: .seller, shortBio: "", url: "", joinedSince: .now, geoLocation: ""))
+            UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"))
+            UserDetailView(userModel: .init(name: "Buyer", username: "the_buyer", email: "buyer@buyer.com", role: .buyer))
+            
+            UserDetailView(userModel: nil)
+        }
     }
     .padding()
 }

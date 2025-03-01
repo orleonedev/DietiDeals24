@@ -12,16 +12,22 @@ class SellingCoordinator: Coordinator {
     
     internal var appContainer: AppContainer
     private var router: SellingRouter
+    let appState: AppState
     
     init(appContainer: AppContainer) {
         self.appContainer = appContainer
         self.router = appContainer.unsafeResolve(SellingRouter.self)
+        self.appState = appContainer.unsafeResolve()
+    }
+    
+    func getUserData() async -> UserDataModel? {
+        return await appState.getUserDataModel()
     }
     
     @MainActor @ViewBuilder
     func rootView() -> some View {
         RoutingKit.RoutableRootView(router: router) {
-            Text("Selling Tab")
+            SellingMainView(viewModel: self.appContainer.unsafeResolve())
         }
     }
     
@@ -29,19 +35,16 @@ class SellingCoordinator: Coordinator {
     func becomeAVendor(onDismiss: @escaping () -> Void) {
         self.router.navigate(to: becomeAVendorDestination(), type: .sheet, onDismiss: onDismiss)
     }
+    
+    @MainActor
+    func dismiss() {
+        self.router.dismiss()
+    }
 
     //MARK: DESTINATIONS
     private func becomeAVendorDestination() -> RoutingKit.Destination {
         .init {
-            Text("Become a Vendor")
-                .interactiveDismissDisabled()
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") {
-                            self.router.dismiss()
-                        }
-                    }
-                }
+            BecomeAVendorView(viewModel: self.appContainer.unsafeResolve())
         }
     }
 }

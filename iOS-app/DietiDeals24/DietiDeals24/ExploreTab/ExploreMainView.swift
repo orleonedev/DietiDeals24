@@ -26,11 +26,16 @@ public struct ExploreMainView: View, LoadableView {
                         }
                 case .loading:
                     loaderView()
+                        .onTapGesture {
+                            viewModel.isSearching = false
+                            viewModel.searchText = ""
+                            viewModel.state = .explore
+                        }
                 case .searching:
                     auctionListViewWithFilters()
             }
         }
-        .searchable(text: self.$viewModel.searchText , placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
+        .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: viewModel.state == .searching ? .always : .automatic), prompt: "Search for products or services")
         .onChange(of: viewModel.searchText) { old, newValue in
             viewModel.isLoading = !newValue.isEmpty
             viewModel.state = newValue.isEmpty ? .explore : .loading
@@ -76,7 +81,7 @@ extension ExploreMainView {
             .padding(.horizontal)
         }
         .scrollIndicators(.never)
-        .padding(.vertical)
+        .padding(.vertical, 8)
     }
     
     @ViewBuilder

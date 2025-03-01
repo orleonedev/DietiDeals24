@@ -25,7 +25,7 @@ struct ValidableTextField: View {
                 }
             TextField(label, text: $text)
                 .textFieldStyle(.plain)
-                .padding(12) // Add padding inside the TextField
+                .padding(12)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(strokeColor(), lineWidth: 1) // Change border color when focused

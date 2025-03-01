@@ -21,6 +21,7 @@ class ExploreMainViewModel: LoadableViewModel {
     private var coordinator: ExploreCoordinator
     
     var state: ExploreState = .explore
+    var isSearching: Bool = false 
     
     var exploreItems: [AuctionCardModel] = []
     var isFetchingExploreItems: Bool = false

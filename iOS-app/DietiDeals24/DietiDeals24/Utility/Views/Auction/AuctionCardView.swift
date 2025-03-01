@@ -55,6 +55,7 @@ struct AuctionCardView: View {
                 
             }
         }
+        .frame(maxWidth: .infinity)
         .onAppear {
             self.scheduleTimer()
             self.updateCountdown()
@@ -143,5 +144,7 @@ extension AuctionCardView {
                 endTime: .now.advanced(by: 15)
             )
         )
+        
+        
     }.padding()
 }

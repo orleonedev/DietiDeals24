@@ -49,6 +49,17 @@ public struct MainTabView: View, LoadableView {
             }
             
         }
+        .tabViewStyle(.sidebarAdaptable)
+        .defaultAdaptableTabBarPlacement(.tabBar)
+        .tabViewSidebarHeader {
+            Text("DietiDeals24")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .lineLimit(1)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom)
+        }
     }
     
 }

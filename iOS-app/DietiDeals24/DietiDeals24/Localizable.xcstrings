@@ -36,10 +36,19 @@
         }
       }
     },
+    "0/6" : {
+
+    },
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
 
     },
+    "Add up to 6 images" : {
+
+    },
     "Apply" : {
+
+    },
+    "Auction Type" : {
 
     },
     "Auctions Created: %@" : {
@@ -78,6 +87,9 @@
     "Hello, %@!" : {
 
     },
+    "Images (optional)" : {
+
+    },
     "Join our seller community and start listing your items for auction. Tap the button below to begin." : {
 
     },
@@ -91,6 +103,9 @@
 
     },
     "More" : {
+
+    },
+    "Next" : {
 
     },
     "Notification Tab" : {
@@ -141,6 +156,9 @@
     "Skip Submit" : {
 
     },
+    "Something went wrong" : {
+
+    },
     "Start Selling" : {
 
     },
@@ -160,6 +178,9 @@
 
     },
     "Verify your email address" : {
+
+    },
+    "We couldn't find any auctions at this time. Try again later." : {
 
     },
     "We Would love to hear more about you, to enrich the experience for all our users!" : {

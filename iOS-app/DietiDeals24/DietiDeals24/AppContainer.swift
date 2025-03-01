@@ -126,6 +126,14 @@ extension AppContainer {
             SellingMainViewModel(sellingCoordinator: self.unsafeResolve())
         }
         
+        register(for: BaseAuctionDetailViewModel.self) {
+            BaseAuctionDetailViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+        register(for: TypedAuctionDetailViewModel.self) {
+            TypedAuctionDetailViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
     }
     
     //MARK: - EXPLORE TAB

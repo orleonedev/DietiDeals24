@@ -72,7 +72,7 @@ class SearchMainViewModel: LoadableViewModel {
             }
             try? await Task.sleep(for: .seconds(2))
             self.fetchedSearchResults.append(contentsOf: AuctionCardModel.mockData) //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreSearchItem = self.fetchedSearchResults.count < 230
+            self.shouldFetchMoreSearchItem = false//self.fetchedSearchResults.count < 230
         }
     }
     

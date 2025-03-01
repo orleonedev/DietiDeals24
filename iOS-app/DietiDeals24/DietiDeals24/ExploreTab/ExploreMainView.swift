@@ -35,7 +35,7 @@ public struct ExploreMainView: View, LoadableView {
                     auctionListViewWithFilters()
             }
         }
-        .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: viewModel.state == .searching ? .always : .automatic), prompt: "Search for products or services")
+        .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
         .onChange(of: viewModel.searchText) { old, newValue in
             viewModel.isLoading = !newValue.isEmpty
             viewModel.state = newValue.isEmpty ? .explore : .loading
@@ -57,9 +57,13 @@ extension ExploreMainView {
             filterScrollView()
                 .fixedSize(horizontal: false, vertical: true)
             Divider()
-            AuctionListView(auctionList: viewModel.searchItems, additionalInfo: viewModel.searchItems.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
+            AuctionListView(auctionList: viewModel.searchItems, additionalInfo: viewModel.searchItems.count > 0 ? viewModel.searchItems.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
                 .scrollIndicatorsFlash(onAppear: true)
-                .padding(.top)
+        }
+        .overlay {
+            if viewModel.searchItems.isEmpty {
+                ContentUnavailableView.search
+            }
         }
     }
     
@@ -86,15 +90,21 @@ extension ExploreMainView {
     
     @ViewBuilder
     func exploreView() -> some View {
-        AuctionListView(auctionList: viewModel.exploreItems, mainHeader: "Latest Auctions", additionalInfo: viewModel.exploreItems.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
+        
+        AuctionListView(auctionList: viewModel.exploreItems, mainHeader: viewModel.exploreItems.count > 0 ? "Latest Auctions" : "", additionalInfo: viewModel.exploreItems.count > 0 ? viewModel.exploreItems.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
             .scrollIndicatorsFlash(onAppear: true)
-            .padding(.top)
+            .overlay {
+                if viewModel.exploreItems.isEmpty && !viewModel.isFetchingExploreItems {
+                    ContentUnavailableView("Something went wrong", systemImage: "questionmark.circle.dashed", description: Text("We couldn't find any auctions at this time. Try again later.")
+                    )
+                }
+            }
     }
 }
 
 #Preview {
     @Previewable @State var exploreMainViewModel =  ExploreMainViewModel(coordinator: .init(appContainer: .init()))
-    exploreMainViewModel.exploreItems = AuctionCardModel.mockData
+    //exploreMainViewModel.exploreItems = AuctionCardModel.mockData
     
     return NavigationStack {
         ExploreMainView(viewModel: exploreMainViewModel)

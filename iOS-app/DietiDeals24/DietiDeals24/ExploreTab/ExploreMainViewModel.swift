@@ -73,8 +73,8 @@ class ExploreMainViewModel: LoadableViewModel {
                 self.isFetchingSearchResults = false
             }
             try? await Task.sleep(for: .seconds(2))
-            self.searchItems.append(contentsOf: AuctionCardModel.mockData) //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreSearchItem = self.searchItems.count < 230
+            self.searchItems = AuctionCardModel.mockData //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
+            self.shouldFetchMoreSearchItem = false//self.searchItems.count < 230
         }
     }
     
@@ -87,7 +87,7 @@ class ExploreMainViewModel: LoadableViewModel {
             }
             try? await Task.sleep(for: .seconds(2))
             self.exploreItems.append(contentsOf: AuctionCardModel.mockData)   //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreExploreItem = self.exploreItems.count < 120
+            self.shouldFetchMoreExploreItem = self.exploreItems.count < 128
         }
     }
     

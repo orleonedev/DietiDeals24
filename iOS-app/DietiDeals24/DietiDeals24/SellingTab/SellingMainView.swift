@@ -101,7 +101,7 @@ extension SellingMainView {
                 .foregroundStyle(.primary)
             
             Button(action: {
-                // Action: Navigate to the create auction flow.
+                viewModel.createAuction()
             }) {
                 Text("Create Auction")
                     .font(.headline)

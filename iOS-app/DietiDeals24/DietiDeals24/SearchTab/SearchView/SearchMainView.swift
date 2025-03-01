@@ -42,8 +42,13 @@ extension SearchMainView {
             filterScrollView()
                 .fixedSize(horizontal: false, vertical: true)
             Divider()
-            AuctionListView(auctionList: viewModel.fetchedSearchResults, additionalInfo: viewModel.fetchedSearchResults.count.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
+            AuctionListView(auctionList: viewModel.fetchedSearchResults, additionalInfo: viewModel.fetchedSearchResults.count > 0 ? viewModel.fetchedSearchResults.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreSearchItem, fetchCallBack: viewModel.getSearchResults)
             .scrollIndicatorsFlash(onAppear: true)
+        }
+        .overlay {
+            if viewModel.fetchedSearchResults.isEmpty {
+                ContentUnavailableView.search
+            }
         }
     }
     

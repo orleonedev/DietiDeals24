@@ -37,14 +37,38 @@ class SellingCoordinator: Coordinator {
     }
     
     @MainActor
-    func dismiss() {
-        self.router.dismiss()
+    func dismiss(to option: RoutingKit.DismissOptions = .toPreviousView) {
+        self.router.dismiss( option: option )
+    }
+    
+    @MainActor
+    func goToBaseAuction() {
+        self.router.navigate(to: baseAuctionDestination(), type: .sheet)
+    }
+    
+    @MainActor
+    func goToDetailAuction(baseAuction: CreateBaseAuctionModel) {
+        self.router.navigate(to: detailAuctionDestination(baseAuction: baseAuction), type: .push)
     }
 
     //MARK: DESTINATIONS
     private func becomeAVendorDestination() -> RoutingKit.Destination {
         .init {
             BecomeAVendorView(viewModel: self.appContainer.unsafeResolve())
+        }
+    }
+    
+    private func baseAuctionDestination() -> RoutingKit.Destination {
+        .init {
+            BaseAuctionDetailView(viewModel: self.appContainer.unsafeResolve())
+        }
+    }
+    
+    private func detailAuctionDestination(baseAuction: CreateBaseAuctionModel) -> RoutingKit.Destination {
+        .init {
+            let vm : TypedAuctionDetailViewModel = self.appContainer.unsafeResolve()
+            vm.setBaseAuction(baseAuction)
+            return TypedAuctionDetailView(viewModel: vm)
         }
     }
 }

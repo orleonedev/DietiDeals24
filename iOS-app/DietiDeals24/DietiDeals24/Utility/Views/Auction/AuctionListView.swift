@@ -62,6 +62,7 @@ public struct AuctionListView: View {
             }
             .padding(.horizontal)
         }
+        .scrollBounceBehavior(.basedOnSize)
     }
 }
 

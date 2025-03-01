@@ -29,4 +29,8 @@ class SellingMainViewModel: LoadableViewModel {
         self.sellingCoordinator.becomeAVendor(onDismiss: {Task{ await self.checkSellerStatus()}})
     }
     
+    @MainActor
+    func createAuction() {
+        self.sellingCoordinator.goToBaseAuction()
+    }
 }

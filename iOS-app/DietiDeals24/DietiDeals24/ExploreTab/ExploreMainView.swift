@@ -66,6 +66,7 @@ extension ExploreMainView {
                     let isSet = viewModel.isFilterSet(for: filterOption)
                     Button {
                         print("showModalForFilter: \(filterOption)")
+                        viewModel.openFilterSheet(for: filterOption)
                     } label: {
                         Text(filterOption.title)
                     }
@@ -84,8 +85,6 @@ extension ExploreMainView {
             .scrollIndicatorsFlash(onAppear: true)
             .padding(.top)
     }
-    
-    
 }
 
 #Preview {

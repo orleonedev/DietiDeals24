@@ -22,7 +22,7 @@ class SearchMainViewModel: LoadableViewModel {
     
     var searchText: String = ""
     var filterModel: SearchFilterModel = .init()
-    let filteringOptions: [FilterType] = [.auctionType, .category, .priceRange, .sortOrder]
+    let filteringOptions: [FilterType] = [.auctionType, .category, .sortOrder] //price range halt
     
     var fetchedSearchResults: [AuctionCardModel] = []
     var isFetchingSearchResults: Bool = false

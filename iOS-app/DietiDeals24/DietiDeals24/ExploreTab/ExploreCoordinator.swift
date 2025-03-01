@@ -25,5 +25,22 @@ class ExploreCoordinator: Coordinator {
         }
     }
     
+    @MainActor
+    func dismiss() {
+        self.router.dismiss()
+    }
+    
+    @MainActor
+    func openSelectableFilterSheet<Filter: FilterModelProtocol>(filter: Filter, onSelect: @escaping (Filter) -> Void, onCancel: @escaping () -> Void) {
+        self.router.navigate(to: selectableFilterSheet(filter: filter, onSelect: onSelect, onCancel: onCancel), type: .sheet)
+    }
+
+    //MARK: DESTINATIONS
+    private func selectableFilterSheet<Filter: FilterModelProtocol>(filter: Filter, onSelect: @escaping (Filter) -> Void, onCancel: @escaping () -> Void) -> RoutingKit.Destination {
+        .init {
+            FilterSelectionSheet(title: Filter.title, options: Filter.allCases, selectedOption: filter, onSelect: onSelect, onCancel: onCancel)
+        }
+    }
+    
     
 }

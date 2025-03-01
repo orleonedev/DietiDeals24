@@ -16,9 +16,6 @@ struct FilterSelectionSheet<Option: FilterModelProtocol>: View {
 
     var body: some View {
         List {
-//            RadioButtonRow(title: "All", isSelected: selectedOption == options.first) {
-//                selectedOption = nil
-//            }
             ForEach(options) { option in
                 RadioButtonRow(title: option.description, isSelected: selectedOption == option) {
                     selectedOption = option

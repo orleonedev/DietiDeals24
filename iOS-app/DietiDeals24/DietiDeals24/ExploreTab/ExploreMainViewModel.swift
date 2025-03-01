@@ -29,7 +29,7 @@ class ExploreMainViewModel: LoadableViewModel {
     var searchItems: [AuctionCardModel] = []
     var searchText: String = ""
     var filterModel: SearchFilterModel = .init()
-    let filteringOptions: [FilterType] = [.auctionType, .category, .priceRange, .sortOrder]
+    let filteringOptions: [FilterType] = [.auctionType, .category, .sortOrder] //price range halt
     var isFetchingSearchResults: Bool = false
     var shouldFetchMoreSearchItem: Bool = true
     
@@ -43,9 +43,9 @@ class ExploreMainViewModel: LoadableViewModel {
         var isSet: Bool = false
         switch type {
             case .auctionType:
-                isSet = filterModel.activeAuctionTypeFilter != nil
+                isSet = filterModel.activeAuctionTypeFilter != .all
             case .category:
-                isSet = filterModel.activeCategoryFilter != nil
+                isSet = filterModel.activeCategoryFilter != .all
             case .priceRange:
                 isSet = filterModel.activePriceRangeFilter != nil
             case .sortOrder:
@@ -54,9 +54,11 @@ class ExploreMainViewModel: LoadableViewModel {
         return isSet
     }
     
-    func makeSearchRequest() {
+    func makeSearchRequest(preserveFilters: Bool = false) {
         self.searchItems.removeAll()
-        //self.resetFilters()
+        if !preserveFilters {
+            self.resetFilters()
+        }
         self.getSearchResults()
     }
     
@@ -92,6 +94,44 @@ class ExploreMainViewModel: LoadableViewModel {
         Task {
             print(auctionID)
         }
+    }
+    
+    private func resetFilters() {
+        self.filterModel = .init(serchTerm: self.searchText.isEmpty ? nil : self.searchText)
+    }
+    
+    @MainActor
+    func openFilterSheet(for filter: FilterType) {
+        switch filter {
+            case .auctionType:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeAuctionTypeFilter) { newValue in
+                    self.filterModel.activeAuctionTypeFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+
+            case .sortOrder:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeSortOrderFilter) { newValue in
+                    self.filterModel.activeSortOrderFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+            case .category:
+                self.coordinator.openSelectableFilterSheet(filter: self.filterModel.activeCategoryFilter) { newValue in
+                    self.filterModel.activeCategoryFilter = newValue
+                    self.coordinator.dismiss()
+                    self.makeSearchRequest(preserveFilters: true)
+                } onCancel: {
+                    self.coordinator.dismiss()
+                }
+            case .priceRange:
+                return
+        }
+        
     }
     
 }

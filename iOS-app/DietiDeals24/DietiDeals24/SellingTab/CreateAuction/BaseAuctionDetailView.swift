@@ -9,6 +9,7 @@ import SwiftUI
 struct BaseAuctionDetailView: View, LoadableView {
     
     @State var viewModel: BaseAuctionDetailViewModel
+    @FocusState var isFocused: Bool
     
     public var body: some View {
         VStack(spacing: 0){
@@ -21,14 +22,16 @@ struct BaseAuctionDetailView: View, LoadableView {
                 }
                 .padding()
             }
+            .onTapGesture {
+                self.isFocused = false
+            }
             .scrollBounceBehavior(.basedOnSize)
         }
         .interactiveDismissDisabled(true)
         .navigationTitle("Create Auction")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden()
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
+            ToolbarItem(placement: .destructiveAction) {
                 Button("Cancel") {
                     self.viewModel.tryToDismiss()
                 }
@@ -44,11 +47,14 @@ extension BaseAuctionDetailView {
     func formFields() -> some View {
         VStack(alignment: .leading, spacing: 32 ){
             ValidableTextField(validationError: $viewModel.validationTitleError, text: $viewModel.baseAuction.title, validation: viewModel.validateTitle, label: "Title")
+                .focused(self.$isFocused)
+
             
             ValidableTextField(validationError: $viewModel.validationDescriptionError, text: $viewModel.baseAuction.description, validation: viewModel.validateDescription, label: "Description")
+                .focused(self.$isFocused)
+
             
             MenuPicker(title: "Category", selection: $viewModel.baseAuction.category, options: Array(AuctionCategory.allCases.dropFirst()), placeholderLabel: "Select a category")
-            
             
         }
         .padding(.vertical)
@@ -62,14 +68,16 @@ extension BaseAuctionDetailView {
                     .font(.caption)
                     .padding(.horizontal, 4)
                 Spacer()
-                Text("0/6")
+                Text("\(viewModel.baseAuction.images.count)/6")
                     .font(.caption)
                     .padding(.horizontal, 4)
             }
             
             ScrollView(.horizontal) {
                 if viewModel.baseAuction.images.isEmpty {
-                    Button(action: {}) {
+                    Button(action: {
+                        
+                    }) {
                         VStack(alignment: .center, spacing: 0){
                             Image(systemName: "photo.badge.plus.fill")
                                 .resizable()
@@ -84,17 +92,21 @@ extension BaseAuctionDetailView {
                         .padding()
                     }
                 } else {
-                    HStack {
+                    HStack(spacing: 24) {
                         ForEach(viewModel.baseAuction.images, id: \.self) { image in
-                            Image(systemName: "photo")
-                                .resizable()
-                                .scaledToFit()
-                                .padding()
-                                .clipShape(.rect(cornerRadius: 12 ))
+                            GeometryReader { proxy in
+                                RemoteImage(urlString: image)
+                                    .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .clipped()
+                                    .clipShape(.rect(cornerRadius: 12))
+                            }
+                            .aspectRatio(1.77, contentMode: .fit)
                         }
                         
                         if viewModel.baseAuction.images.count < 6 {
-                            Button(action: {}) {
+                            Button(action: {
+                                
+                            }) {
                                 Image(systemName: "plus.circle")
                                     .resizable()
                                     .padding()
@@ -139,7 +151,7 @@ extension BaseAuctionDetailView {
 }
 
 #Preview {
-    //NavigationStack {
+    NavigationStack {
         BaseAuctionDetailView(viewModel: .init(sellingCoordinator: .init(appContainer: .init())))
-    //}
+    }
 }

@@ -94,6 +94,24 @@ class ExploreMainViewModel: LoadableViewModel {
     func getAuctionDetail(_ auctionID: UUID) {
         Task {
             print(auctionID)
+            self.isLoading = true
+            try? await Task.sleep(for: .seconds(2))
+            let auction = AuctionDetailModel(
+                id: auctionID,
+                title: "TEST",
+                description: "long description long very long description very ver long description vd long description long very long description very ver long description vd long description long very long description very ver long description vd",
+                category: .Electronics,
+                images: [],
+                currentPrice: 12345,
+                threshold: 12,
+                timer: 34,
+                endTime: .now.advanced(by: 60*60*34),
+                vendorID: UUID(),
+                vendorName: "Venditore Test"
+            )
+            self.isLoading = false
+            await self.coordinator.goToAuction(auction)
+            
         }
     }
     

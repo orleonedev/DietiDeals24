@@ -9,6 +9,7 @@ import SwiftUI
 
 class ExploreCoordinator: Coordinator {
     typealias ExploreRouter = RoutingKit.Router
+    typealias ExploreAuctionVM = AuctionDetailMainViewModel
     
     internal var appContainer: AppContainer
     private var router: ExploreRouter
@@ -23,6 +24,11 @@ class ExploreCoordinator: Coordinator {
         RoutingKit.RoutableRootView(router: router) { [self] in
             ExploreMainView(viewModel: appContainer.unsafeResolve(ExploreMainViewModel.self))
         }
+    }
+    
+    @MainActor
+    func goToAuction(_ auction: AuctionDetailModel) {
+        self.router.navigate(to: auctionDetailDestination(auction), type: .push)
     }
     
     @MainActor
@@ -42,5 +48,13 @@ class ExploreCoordinator: Coordinator {
         }
     }
     
+    private func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(ExploreAuctionVM.self)
+            vm.setAuction(auction)
+            return AuctionDetailMainView(viewModel: vm)
+            
+        }
+    }
     
 }

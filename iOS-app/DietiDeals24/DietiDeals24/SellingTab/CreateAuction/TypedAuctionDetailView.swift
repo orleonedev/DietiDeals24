@@ -10,6 +10,7 @@ import SwiftUI
 public struct TypedAuctionDetailView: View, LoadableView {
     
     @State var viewModel: TypedAuctionDetailViewModel
+    @FocusState private var isFocused: Bool
     
     public var body: some View {
         VStack(spacing: 0){
@@ -28,11 +29,22 @@ public struct TypedAuctionDetailView: View, LoadableView {
                 }
                 .padding()
             }
+            .onTapGesture {
+                self.isFocused = false
+            }
             .scrollBounceBehavior(.basedOnSize)
         }
+        .animation(.easeInOut, value: viewModel.auctionType)
         .interactiveDismissDisabled(true)
         .navigationTitle(self.viewModel.baseAuction?.title ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .destructiveAction) {
+                Button("Cancel") {
+                    self.viewModel.tryToDismiss()
+                }
+            }
+        }
         
     }
 }
@@ -43,32 +55,46 @@ extension TypedAuctionDetailView {
     func formFields() -> some View {
         VStack(alignment: .leading,spacing: 21) {
             
-            ValidableTextField(validationError: .constant(false), text: $viewModel.startingPrice, validation: {
-                
-            }, label: "Starting Price" )
+            ValidableTextField(validationError: $viewModel.startingPriceValidationError, text: $viewModel.startingPrice, validation: viewModel.validateStartingPrice, label: "Starting Price" )
             .keyboardType(.decimalPad)
+            .focused(self.$isFocused)
             
+            ValidableTextField(validationError: $viewModel.timerValidationError, text: $viewModel.timer, validation: viewModel.validateTimer, label: "Timer (min 1h)" )
+            .keyboardType(.decimalPad)
+            .focused(self.$isFocused)
+            
+            ValidableTextField(validationError: $viewModel.thresholdValidationError, text: $viewModel.threshold, validation: viewModel.validateThreshold, label: "Threshold (min. 10)" )
+                .keyboardType(.numberPad)
+            .focused(self.$isFocused)
             
             if self.viewModel.auctionType == .descending {
-                ValidableTextField(validationError: .constant(false), text: $viewModel.secretPrice, validation: {
-                    
-                }, label: "Secret Price" )
-                .keyboardType(.decimalPad)
+                ValidableTextField(validationError: $viewModel.secretPriceValidationError, text: $viewModel.secretPrice, validation: viewModel.validateSecretPrice, label: "Secret Price" )
+                    .keyboardType(.decimalPad)
+                .focused(self.$isFocused)
                 .transition(.opacity)
             }
             
         }
-        .animation(.easeInOut, value: viewModel.auctionType)
+        
     }
     
     @ViewBuilder
     func nextButton() -> some View {
         Button(action: {
-            
+            self.viewModel.goToAuctionPreview()
         }) {
-            
+            Text("Next")
+                .font(.headline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(.accent)
+                .clipShape(.rect(cornerRadius: 12))
         }
-        
     }
 }
 
+#Preview {
+    TypedAuctionDetailView(viewModel: .init(sellingCoordinator: .init(appContainer: .init())))
+}

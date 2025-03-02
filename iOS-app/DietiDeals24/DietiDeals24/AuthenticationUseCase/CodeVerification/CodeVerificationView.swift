@@ -10,6 +10,7 @@ import SwiftUI
 struct CodeVerificationView: View, LoadableView {
     
     @State var viewModel: CodeVerificationViewModel
+    @FocusState var isFocused: Bool
     
     var body: some View {
         GeometryReader { geometry in
@@ -34,6 +35,7 @@ struct CodeVerificationView: View, LoadableView {
                     ValidableTextField(validationError: $viewModel.validationCodeError, text: $viewModel.confimationCode, validation: viewModel.validateCode, label: "Code")
                         .textContentType(.oneTimeCode)
                         .keyboardType(.numberPad)
+                        .focused(self.$isFocused)
                         
                     Button {
                         viewModel.submitConfirmationCode()
@@ -53,6 +55,9 @@ struct CodeVerificationView: View, LoadableView {
                     }
                 }
                 .padding()
+            }
+            .onTapGesture {
+                self.isFocused = false
             }
             .frame(width: size.width, height: size.height)
         }

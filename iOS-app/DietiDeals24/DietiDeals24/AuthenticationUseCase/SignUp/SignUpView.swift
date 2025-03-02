@@ -10,6 +10,7 @@ import SwiftUI
 struct SignUpView: View, LoadableView {
     
     @State var viewModel: SignUpViewModel
+    @FocusState var isFocused: Bool
     
     var body: some View {
         ScrollView {
@@ -23,6 +24,9 @@ struct SignUpView: View, LoadableView {
             }
             .padding()
             
+        }
+        .onTapGesture {
+            self.isFocused = false
         }
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(true)
@@ -53,6 +57,7 @@ extension SignUpView {
             )
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
+            .focused(self.$isFocused)
             
             ValidableTextField(
                 validationError: self.$viewModel.validationUserNameError,
@@ -61,6 +66,8 @@ extension SignUpView {
             )
             .textContentType(.username)
             .keyboardType(.asciiCapable)
+            .focused(self.$isFocused)
+
             
             SecureValidableTextField(
                 validationError: self.$viewModel.validationPasswordError,
@@ -69,6 +76,8 @@ extension SignUpView {
             )
             .autocorrectionDisabled(true)
             .textContentType(.newPassword)
+            .focused(self.$isFocused)
+
             
             ValidableTextField(
                 validationError: self.$viewModel.validationFullNameError,
@@ -78,6 +87,8 @@ extension SignUpView {
             )
             .textContentType(.name)
             .keyboardType(.asciiCapable)
+            .focused(self.$isFocused)
+
             
             ValidableDatePicker(validationError: self.$viewModel.validationBirthDateError, date: self.$viewModel.birthdate, validation: self.viewModel.validateBirthDate, label: "Birthdate", range: self.viewModel.dateRange)
             

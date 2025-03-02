@@ -36,7 +36,7 @@
         }
       }
     },
-    "0/6" : {
+    "%lld/6" : {
 
     },
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
@@ -67,6 +67,9 @@
 
     },
     "Create your account" : {
+
+    },
+    "Description" : {
 
     },
     "Dieti Deals 24" : {
@@ -102,6 +105,9 @@
     "Logout" : {
 
     },
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor quam id massa faucibus dignissim. Nullam eget metus id nisl malesuada condimentum. Nam viverra fringilla erat, ut fermentum nunc feugiat eu." : {
+
+    },
     "More" : {
 
     },
@@ -123,7 +129,16 @@
     "Personal Area" : {
 
     },
+    "Present Offer" : {
+
+    },
+    "Publish Auction" : {
+
+    },
     "Ready to create your next auction? Tap the button below to get started with listing your items." : {
+
+    },
+    "Remaining Time" : {
 
     },
     "Revoke Cred" : {
@@ -133,6 +148,9 @@
 
     },
     "Search for products or services" : {
+
+    },
+    "Secret Price" : {
 
     },
     "Sell" : {
@@ -165,6 +183,9 @@
     "Start Selling on \nDietiDeals24" : {
 
     },
+    "Starting Price" : {
+
+    },
     "Submit Vendor Details" : {
 
     },
@@ -172,6 +193,12 @@
 
     },
     "This is the start of cognito setup" : {
+
+    },
+    "Threshold" : {
+
+    },
+    "Timer" : {
 
     },
     "Verify" : {

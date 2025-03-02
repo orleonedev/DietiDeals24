@@ -28,8 +28,11 @@ struct SearchMainView: View, LoadableView {
         .onSubmit(of: .search) {
             viewModel.makeSearchRequest()
         }
-        
+        .scrollDismissesKeyboard(.immediately)
         .navigationTitle("Search")
+        .overlay {
+            loaderView()
+        }
     }
     
 }

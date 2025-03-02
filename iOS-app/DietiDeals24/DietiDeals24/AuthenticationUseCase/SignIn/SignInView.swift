@@ -12,6 +12,7 @@ import RoutingKit
 struct SignInView: View, LoadableView {
     
     @State var viewModel: SignInViewModel
+    @FocusState var isFocused: Bool
     
     var body: some View {
         ScrollView {
@@ -28,6 +29,9 @@ struct SignInView: View, LoadableView {
                 socialLoginStack()
             }
             .padding()
+        }
+        .onTapGesture {
+            self.isFocused = false
         }
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
@@ -55,6 +59,7 @@ extension SignInView {
                 ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email")
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
+                    .focused(self.$isFocused)
             }
             
             SecureValidableTextField(
@@ -64,7 +69,7 @@ extension SignInView {
             )
             .textContentType(.password)
             .autocorrectionDisabled(true)
-            
+            .focused(self.$isFocused)
         }
         
     }

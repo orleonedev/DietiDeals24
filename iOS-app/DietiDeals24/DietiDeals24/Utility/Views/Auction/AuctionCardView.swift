@@ -148,3 +148,4 @@ extension AuctionCardView {
         
     }.padding()
 }
+

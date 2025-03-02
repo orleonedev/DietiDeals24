@@ -42,6 +42,10 @@ class BaseAuctionDetailViewModel: LoadableViewModel {
     
     @MainActor
     func goToAuctionDetails() {
+        validateTitle()
+        validateDescription()
+        validateCategory()
+        guard !validationTitleError && !validationDescriptionError && !validationCategoryError else { return }
         self.sellingCoordinator.goToDetailAuction(baseAuction: self.baseAuction)
     }
     

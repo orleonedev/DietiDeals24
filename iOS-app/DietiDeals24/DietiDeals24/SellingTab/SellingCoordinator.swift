@@ -9,6 +9,7 @@ import SwiftUI
 
 class SellingCoordinator: Coordinator {
     typealias SellingRouter = RoutingKit.Router
+    typealias SellingAuctionVM = AuctionDetailMainViewModel
     
     internal var appContainer: AppContainer
     private var router: SellingRouter
@@ -51,6 +52,13 @@ class SellingCoordinator: Coordinator {
         self.router.navigate(to: detailAuctionDestination(baseAuction: baseAuction), type: .push)
     }
 
+    @MainActor
+    func goToAuctionPreview(auction: CreateAuctionModel) {
+        self.router.navigate(to: auctionPreviewDestination(auction: auction), type: .push)
+    }
+    
+    
+    
     //MARK: DESTINATIONS
     private func becomeAVendorDestination() -> RoutingKit.Destination {
         .init {
@@ -69,6 +77,14 @@ class SellingCoordinator: Coordinator {
             let vm : TypedAuctionDetailViewModel = self.appContainer.unsafeResolve()
             vm.setBaseAuction(baseAuction)
             return TypedAuctionDetailView(viewModel: vm)
+        }
+    }
+    
+    private func auctionPreviewDestination(auction: CreateAuctionModel) -> RoutingKit.Destination {
+        .init {
+            let vm : AuctionPreviewViewModel = self.appContainer.unsafeResolve()
+            vm.setAuction(auction)
+            return AuctionPreviewView(viewModel: vm)
         }
     }
 }

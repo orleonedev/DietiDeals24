@@ -91,7 +91,6 @@ extension AppContainer {
             MainTabViewModel(mainCoordinator: self.unsafeResolve())
         }
         
-        
     }
     
     //MARK: - USER AREA TAB
@@ -111,6 +110,7 @@ extension AppContainer {
     
     //MARK: - SELL TAB
     private func registerSellingTab() {
+        
         register(for: SellingCoordinator.self, scope: .singleton) {
             SellingCoordinator(appContainer: self)
         }
@@ -134,10 +134,19 @@ extension AppContainer {
             TypedAuctionDetailViewModel(sellingCoordinator: self.unsafeResolve())
         }
         
+        register(for: AuctionPreviewViewModel.self) {
+            AuctionPreviewViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+        register(for: SellingCoordinator.SellingAuctionVM.self) {
+            AuctionDetailMainViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
     }
     
     //MARK: - EXPLORE TAB
     private func registerExploreTab() {
+        
         register(for: ExploreCoordinator.self, scope: .singleton) {
             ExploreCoordinator(appContainer: self)
         }
@@ -149,10 +158,15 @@ extension AppContainer {
         register(for: ExploreMainViewModel.self) {
             ExploreMainViewModel(coordinator: self.unsafeResolve())
         }
+        
+        register(for: ExploreCoordinator.ExploreAuctionVM.self) {
+            AuctionDetailMainViewModel(exploreCoordinator: self.unsafeResolve())
+        }
     }
     
     //MARK: - SEARCH TAB
     private func registerSearchTab() {
+        
         register(for: SearchCoordinator.self, scope: .singleton) {
             SearchCoordinator(appContainer: self)
         }
@@ -164,7 +178,9 @@ extension AppContainer {
         register(for: SearchMainViewModel.self) {
             SearchMainViewModel(coordinator: self.unsafeResolve())
         }
-        
+        register(for: SearchCoordinator.SearchAuctionVM.self) {
+            AuctionDetailMainViewModel(searchCoordinator: self.unsafeResolve())
+        }
     }
     
     //MARK: - NOTIFICATIONS TAB

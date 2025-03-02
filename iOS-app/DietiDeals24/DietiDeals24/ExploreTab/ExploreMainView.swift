@@ -44,6 +44,10 @@ public struct ExploreMainView: View, LoadableView {
             viewModel.makeSearchRequest()
         }
         .navigationTitle("Explore")
+        .scrollDismissesKeyboard(.immediately)
+        .overlay {
+            loaderView()
+        }
     }
     
     

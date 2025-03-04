@@ -12,8 +12,6 @@ struct SearchMainView: View, LoadableView {
     var body: some View {
         VStack{
             switch viewModel.viewState {
-                case .loading:
-                    loaderView()
                 case .idle:
                     categoryListView()
                 case .fetched:
@@ -21,13 +19,14 @@ struct SearchMainView: View, LoadableView {
             }
         }
         .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
-        .onChange(of: viewModel.searchText) { old, newValue in
-            viewModel.isLoading = !newValue.isEmpty
-            viewModel.viewState = newValue.isEmpty ? .idle : .loading
-        }
         .onSubmit(of: .search) {
             viewModel.makeSearchRequest()
         }
+        .onChange(of: viewModel.isSearching, initial: false, { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                viewModel.viewState = .idle
+            }
+        })
         .scrollDismissesKeyboard(.immediately)
         .navigationTitle("Search")
         .overlay {
@@ -61,7 +60,8 @@ extension SearchMainView {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(AuctionCategory.allCases, id: \.self) { category in
                     Button {
-                        
+                        viewModel.setFilter(for: .category, value: category)
+                        viewModel.makeSearchRequest(preserveFilters: true)
                     } label: {
                         VStack(alignment: .leading){
                             HStack{

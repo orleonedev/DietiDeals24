@@ -12,7 +12,6 @@ class ExploreMainViewModel: LoadableViewModel {
     
     enum ExploreState {
         case explore
-        case loading
         case searching
     }
     
@@ -20,8 +19,15 @@ class ExploreMainViewModel: LoadableViewModel {
     
     private var coordinator: ExploreCoordinator
     
-    var state: ExploreState = .explore
-    var isSearching: Bool = false 
+    var state: ExploreState = .explore {
+        didSet {
+            if state == .explore {
+                self.resetSearchState()
+            }
+        }
+    }
+    
+    var isSearching: Bool = false
     
     var exploreItems: [AuctionCardModel] = []
     var isFetchingExploreItems: Bool = false
@@ -39,6 +45,14 @@ class ExploreMainViewModel: LoadableViewModel {
         self.coordinator = coordinator
     }
     
+    func resetSearchState(preserveFilters: Bool = false) {
+        self.searchItems.removeAll()
+        self.isFetchingSearchResults = false
+        self.shouldFetchMoreSearchItem = true
+        if !preserveFilters {
+            self.resetFilters()
+        }
+    }
     
     func isFilterSet(for type: FilterType ) -> Bool {
         var isSet: Bool = false
@@ -55,14 +69,15 @@ class ExploreMainViewModel: LoadableViewModel {
         return isSet
     }
     
+    @MainActor
     func makeSearchRequest(preserveFilters: Bool = false) {
-        self.searchItems.removeAll()
-        if !preserveFilters {
-            self.resetFilters()
-        }
+        self.isLoading = true
+        self.isSearching = true
+        self.resetSearchState(preserveFilters: preserveFilters)
         self.getSearchResults()
     }
     
+    @MainActor
     func getSearchResults() {
         Task {
             guard shouldFetchMoreSearchItem, !isFetchingSearchResults else { return }
@@ -78,6 +93,7 @@ class ExploreMainViewModel: LoadableViewModel {
         }
     }
     
+    @MainActor
     func getMoreExploreItems() {
         Task {
             guard shouldFetchMoreExploreItem, !isFetchingExploreItems else { return }

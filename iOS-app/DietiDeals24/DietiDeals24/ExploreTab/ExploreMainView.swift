@@ -24,25 +24,19 @@ public struct ExploreMainView: View, LoadableView {
                                 viewModel.getMoreExploreItems()
                             }
                         }
-                case .loading:
-                    loaderView()
-                        .onTapGesture {
-                            viewModel.isSearching = false
-                            viewModel.searchText = ""
-                            viewModel.state = .explore
-                        }
                 case .searching:
                     auctionListViewWithFilters()
             }
         }
         .searchable(text: self.$viewModel.searchText , isPresented: $viewModel.isSearching, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search for products or services")
-        .onChange(of: viewModel.searchText) { old, newValue in
-            viewModel.isLoading = !newValue.isEmpty
-            viewModel.state = newValue.isEmpty ? .explore : .loading
-        }
         .onSubmit(of: .search) {
             viewModel.makeSearchRequest()
         }
+        .onChange(of: viewModel.isSearching, initial: false, { oldValue, newValue in
+            if oldValue == true && newValue == false {
+                viewModel.state = .explore
+            }
+        })
         .navigationTitle("Explore")
         .scrollDismissesKeyboard(.immediately)
         .overlay {

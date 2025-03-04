@@ -12,13 +12,18 @@ class SearchMainViewModel: LoadableViewModel {
     
     enum SearchViewState {
         case idle
-        case loading
         case fetched
     }
     
     internal var isLoading: Bool = false
     private var coordinator: SearchCoordinator
-    var viewState: SearchViewState = .idle
+    var viewState: SearchViewState = .idle {
+        didSet {
+            if viewState == .idle {
+                self.reset()
+            }
+        }
+    }
     
     var searchText: String = ""
     var isSearching: Bool = false
@@ -28,6 +33,15 @@ class SearchMainViewModel: LoadableViewModel {
     var fetchedSearchResults: [AuctionCardModel] = []
     var isFetchingSearchResults: Bool = false
     var shouldFetchMoreSearchItem: Bool = true
+    
+    func reset(preserveFilters: Bool = false) {
+        self.fetchedSearchResults.removeAll()
+        self.isFetchingSearchResults = false
+        self.shouldFetchMoreSearchItem = true
+        if !preserveFilters {
+            self.resetFilters()
+        }
+    }
     
     init(coordinator: SearchCoordinator) {
         self.coordinator = coordinator
@@ -48,11 +62,28 @@ class SearchMainViewModel: LoadableViewModel {
         return isSet
     }
     
-    func makeSearchRequest(preserveFilters: Bool = false) {
-        self.fetchedSearchResults.removeAll()
-        if !preserveFilters {
-            self.resetFilters()
+    public func setFilter<Filter: FilterModelProtocol>(for type: FilterType, value: Filter) {
+        switch type {
+            case .auctionType:
+                guard let auctionTypeValue = value as? AuctionType else { return }
+                filterModel.activeAuctionTypeFilter = auctionTypeValue
+            case .category:
+                guard let categoryTypeValue = value as? AuctionCategory else { return }
+                filterModel.activeCategoryFilter = categoryTypeValue
+            case .priceRange:
+                break
+                //filterModel.activePriceRangeFilter != nil
+            case .sortOrder:
+                guard let sortTypeValue = value as? SortOrderFilter else { return }
+                filterModel.activeSortOrderFilter = sortTypeValue
         }
+    }
+    
+    @MainActor
+    func makeSearchRequest(preserveFilters: Bool = false) {
+        self.isLoading = true
+        self.isSearching = true
+        self.reset(preserveFilters: preserveFilters)
         self.getSearchResults()
     }
     
@@ -60,6 +91,7 @@ class SearchMainViewModel: LoadableViewModel {
         self.filterModel = .init(serchTerm: self.searchText.isEmpty ? nil : self.searchText)
     }
     
+    @MainActor
     func getSearchResults() {
         Task {
             guard shouldFetchMoreSearchItem, !isFetchingSearchResults else { return }

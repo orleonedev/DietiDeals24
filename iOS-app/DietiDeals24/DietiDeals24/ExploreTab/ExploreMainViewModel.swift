@@ -40,9 +40,11 @@ class ExploreMainViewModel: LoadableViewModel {
     var isFetchingSearchResults: Bool = false
     var shouldFetchMoreSearchItem: Bool = true
     
+    var auctionService: AuctionService
     
-    init(coordinator: ExploreCoordinator) {
+    init(coordinator: ExploreCoordinator, auctionService: AuctionService) {
         self.coordinator = coordinator
+        self.auctionService = auctionService
     }
     
     func resetSearchState(preserveFilters: Bool = false) {
@@ -90,6 +92,7 @@ class ExploreMainViewModel: LoadableViewModel {
             try? await Task.sleep(for: .seconds(2))
             self.searchItems = AuctionCardModel.mockData //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
             self.shouldFetchMoreSearchItem = false//self.searchItems.count < 230
+            let _ = try? await auctionService.fetchAuctions(filters: filterModel, page: 1, pageSize: 20)
         }
     }
     

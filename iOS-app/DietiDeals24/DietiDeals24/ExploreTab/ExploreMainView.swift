@@ -101,10 +101,10 @@ extension ExploreMainView {
 }
 
 #Preview {
-    @Previewable @State var exploreMainViewModel =  ExploreMainViewModel(coordinator: .init(appContainer: .init()))
+    @Previewable @State var exploreMainViewModel =  ExploreMainViewModel(coordinator: .init(appContainer: .init()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
     //exploreMainViewModel.exploreItems = AuctionCardModel.mockData
     
-    return NavigationStack {
+    NavigationStack {
         ExploreMainView(viewModel: exploreMainViewModel)
     }
 }

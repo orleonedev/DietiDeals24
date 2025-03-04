@@ -26,14 +26,25 @@ extension AppContainer {
         #else
         Logger.shared.add(logger: ConsoleLogger(logLevel: .error))
 #endif
-        register(for: RESTDataSource.self, scope: .singleton) {
+        typealias AuthRestDataSource = DefaultRESTDataSource
+        
+        register(for: AuthRestDataSource.self,scope: .singleton) {
             DefaultRESTDataSource()
         }
+        
         register(for: AuthService.self, scope: .singleton) { [self] in
-            CognitoAuthService(rest: unsafeResolve())
+            CognitoAuthService(rest: unsafeResolve(AuthRestDataSource.self))
         }
         register(for: CredentialService.self, scope: .singleton) {
             KeychainCredentialService()
+        }
+        
+        register(for: RESTDataSource.self) {
+            DefaultRESTDataSource(credentialService: self.unsafeResolve(CredentialService.self), authService: self.unsafeResolve(AuthService.self))
+            }
+        
+        register(for: AuctionService.self) {
+            DefaultAuctionService(rest: self.unsafeResolve())
         }
         
         register(for: AppState.self, scope: .singleton) {
@@ -156,7 +167,7 @@ extension AppContainer {
         }
         
         register(for: ExploreMainViewModel.self) {
-            ExploreMainViewModel(coordinator: self.unsafeResolve())
+            ExploreMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         
         register(for: ExploreCoordinator.ExploreAuctionVM.self) {

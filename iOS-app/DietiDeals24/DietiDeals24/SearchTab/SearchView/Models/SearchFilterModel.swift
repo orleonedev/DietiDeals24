@@ -12,16 +12,9 @@ struct SearchFilterModel {
     var activeCategoryFilter: AuctionCategory = .all
     var activePriceRangeFilter: PriceRangeFilter?
     
-//    var auctionTypes: [AuctionType] = AuctionType.allCases
-//    var sortOrderTypes: [SortOrderFilter] = SortOrderFilter.allCases
-//    var categoryTypes: [AuctionCategory] = AuctionCategory.allCases
 }
 
 enum AuctionType: Int, FilterModelProtocol {
-    //var allCases: [AuctionType] { return Self.allCases}
-    
-    
-    //var title: String {return Self.title}
     
     var value: Any {return self.rawValue}
     
@@ -51,10 +44,6 @@ enum AuctionType: Int, FilterModelProtocol {
 }
 
 enum SortOrderFilter: Int, FilterModelProtocol {
-    
-    //var allCases: [SortOrderFilter] { return Self.allCases}
-    
-    //var title: String {return Self.title}
     
     var value: Any {return self.rawValue}
     
@@ -88,10 +77,6 @@ enum SortOrderFilter: Int, FilterModelProtocol {
 }
 
 enum AuctionCategory: String, FilterModelProtocol {
-    
-    //var allCases: [AuctionCategory] { return Self.allCases}
-    
-    //var title: String {return Self.title}
     
     var value: Any {return self.rawValue}
     

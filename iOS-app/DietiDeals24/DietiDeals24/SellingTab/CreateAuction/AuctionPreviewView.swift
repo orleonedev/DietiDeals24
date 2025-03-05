@@ -185,23 +185,20 @@ extension AuctionPreviewView {
         }
     }
     
-    private func formatTimer(_ timer: Int) -> String {
+    private func formatTimer(_ hours: Int) -> String {
+        
+        let timer: Int = hours*60*60
         
         if timer > 86400 {
             // More than 1 day: show day and hours.
             let days = Int(timer) / 86400
             let hours = (Int(timer) % 86400) / 3600
             return "\(days) day\(days != 1 ? "s" : ""), \(hours)h"
-        } else if timer > 3600 {
+        } else {
             // More than 1 hour: show hours and minutes.
             let hours = Int(timer) / 3600
             let minutes = (Int(timer) % 3600) / 60
             return "\(hours)h \(minutes)m"
-        } else {
-            // Less than 1 hour: show minutes and seconds.
-            let minutes = Int(timer) / 60
-            let seconds = Int(timer) % 60
-            return "\(minutes)m \(seconds)s"
         }
 
     }

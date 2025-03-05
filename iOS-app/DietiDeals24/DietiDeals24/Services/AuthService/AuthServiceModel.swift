@@ -35,6 +35,7 @@ struct AuthTokenSession: Codable, AuthTokenSessionGenerator {
 enum AuthFederatedProvider: String {
     case google
     case facebook
+    case apple
     // Extend with additional providers as needed.
 }
 

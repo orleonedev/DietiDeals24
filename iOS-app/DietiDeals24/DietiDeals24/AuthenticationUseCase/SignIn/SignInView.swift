@@ -17,22 +17,29 @@ struct SignInView: View, LoadableView {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Spacer()
-                Image("AppIconImage")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 128, height: 128)
-                    .clipShape(.rect(cornerRadius: 128/6.4))
-                Spacer()
-                loginView()
-                noAccountView()
+                VStack(spacing: 24) {
+                    Spacer()
+                    Image("AppIconImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 128, height: 128)
+                        .clipShape(.rect(cornerRadius: 128/6.4))
+                    Spacer()
+                    loginView()
+                    noAccountView()
+                }
+                .background(.clear)
+                .contentShape(Rectangle())
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        isFocused = false
+                    }
+                )
                 socialLoginStack()
             }
             .padding()
         }
-        .onTapGesture {
-            self.isFocused = false
-        }
+        
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
         .overlay {
@@ -171,9 +178,16 @@ extension SignInView {
     func signInWithApple() -> some View {
         
         AuthenticationServices.SignInWithAppleButton(.signIn) { request in
-            
+            request.requestedScopes = [.email, .fullName]
         } onCompletion: { result in
-            
+            switch result {
+                case .success(let authorization):
+                    let credentials = authorization.credential as? ASAuthorizationAppleIDCredential
+                    //TODO: Cognito provider
+                    
+                case .failure(let error):
+                    print(error)
+            }
         }
         .signInWithAppleButtonStyle(.whiteOutline)
     }

@@ -9,6 +9,7 @@ using Amazon.Extensions.CognitoAuthentication;
 using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DietiDeals24.DataAccessLayer.Services.Impl;
@@ -274,7 +275,7 @@ public class AuthenticationService: IAuthenticationService
 
             await ExecuteWithRetryAsync(() => _cognitoClient.ConfirmSignUpAsync(request));
             
-            var dbUser = _unitOfWork.UserRepository.Get(u => u.Email == email).FirstOrDefault();
+            var dbUser = await _unitOfWork.UserRepository.Get(u => u.Email == email).FirstOrDefaultAsync();
             if (dbUser == null)
             {
                 throw new InvalidOperationException("User does not exists.");

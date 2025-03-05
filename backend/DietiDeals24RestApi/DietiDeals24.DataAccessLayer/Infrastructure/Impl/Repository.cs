@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DietiDeals24.DataAccessLayer.Infrastructure;
@@ -102,5 +103,15 @@ public class Repository<TEntity,TKey> : IRepository<TEntity,TKey> where TEntity 
         _context.Entry<TEntity>(entity).State = EntityState.Modified;
 
         return Task.CompletedTask;
+    }
+    
+    public async Task<int> CountAsync()
+    {
+        return await _context.Set<TEntity>().CountAsync();
+    }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _context.Set<TEntity>().CountAsync(predicate);
     }
 }

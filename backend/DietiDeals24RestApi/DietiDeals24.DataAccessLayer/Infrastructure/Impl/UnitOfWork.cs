@@ -14,7 +14,6 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     private readonly IRepository<User, Guid> _userRepository;
     private readonly IRepository<Vendor, Guid> _vendorRepository;
-    private IRepository<Category, Guid> _categoryRepository;
     private IRepository<Auction, Guid> _auctionRepository;
     private IRepository<Bid, Guid> _bidRepository;
     private IRepository<AuctionImage, Guid> _auctionImageRepository;
@@ -24,7 +23,6 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public UnitOfWork(DietiDeals24DbContext context,
         IRepository<User, Guid> userRepository,
         IRepository<Vendor, Guid> vendorRepository,
-        IRepository<Category, Guid> categoryRepository, 
         IRepository<Auction, Guid> auctionRepository, 
         IRepository<Bid, Guid> bidRepository, 
         IRepository<AuctionImage, Guid> auctionImageRepository, 
@@ -34,7 +32,6 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         _context = context;
         _userRepository = userRepository;
         _vendorRepository = vendorRepository;
-        _categoryRepository = categoryRepository;
         _auctionRepository = auctionRepository;
         _bidRepository = bidRepository;
         _auctionImageRepository = auctionImageRepository;
@@ -44,8 +41,6 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     public IRepository<User, Guid> UserRepository => _userRepository;
     public IRepository<Vendor, Guid> VendorRepository => _vendorRepository;
-    public IRepository<Category, Guid> CategoryRepository => _categoryRepository;
-
     public IRepository<Auction, Guid> AuctionRepository => _auctionRepository;
 
     public IRepository<Bid, Guid> BidRepository => _bidRepository;

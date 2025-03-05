@@ -1,13 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
-using Amazon.CognitoIdentityProvider;
 using DietiDeals24.DataAccessLayer.Extensions;
 using DietiDeals24.RestApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using FluentValidation;
 
 namespace DietiDeals24.RestApi;
 
@@ -40,7 +40,9 @@ public class Program
                 };
             });
         
+        builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddControllers();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>

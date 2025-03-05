@@ -24,9 +24,10 @@ public class AuctionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAuctionById(Guid id)
     {
+        _logger.LogInformation("[CONTROLLER] Getting auction by id: {id}", id);
+
         try
         {
-            _logger.LogInformation("[CONTROLLER] Getting auction by id: {id}", id);
             var result = await _auctionWorker.GetAuctionById(id);
             if (result == null) return NotFound();
             return Ok(result);
@@ -44,9 +45,10 @@ public class AuctionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAllAuctions()
     {
+        _logger.LogInformation("[CONTROLLER] Getting all auctions");
+
         try
         {
-            _logger.LogInformation("[CONTROLLER] Getting all auctions");
             var result = await _auctionWorker.GetAllAuctions();
 
             if (result.Any()) return Ok(result);
@@ -59,17 +61,17 @@ public class AuctionController : ControllerBase
         }
     }
 
-    [HttpGet("get-paginated-auctions", Name = "GetPaginatedAuctions")]
+    [HttpPost("get-paginated-auctions", Name = "GetPaginatedAuctions")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetPaginatedAuctions([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5, 
-        [FromQuery] AuctionFilters filters = null)
+    public async Task<IActionResult> GetPaginatedAuctions([FromBody] AuctionFiltersDTO filters)
     {
+        _logger.LogInformation("[CONTROLLER] Getting paginated auctions");
+
         try
         {
-            _logger.LogInformation("[CONTROLLER] Getting paginated auctions");
-            var result = await _auctionWorker.GetPaginatedAuctions(pageNumber, pageSize, filters);
+            var result = await _auctionWorker.GetPaginatedAuctions(filters);
 
             if (result.Results.Any()) return Ok(result);
             return NotFound();
@@ -80,15 +82,38 @@ public class AuctionController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+    
+    [HttpGet("get-detailed-auction-by-id", Name = "GetDetailedAuctionById")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetDetailedAuctionById([FromQuery] Guid id)
+    {
+        _logger.LogInformation("[CONTROLLER] Getting all detailed auctions");
+
+        try
+        {
+            var result = await _auctionWorker.GetDetailedAuctionById(id);
+            
+            if(result != null) return Ok(result);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] Failed to get the auction. Exception occurred: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpPost("create-auction", Name = "CreateAuction")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateAuction([FromBody] CreateAuctionDTO auction)
     {
+        _logger.LogInformation("[CONTROLLER] Creating new auction");
+
         try
         {
-            _logger.LogInformation("[CONTROLLER] Creating new auction");
             
             var result = await _auctionWorker.CreateAuction(auction);
 

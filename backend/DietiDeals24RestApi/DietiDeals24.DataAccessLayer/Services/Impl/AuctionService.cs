@@ -8,7 +8,7 @@ using DietiDeals24.DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace DietiDeals24.DataAccessLayer.Services;
+namespace DietiDeals24.DataAccessLayer.Services.Impl;
 
 public class AuctionService : IAuctionService
 {
@@ -50,7 +50,7 @@ public class AuctionService : IAuctionService
                 AuctionState = auction.AuctionState,
                 StartingDate = auction.StartingDate,
                 EndingDate = auction.EndingDate,
-                AuctionImages = auction.AuctionImages.Select( image => new AuctionImage
+                AuctionImages = auction.AuctionImages.Select(image => new AuctionImage
                 {
                     Id = image.Id,
                     AuctionId = image.AuctionId,
@@ -92,14 +92,15 @@ public class AuctionService : IAuctionService
         };
     }
 
-    public async Task<IQueryable<Auction>> GetAllAuctionsAsync(string? predicate = null, params object[] parameters)
+    public async Task<List<Auction>> GetAllAuctionsAsync(string? predicate = null, params object[] parameters)
     {
         try
         {
             var auctions = _unitOfWork.AuctionRepository.Get(predicate, parameters);
 
-            return auctions
-                .OrderBy(auction => auction.EndingDate);
+            return await auctions
+                .OrderBy(auction => auction.Id)
+                .ToListAsync();
         }
         catch (Exception ex)
         {
@@ -108,57 +109,40 @@ public class AuctionService : IAuctionService
         }
     }
 
-    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctionsAsync(int pageNumber, int pageSize, 
-        AuctionFilters filters, string? predicate = null, params object[] parameters)
+    public async Task<List<Auction>> GetPaginatedAuctionsAsync(AuctionFiltersDTO filters, 
+        string? predicate = null, params object[] parameters)
     {
+        _logger.LogInformation("[SERVICE] Getting paginated auctions.");
+        
         try
         {
-            var query = _unitOfWork.AuctionRepository.Get(
-                auction => /*(filters.Category == null || auction.Category == filters.Category.Value) && */ //need to be fixed
-                     (filters.Type == null || auction.AuctionType == filters.Type.Value) &&
-                     (auction.CurrentPrice >= filters.MinPrice) &&
-                     (auction.CurrentPrice <= filters.MaxPrice)
-            );
+            var query = _unitOfWork.AuctionRepository
+                .Get(
+                    auction => (auction.AuctionState == AuctionState.Open) && 
+                        (filters.SearchText == null || auction.Title.ToLower().Contains(filters.SearchText.ToLower())) &&
+                        //(filters.Category == null || auction.Category == filters.Category) && 
+                        (filters.Type == null || auction.AuctionType == filters.Type.Value) &&
+                        (filters.MinPrice == 0 || auction.CurrentPrice >= filters.MinPrice) &&
+                        (filters.MaxPrice == 0 || auction.CurrentPrice <= filters.MaxPrice) &&
+                        (filters.VendorId == null || auction.VendorId == filters.VendorId)
+                );
             
-            var totalRecords = await query.CountAsync();
-
+            query = filters.Order switch
+            {
+                AuctionSortOrder.MostBids => query.OrderByDescending(auction => auction.Bids.Count),
+                AuctionSortOrder.PriceHighToLow => query.OrderByDescending(auction => auction.CurrentPrice),
+                AuctionSortOrder.PriceLowToHigh => query.OrderBy(auction => auction.CurrentPrice),
+                AuctionSortOrder.NewestFirst => query.OrderByDescending(auction => auction.StartingDate),
+                _ => query // Default case: No sorting
+            };
+            
             var paginatedAuctions = await query
-                //.OrderBy(a => a.Id)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((filters.PageNumber - 1) * filters.PageSize)
+                .Take(filters.PageSize)
                 .ToListAsync();
+            
+            return paginatedAuctions;
 
-            var auctionIds = paginatedAuctions.Select(auction => auction.Id).ToList();
-            var auctionImageUrls = await GetImagesUrlsForAuctionAsync(auctionIds);
-            var offerCounts = await GetOffersForAuctionAsync(auctionIds);
-
-            var result = paginatedAuctions.Select(auction => new HomePageAuctionDTO
-            {
-                Id = auction.Id,
-                MainImageUrl = auctionImageUrls.ContainsKey(auction.Id) && auctionImageUrls[auction.Id].Any()
-                    ? auctionImageUrls[auction.Id].First()  // Extract the first image
-                    : "No Image",
-                Title = auction.Title,
-                Type = (AuctionType) auction.AuctionType,
-                CurrentPrice = auction.CurrentPrice,
-                StartDate = auction.StartingDate,
-                Threshold = auction.Threshold,
-                ThresholdTimer = auction.Timer,
-                Bids = offerCounts.ContainsKey(auction.Id) ? offerCounts[auction.Id] : 0
-            })
-            .OrderByDescending<HomePageAuctionDTO, object>(auction =>
-            {
-                return filters.Order switch
-                {
-                    AuctionSortOrder.MostBids => auction.Bids,
-                    AuctionSortOrder.PriceHighToLow => auction.CurrentPrice,
-                    AuctionSortOrder.PriceLowToHigh => -auction.CurrentPrice,
-                    AuctionSortOrder.NewestFirst => auction.StartDate
-                };
-            })
-            .ToList();
-
-            return new PaginatedResult<HomePageAuctionDTO>(result, totalRecords);
         }
         catch (Exception ex)
         {
@@ -167,23 +151,27 @@ public class AuctionService : IAuctionService
         }
     }
 
-    public async Task<DetailedAuctionDTO> CreateAuctionAsync(CreateAuctionDTO auction)
+    public async Task<Auction> GetDetailedAuctionByIdAsync(Guid auctionId)
     {
         try
         {
-            if (auction == null) throw new ArgumentNullException(nameof(auction), "[SERVICE] Auction DTO is null.");
-            
-            // Fetch vendor & category in parallel to improve efficiency
-            var vendor = await _unitOfWork.VendorRepository
-                .Get(vendor => vendor.Id == auction.VendorId)
-                .FirstOrDefaultAsync();
-            
-            var category = await _unitOfWork.CategoryRepository
-                .Get(category => category.Name.ToLower() == auction.Category.ToString().ToLower())
-                .FirstOrDefaultAsync();
-
-            if (vendor == null) throw new InvalidOperationException("[SERVICE] Vendor does not exist.");
-            if (category == null) throw new InvalidOperationException("[SERVICE] Category does not exist.");
+            return await _unitOfWork.AuctionRepository
+                .Get(auction => auction.Id == auctionId)
+                .FirstOrDefaultAsync() ?? throw new InvalidOperationException();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Getting detailed auction failed: {ex.Message}");
+            throw new Exception("[SERVICE] Getting detailed auction failed.", ex);
+        }
+    }
+    
+    public async Task<Auction> CreateAuctionAsync(CreateAuctionDTO auction, Vendor vendor)
+    {
+        try
+        {
+            if (auction == null) throw new ArgumentNullException(nameof(auction), "[SERVICE] CreateAuctionDTO is null.");
+            if (vendor == null) throw new ArgumentNullException(nameof(vendor), "[SERVICE] Vendor does not exist.");
 
             var newAuction = new Auction
             {
@@ -195,51 +183,19 @@ public class AuctionService : IAuctionService
                 Threshold = auction.Threshold,
                 Timer = auction.ThresholdTimer,
                 SecretPrice = auction.SecretPrice,
+                VendorId = vendor.Id,
                 AuctionState = AuctionState.Open,
                 StartingDate = DateTime.Now,
-                Vendor = vendor,
-                Category = category
+                EndingDate = DateTime.Now.AddHours(auction.ThresholdTimer)
+                //Category = auction.Category,
             };
 
             _unitOfWork.BeginTransaction();
-
             await _unitOfWork.AuctionRepository.Add(newAuction);
-            //await _unitOfWork.Save(); // Save to generate the Auction ID
-
-            // Create images if any exist
-            var imageList = auction.ImagesUrls?
-                .Select(imageUrl => new AuctionImage
-                {
-                    AuctionId = newAuction.Id,
-                    Url = imageUrl,
-                    Auction = newAuction
-                }).ToList() ?? new List<AuctionImage>();
-
-            if (imageList.Any())
-            {
-                await _unitOfWork.AuctionImageRepository.AddRange(imageList);
-            }
-
-            _unitOfWork.Commit(); // Commit only once after all operations
+            _unitOfWork.Commit();
             await _unitOfWork.Save();
-
-            return new DetailedAuctionDTO
-            {
-                Id = newAuction.Id,
-                MainImageUrl = imageList.FirstOrDefault()?.Url, // Handle case where no images exist
-                Title = newAuction.Title,
-                Description = newAuction.AuctionDescription,
-                Type = newAuction.AuctionType,
-                Category = Enum.TryParse(category.Name, true, out AuctionCategory parsedCategory) 
-                            ? parsedCategory 
-                            : throw new InvalidOperationException("[SERVICE] Invalid category name."),
-                CurrentPrice = newAuction.CurrentPrice,
-                StartDate = newAuction.StartingDate,
-                EndingDate = newAuction.EndingDate,
-                Threshold = newAuction.Threshold,
-                ThresholdTimer = newAuction.Timer,
-                Bids = newAuction.Bids?.Count ?? 0
-            };
+            
+            return newAuction;
         }
         catch (Exception ex)
         {
@@ -247,46 +203,5 @@ public class AuctionService : IAuctionService
             throw new Exception("[SERVICE] Creating new auction failed.", ex);
         }
     }
-
-    private async Task<Dictionary<Guid, int>> GetOffersForAuctionAsync(List<Guid> auctionIds)
-    {
-        if (auctionIds == null || !auctionIds.Any())
-            return new Dictionary<Guid, int>();
-
-        try
-        {
-            return await _unitOfWork.BidRepository
-                .Get(bid => auctionIds.Contains(bid.AuctionId))
-                .GroupBy(bid => bid.AuctionId)
-                .ToDictionaryAsync(group => group.Key, group => group.Count());
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[SERVICE] Getting offer counts failed: {Message}", ex.Message);
-            throw new Exception("[SERVICE] Getting offer counts failed.", ex);
-        }
-    }
     
-    private async Task<Dictionary<Guid, List<string>>> GetImagesUrlsForAuctionAsync(List<Guid> auctionIds)
-    {
-        if (auctionIds == null || !auctionIds.Any())
-            return new Dictionary<Guid, List<string>>();
-
-        try
-        {
-            return await _unitOfWork.AuctionImageRepository
-                .Get(image => auctionIds.Contains(image.AuctionId))
-                .GroupBy(image => image.AuctionId)
-                .ToDictionaryAsync(
-                    group => group.Key,  // Auction ID as key
-                    group => group.Select(image => image.Url).ToList() // List of image URLs as value
-                );
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[SERVICE] Getting image URLs failed: {Message}", ex.Message);
-            throw new Exception("[SERVICE] Getting image URLs failed.", ex);
-        }
-    }
-
 }

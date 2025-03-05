@@ -8,6 +8,7 @@ public interface IAuctionWorker
 {
     public Task<Auction> GetAuctionById(Guid id);
     public Task<List<Auction>> GetAllAuctions();
-    public Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(int pageNumber, int pageSize, AuctionFilters filters);
+    public Task<DetailedAuctionDTO> GetDetailedAuctionById(Guid id);
+    public Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(AuctionFiltersDTO filters);
     public Task<DetailedAuctionDTO> CreateAuction(CreateAuctionDTO auction);
 }

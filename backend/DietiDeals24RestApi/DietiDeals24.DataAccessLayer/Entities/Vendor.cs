@@ -7,6 +7,7 @@ public class Vendor
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    // Inserire locazione geografica (string?), url sito web (string?), short bio (string?)
     public DateTime StartingDate { get; set; }
     public int SuccessfulAuctions { get; set; }
 

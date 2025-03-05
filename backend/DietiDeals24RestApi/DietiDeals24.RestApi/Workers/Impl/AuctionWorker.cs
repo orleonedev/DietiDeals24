@@ -8,13 +8,25 @@ public class AuctionWorker: IAuctionWorker
 {
     private readonly ILogger<AuctionWorker> _logger;
     private readonly IAuctionService _auctionService;
+    private readonly IVendorService _vendorService;
+    private readonly ICategoryService _categoryService;
+    private readonly IBidService _bidService;
+    private readonly IImageService _imageService;
 
     public AuctionWorker(
         ILogger<AuctionWorker> logger, 
-        IAuctionService auctionService)
+        IAuctionService auctionService,
+        IVendorService vendorService,
+        ICategoryService categoryService,
+        IBidService bidService,
+        IImageService imageService)
     {
         _logger = logger;
         _auctionService = auctionService;
+        _vendorService = vendorService;
+        _categoryService = categoryService;
+        _bidService = bidService;
+        _imageService = imageService;
     }
 
     public async Task<Auction> GetAuctionById(Guid id)
@@ -23,7 +35,7 @@ public class AuctionWorker: IAuctionWorker
         var auction = await _auctionService.GetAuctionByIdAsync(id);
         return auction;
     }
-
+    
     public async Task<List<Auction>> GetAllAuctions()
     {
         _logger.LogInformation("[WORKER] Getting all auctions");
@@ -41,13 +53,42 @@ public class AuctionWorker: IAuctionWorker
         }
     }
 
-    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(int pageNumber, int pageSize, AuctionFilters filters)
+    public async Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(AuctionFiltersDTO filters)
     {
-        _logger.LogInformation("[WORKER] Getting paginated auctions");
+        _logger.LogInformation("[WORKER] Getting paginated auctions.");
 
         try
         {
-            return await _auctionService.GetPaginatedAuctionsAsync(pageNumber, pageSize, filters);
+            // Fetch the ordered auctions directly from the service
+            var auctions = await _auctionService.GetPaginatedAuctionsAsync(filters);
+            var paginatedAuctions = new PaginatedResult<HomePageAuctionDTO>
+            {
+                Results = new List<HomePageAuctionDTO>(),
+                TotalRecords = auctions.Count,
+                PageNumber = filters.PageNumber,
+                PageSize = filters.PageSize
+            };
+
+            // Fetch all bids & images
+            var auctionIds = auctions.Select(auction => auction.Id).ToList();
+            var bidsCountDict = await _bidService.GetBidsCountForAuctionAsync(auctionIds);
+            var imagesDict = await _imageService.GetImagesUrlsForAuctionAsync(auctionIds);
+            
+            foreach (var auction in auctions)
+            {
+                paginatedAuctions.Results.Add(new HomePageAuctionDTO
+                {
+                    Id = auction.Id,
+                    MainImageUrl = imagesDict.TryGetValue(auction.Id, out var images) && images.Any() ? images.First() : "",
+                    Title = auction.Title,
+                    Type = auction.AuctionType,
+                    CurrentPrice = auction.CurrentPrice,
+                    EndingDate = auction.EndingDate,
+                    Bids = bidsCountDict.TryGetValue(auction.Id, out var bids) ? bids : 0
+                });
+            }
+
+            return paginatedAuctions;
         }
         catch (Exception ex)
         {
@@ -56,13 +97,70 @@ public class AuctionWorker: IAuctionWorker
         }
     }
 
-    public async Task<DetailedAuctionDTO> CreateAuction(CreateAuctionDTO auction)
+    
+    public async Task<DetailedAuctionDTO> GetDetailedAuctionById(Guid id)
+    {
+        _logger.LogInformation("[WORKER] Getting the auction.");
+
+        try
+        {
+            var auction = await _auctionService.GetDetailedAuctionByIdAsync(id);
+            
+            return new DetailedAuctionDTO
+            {
+                Id = auction.Id,
+                //MainImageUrl = auctionImagesUrls.FirstOrDefault(),
+                //ImagesUrls = auctionImagesUrls,
+                Title = auction.Title,
+                /*Category = Enum.TryParse(auction.Category.Name, true, out AuctionCategory parsedCategory) 
+                    ? parsedCategory 
+                    : throw new InvalidOperationException("[SERVICE] Invalid category name."),*/
+                Type = auction.AuctionType,
+                CurrentPrice = auction.CurrentPrice,
+                StartingDate = auction.StartingDate,
+                EndingDate = auction.EndingDate,
+                Threshold = auction.Threshold,
+                ThresholdTimer = auction.Timer,
+                //Bids = auctionBids,
+                Description = auction.AuctionDescription,
+                VendorId = auction.VendorId,
+                VendorName = auction.Vendor.User.Username,
+                SecretPrice = auction.SecretPrice
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Getting detailed auction. Exception occurred: {ex.Message}");
+            throw new Exception("[WORKER] Getting detailed auction failed.", ex);
+        }
+    }
+
+    public async Task<DetailedAuctionDTO> CreateAuction(CreateAuctionDTO auctionDto)
     {
         _logger.LogInformation("[WORKER] Creating new auction");
 
         try
         {
-            return await _auctionService.CreateAuctionAsync(auction);
+            var vendor = await _vendorService.GetVendorByIdAsync(auctionDto.VendorId);
+            var auction = await _auctionService.CreateAuctionAsync(auctionDto, vendor);
+            //image service che aggiunge le immagini
+
+            return new DetailedAuctionDTO
+            {
+                Id = auction.Id,
+                Title = auction.Title,
+                Description = auction.AuctionDescription,
+                Type = auction.AuctionType,
+                Category = auctionDto.Category,
+                StartingDate = auction.StartingDate,
+                EndingDate = auction.EndingDate,
+                CurrentPrice = auction.CurrentPrice,
+                Threshold = auction.Threshold,
+                ThresholdTimer = auction.Timer,
+                //MainImageUrl = auction.AuctionImages.First().Url,
+                //ImagesUrls = 
+                Bids = 0
+            };
         }
         catch (Exception ex)
         {

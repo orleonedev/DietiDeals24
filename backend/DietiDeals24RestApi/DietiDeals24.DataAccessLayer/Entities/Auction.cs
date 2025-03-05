@@ -16,6 +16,7 @@ public class Auction
     public decimal? SecretPrice { get; set; }
     public Guid VendorId { get; set; }
     public Guid CategoryId { get; set; }
+    //public AuctionCategory Category { get; set; }
     public AuctionState AuctionState { get; set; }
     public DateTime StartingDate { get; set; }
     public DateTime EndingDate { get; set; }
@@ -23,15 +24,16 @@ public class Auction
     // Navigation Properties
     public Vendor Vendor { get; set; }
     public Category Category { get; set; }
-    public ICollection<AuctionImage> AuctionImages { get; set; }
-    public ICollection<Bid> Bids { get; set; }
+    public ICollection<AuctionImage> AuctionImages { get; set; } = new List<AuctionImage>();
+    public ICollection<Bid> Bids { get; set; } = new List<Bid>();
     //public ICollection<Transaction> Transactions { get; set; }
 }
 
 public enum AuctionType
 {
-    Incremental = 0,
-    Descending = 1
+    All = 0,
+    Incremental = 1,
+    Descending = 2
 }
 
 public enum AuctionState
@@ -43,8 +45,11 @@ public enum AuctionState
 
 public enum AuctionCategory
 {
-    Goods = 0,
-    Services = 1
+    All = 0,
+    Services = 1,
+    Electronics = 2,
+    Furniture = 3,
+    Clothing = 4
 }
 
 public enum AuctionSortOrder

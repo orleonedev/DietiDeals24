@@ -20,6 +20,10 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<ICheckService, CheckService>();
         serviceCollection.AddScoped<IAuctionService, AuctionService>();
+        serviceCollection.AddScoped<IVendorService, VendorService>();
+        serviceCollection.AddScoped<ICategoryService, CategoryService>();
+        serviceCollection.AddScoped<IBidService, BidService>();
+        serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddAWSService<IAmazonCognitoIdentityProvider>();
         serviceCollection.AddSingleton<ISecretsService, SecretsService>();
         serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();

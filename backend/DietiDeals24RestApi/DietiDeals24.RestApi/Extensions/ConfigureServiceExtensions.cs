@@ -10,6 +10,7 @@ public static class ConfigureServiceExtensions
         services.AddScoped<ICheckWorker, CheckWorker>();
         services.AddScoped<IAuctionWorker, AuctionWorker>();
         services.AddScoped<IAuthenticationWorker, AuthenticationWorker>();
+        services.AddScoped<IBidWorker, BidWorker>();
         return services;
     }
 }

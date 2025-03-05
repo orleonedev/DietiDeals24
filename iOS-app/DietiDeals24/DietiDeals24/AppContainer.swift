@@ -51,6 +51,10 @@ extension AppContainer {
             DefaultVendorService(rest: self.unsafeResolve())
         }
         
+        register(for: BidService.self) {
+            DefaultBidService(rest: self.unsafeResolve())
+        }
+        
         register(for: AppState.self, scope: .singleton) {
             AppState(credentialService: self.unsafeResolve(), authService: self.unsafeResolve())
         }

@@ -12,13 +12,13 @@ enum VendorEndpoint {
     case getVendor(id: UUID)
 }
 
-extension VendorEndpoint: EndpointConvertible {
-    var endpoint: Endpoint {
+extension VendorEndpoint {
+    var endpoint: EndpointConvertible {
         switch self {
             case .becomeVendor(let parameters):
-                return Self.getBecomeAVendorEndpoint(param: parameters).endpoint
+                return Self.getBecomeAVendorEndpoint(param: parameters)
             case .getVendor(let id):
-                return Self.getVendorDetailEndpoint(id: id).endpoint
+                return Self.getVendorDetailEndpoint(id: id)
         }
     }
     

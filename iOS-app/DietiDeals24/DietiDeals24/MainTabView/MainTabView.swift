@@ -6,72 +6,60 @@
 //
 
 import SwiftUI
+import RoutingKit
 
 public struct MainTabView: View, LoadableView {
     
     @State var viewModel: MainTabViewModel
-    @State var appState: AppState
+    private let exploreCoordinator: ExploreCoordinator
+    private let searchCoordinator: SearchCoordinator
+    private let sellingCoordinator: SellingCoordinator
+    private let notificationCoordinator: NotificationCoordinator
+    private let userAreaCoordinator: UserAreaCoordinator
+    
+    init(viewModel: MainTabViewModel, userAreaCoordinator: UserAreaCoordinator, sellingCoordinator: SellingCoordinator, searchCoordinator: SearchCoordinator, exploreCoordinator: ExploreCoordinator, notificationCoordinator: NotificationCoordinator) {
+        self.viewModel = viewModel
+        self.userAreaCoordinator = userAreaCoordinator
+        self.sellingCoordinator = sellingCoordinator
+        self.notificationCoordinator = notificationCoordinator
+        self.exploreCoordinator = exploreCoordinator
+        self.searchCoordinator = searchCoordinator
+    }
+    
     public var body: some View {
         
         TabView(selection: $viewModel.activeTab) {
             
             Tab("Explore", systemImage: "house", value: 0) {
-                exploreTabView(appState: self.appState)
+                exploreCoordinator.rootView()
             }
             Tab("Search", systemImage: "magnifyingglass", value: 1) {
-                searchItemsTabView()
+                searchCoordinator.rootView()
             }
+                
             Tab("Sell", systemImage: "plus.circle", value: 2) {
-                sellTabView()
+                sellingCoordinator.rootView()
             }
+            
             Tab("Notifications", systemImage: "bell", value: 3) {
-                notificationTabView()
+                notificationCoordinator.rootView()
             }
             Tab("Personal Area", systemImage: "person", value: 4) {
-                UserAreaTabView()
+                userAreaCoordinator.rootView()
             }
             
         }
-    }
-    
-}
-
-extension MainTabView {
-    
-    @ViewBuilder
-    func exploreTabView(appState: AppState) -> some View {
-        ContentView(appState: appState)
-    }
-    
-    @ViewBuilder
-    func searchItemsTabView() -> some View {
-        NavigationStack{
-            Text("Search Items Tab")
+        .tabViewStyle(.sidebarAdaptable)
+        .defaultAdaptableTabBarPlacement(.tabBar)
+        .tabViewSidebarHeader {
+            Text("DietiDeals24")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .lineLimit(1)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom)
         }
     }
     
-    @ViewBuilder
-    func sellTabView() -> some View {
-        NavigationStack{
-            Text("Sell Tab")
-        }
-    }
-    
-    @ViewBuilder
-    func notificationTabView() -> some View {
-        NavigationStack{
-            Text("notification Tab")
-        }
-    }
-    
-    @ViewBuilder
-    func UserAreaTabView() -> some View {
-        NavigationStack{
-            Text("UserArea Tab")
-        }
-    }
-}
-
-#Preview {
-    MainTabView(viewModel: .init(), appState: .init(credentialService: KeychainCredentialService(), authService: CognitoAuthService(rest: DefaultRESTDataSource())))
 }

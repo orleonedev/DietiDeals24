@@ -4,16 +4,81 @@
     "" : {
 
     },
+    "------" : {
+
+    },
+    "@------------" : {
+
+    },
+    "@%@" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ €" : {
+
+    },
+    "%lld bid%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bid%2$@"
+          }
+        }
+      }
+    },
+    "%lld/6" : {
+
+    },
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
+
+    },
+    "Add up to 6 images" : {
+
+    },
+    "Apply" : {
+
+    },
+    "Auction Type" : {
+
+    },
+    "Auctions Created: %@" : {
+
+    },
+    "Become a Vendor" : {
+
+    },
+    "Become a Vendor on \nDietiDeals24" : {
 
     },
     "Cancel" : {
 
     },
+    "Close" : {
+
+    },
+    "Create Auction" : {
+
+    },
     "Create your account" : {
 
     },
+    "Description" : {
+
+    },
     "Dieti Deals 24" : {
+
+    },
+    "DietiDeals24" : {
 
     },
     "Don't have an account?" : {
@@ -28,10 +93,28 @@
     "Hello, %@!" : {
 
     },
+    "Images (optional)" : {
+
+    },
+    "Join our vendor community and start listing your items for auction. Tap the button below to begin." : {
+
+    },
+    "Joined since %@" : {
+
+    },
     "load" : {
 
     },
-    "notification Tab" : {
+    "Logout" : {
+
+    },
+    "More" : {
+
+    },
+    "Next" : {
+
+    },
+    "Notification Tab" : {
 
     },
     "Notifications" : {
@@ -46,19 +129,31 @@
     "Personal Area" : {
 
     },
+    "Present Offer" : {
+
+    },
+    "Publish Auction" : {
+
+    },
+    "Ready to create your next auction? Tap the button below to get started with listing your items." : {
+
+    },
+    "Remaining Time" : {
+
+    },
     "Revoke Cred" : {
 
     },
     "Search" : {
 
     },
-    "Search Items Tab" : {
+    "Search for products or services" : {
+
+    },
+    "Secret Price" : {
 
     },
     "Sell" : {
-
-    },
-    "Sell Tab" : {
 
     },
     "Sign In" : {
@@ -76,19 +171,46 @@
     "Skip Sign Up" : {
 
     },
+    "Skip Submit" : {
+
+    },
+    "Something went wrong" : {
+
+    },
+    "Start Selling" : {
+
+    },
+    "Starting Price" : {
+
+    },
+    "Submit Vendor Details" : {
+
+    },
     "Terms and Conditions" : {
 
     },
     "This is the start of cognito setup" : {
 
     },
-    "UserArea Tab" : {
+    "Threshold" : {
+
+    },
+    "Timer" : {
 
     },
     "Verify" : {
 
     },
     "Verify your email address" : {
+
+    },
+    "We couldn't find any auctions at this time. Try again later." : {
+
+    },
+    "We Would love to hear more about you, to enrich the experience for all our users!" : {
+
+    },
+    "Welcome, Vendor!" : {
 
     }
   },

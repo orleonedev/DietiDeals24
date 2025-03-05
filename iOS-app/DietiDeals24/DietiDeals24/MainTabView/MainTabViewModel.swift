@@ -12,5 +12,11 @@ class MainTabViewModel: LoadableViewModel {
     var isLoading: Bool = false
     var activeTab: Int = 0
     
+    let mainCoordinator: MainTabCoordinator
+    
+    init(mainCoordinator: MainTabCoordinator) {
+        self.mainCoordinator = mainCoordinator
+    }
+    
     
 }

@@ -12,23 +12,34 @@ import RoutingKit
 struct SignInView: View, LoadableView {
     
     @State var viewModel: SignInViewModel
+    @FocusState var isFocused: Bool
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Spacer()
-                Image("AppIconImage")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 128, height: 128)
-                    .clipShape(.rect(cornerRadius: 128/6.4))
-                Spacer()
-                loginView()
-                noAccountView()
+                VStack(spacing: 24) {
+                    Spacer()
+                    Image("AppIconImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 128, height: 128)
+                        .clipShape(.rect(cornerRadius: 128/6.4))
+                    Spacer()
+                    loginView()
+                    noAccountView()
+                }
+                .background(.clear)
+                .contentShape(Rectangle())
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        isFocused = false
+                    }
+                )
                 socialLoginStack()
             }
             .padding()
         }
+        
         .scrollBounceBehavior(.basedOnSize)
         .scrollDismissesKeyboard(.interactively)
         .overlay {
@@ -55,6 +66,7 @@ extension SignInView {
                 ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email")
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
+                    .focused(self.$isFocused)
             }
             
             SecureValidableTextField(
@@ -64,7 +76,7 @@ extension SignInView {
             )
             .textContentType(.password)
             .autocorrectionDisabled(true)
-            
+            .focused(self.$isFocused)
         }
         
     }
@@ -78,6 +90,7 @@ extension SignInView {
                         try await viewModel.tryAuthentication()
                     } catch {
                         print(error)
+                        viewModel.isLoading = false
                     }
                 }
             }) {
@@ -98,6 +111,7 @@ extension SignInView {
                         try await viewModel.skipAuth()
                     } catch {
                         print(error)
+                        viewModel.isLoading = false
                     }
                 }
             }
@@ -164,9 +178,16 @@ extension SignInView {
     func signInWithApple() -> some View {
         
         AuthenticationServices.SignInWithAppleButton(.signIn) { request in
-            
+            request.requestedScopes = [.email, .fullName]
         } onCompletion: { result in
-            
+            switch result {
+                case .success(let authorization):
+                    let credentials = authorization.credential as? ASAuthorizationAppleIDCredential
+                    //TODO: Cognito provider
+                    
+                case .failure(let error):
+                    print(error)
+            }
         }
         .signInWithAppleButtonStyle(.whiteOutline)
     }

@@ -74,7 +74,7 @@ final class CognitoAuthService: AuthService {
     }
     
     func signOut() async throws {
-        
+        //TODO: invalidate Tokens
     }
     
 }

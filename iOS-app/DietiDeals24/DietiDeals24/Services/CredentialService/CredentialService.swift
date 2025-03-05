@@ -13,6 +13,8 @@ protocol CredentialService: AnyObject {
     func getRefreshToken() -> String?
     func getIdToken() -> String?
     
+    func getAccountModel() -> UserAccount?
+    
     func setSessionCredentials(session: SessionCredential?)
     func getSessionCredentials() -> SessionCredential?
     func clearSessionCredentials()

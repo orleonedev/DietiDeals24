@@ -26,14 +26,33 @@ extension AppContainer {
         #else
         Logger.shared.add(logger: ConsoleLogger(logLevel: .error))
 #endif
-        register(for: RESTDataSource.self, scope: .singleton) {
+        typealias AuthRestDataSource = DefaultRESTDataSource
+        
+        register(for: AuthRestDataSource.self,scope: .singleton) {
             DefaultRESTDataSource()
         }
+        
         register(for: AuthService.self, scope: .singleton) { [self] in
-            CognitoAuthService(rest: unsafeResolve())
+            CognitoAuthService(rest: unsafeResolve(AuthRestDataSource.self))
         }
         register(for: CredentialService.self, scope: .singleton) {
             KeychainCredentialService()
+        }
+        
+        register(for: RESTDataSource.self) {
+            DefaultRESTDataSource(credentialService: self.unsafeResolve(CredentialService.self), authService: self.unsafeResolve(AuthService.self))
+            }
+        
+        register(for: AuctionService.self) {
+            DefaultAuctionService(rest: self.unsafeResolve())
+        }
+        
+        register(for: VendorService.self) {
+            DefaultVendorService(rest: self.unsafeResolve())
+        }
+        
+        register(for: BidService.self) {
+            DefaultBidService(rest: self.unsafeResolve())
         }
         
         register(for: AppState.self, scope: .singleton) {
@@ -48,13 +67,18 @@ extension AppContainer {
     func setupRouting() {
         
         self.registerAuthFlow()
-        self.registerMainFlows()
+        self.registerUserArea()
+        self.registerSellingTab()
+        self.registerExploreTab()
+        self.registerSearchTab()
+        self.registerNotificationTab()
+        self.registerMainTab()
 
-        
     }
     
+    //MARK: - AUTH
     private func registerAuthFlow() {
-        register(for: AuthFlowCoordinator.AuthRouter.self, scope: .singleton) { @MainActor [self] in
+        register(for: AuthFlowCoordinator.AuthRouter.self) { @MainActor [self] in
             AuthFlowCoordinator.AuthRouter()
         }
         register(for: AuthFlowCoordinator.self, scope: .singleton) {
@@ -71,10 +95,121 @@ extension AppContainer {
         }
     }
     
-    private func registerMainFlows() {
+    //MARK: - MAIN
+    private func registerMainTab() {
+        
+        register(for: MainTabCoordinator.self, scope: .singleton) {
+            MainTabCoordinator(appContainer: self)
+        }
+        
+        register(for: MainTabCoordinator.TabRouter.self) { @MainActor [self] in
+            MainTabCoordinator.TabRouter()
+        }
+        
         register(for: MainTabViewModel.self) { [self] in
-            MainTabViewModel()
+            MainTabViewModel(mainCoordinator: self.unsafeResolve())
+        }
+        
+    }
+    
+    //MARK: - USER AREA TAB
+    private func registerUserArea() {
+        register(for: UserAreaCoordinator.self, scope: .singleton) {
+            UserAreaCoordinator(appContainer: self)
+        }
+        
+        register(for: UserAreaCoordinator.UserAreaRouter.self) { @MainActor [self] in
+            UserAreaCoordinator.UserAreaRouter()
+        }
+        
+        register(for: UserAreaMainViewModel.self) {
+            UserAreaMainViewModel(coordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
         }
     }
     
+    //MARK: - SELL TAB
+    private func registerSellingTab() {
+        
+        register(for: SellingCoordinator.self, scope: .singleton) {
+            SellingCoordinator(appContainer: self)
+        }
+        
+        register(for: SellingCoordinator.SellingRouter.self) { @MainActor [self] in
+            SellingCoordinator.SellingRouter()
+        }
+        
+        register(for: BecomeAVendorViewModel.self) {
+            BecomeAVendorViewModel(sellingCoordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
+        }
+        register(for: SellingMainViewModel.self) {
+            SellingMainViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+        register(for: BaseAuctionDetailViewModel.self) {
+            BaseAuctionDetailViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+        register(for: TypedAuctionDetailViewModel.self) {
+            TypedAuctionDetailViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+        register(for: AuctionPreviewViewModel.self) {
+            AuctionPreviewViewModel(sellingCoordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
+        }
+        
+        register(for: SellingCoordinator.SellingAuctionVM.self, tag: .init("Selling")) {
+            AuctionDetailMainViewModel(sellingCoordinator: self.unsafeResolve())
+        }
+        
+    }
+    
+    //MARK: - EXPLORE TAB
+    private func registerExploreTab() {
+        
+        register(for: ExploreCoordinator.self, scope: .singleton) {
+            ExploreCoordinator(appContainer: self)
+        }
+        
+        register(for: ExploreCoordinator.ExploreRouter.self) { @MainActor [self] in
+            ExploreCoordinator.ExploreRouter()
+        }
+        
+        register(for: ExploreMainViewModel.self) {
+            ExploreMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
+        }
+        
+        register(for: ExploreCoordinator.ExploreAuctionVM.self, tag: .init("Explore")) {
+            AuctionDetailMainViewModel(exploreCoordinator: self.unsafeResolve())
+        }
+    }
+    
+    //MARK: - SEARCH TAB
+    private func registerSearchTab() {
+        
+        register(for: SearchCoordinator.self, scope: .singleton) {
+            SearchCoordinator(appContainer: self)
+        }
+        
+        register(for: SearchCoordinator.SearchRouter.self) { @MainActor [self] in
+            SearchCoordinator.SearchRouter()
+        }
+        
+        register(for: SearchMainViewModel.self) {
+            SearchMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
+        }
+        register(for: SearchCoordinator.SearchAuctionVM.self, tag: .init("Search")) {
+            AuctionDetailMainViewModel(searchCoordinator: self.unsafeResolve())
+        }
+    }
+    
+    //MARK: - NOTIFICATIONS TAB
+    private func registerNotificationTab() {
+        register(for: NotificationCoordinator.self, scope: .singleton) {
+            NotificationCoordinator(appContainer: self)
+        }
+        
+        register(for: NotificationCoordinator.NotificationRouter.self) { @MainActor [self] in
+            NotificationCoordinator.NotificationRouter()
+        }
+    }
 }

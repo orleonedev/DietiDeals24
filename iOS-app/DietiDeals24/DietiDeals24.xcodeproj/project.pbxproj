@@ -535,7 +535,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D PROD";
 				PRODUCT_BUNDLE_IDENTIFIER = ingsw2324g63.sigmaTeam.DietiDeals24;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -570,7 +570,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D PROD";
 				PRODUCT_BUNDLE_IDENTIFIER = ingsw2324g63.sigmaTeam.DietiDeals24;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -679,7 +679,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEV";
 				PRODUCT_BUNDLE_IDENTIFIER = "ingsw2324g63.sigmaTeam.DietiDeals24-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -714,7 +714,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEV";
 				PRODUCT_BUNDLE_IDENTIFIER = "ingsw2324g63.sigmaTeam.DietiDeals24-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";

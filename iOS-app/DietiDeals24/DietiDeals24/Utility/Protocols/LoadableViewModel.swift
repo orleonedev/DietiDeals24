@@ -32,6 +32,7 @@ extension View where Self: LoadableView {
                 }
                 
             }
+            .ignoresSafeArea()
             .transition(.opacity)
         }
     }

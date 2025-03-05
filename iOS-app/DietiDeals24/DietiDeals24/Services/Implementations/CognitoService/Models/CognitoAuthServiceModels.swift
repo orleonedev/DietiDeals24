@@ -177,7 +177,7 @@ extension CognitoEndpoint {
         }
     }
     
-    static func getLoginEndpoint(username: String, password: String) -> CodableEndpoint<CognitoAuthResponse> {
+    static private func getLoginEndpoint(username: String, password: String) -> CodableEndpoint<CognitoAuthResponse> {
         
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
@@ -207,7 +207,7 @@ extension CognitoEndpoint {
         )
     }
     
-    static func getLoginEndpoint(provider: String, token: String) -> CodableEndpoint<CognitoAuthResponse> {
+    static private func getLoginEndpoint(provider: String, token: String) -> CodableEndpoint<CognitoAuthResponse> {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
@@ -236,7 +236,7 @@ extension CognitoEndpoint {
         )
     }
     
-    static func getLoginEndpoint(refreshToken: String) -> CodableEndpoint<CognitoAuthResponse> {
+    static private func getLoginEndpoint(refreshToken: String) -> CodableEndpoint<CognitoAuthResponse> {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
@@ -264,7 +264,7 @@ extension CognitoEndpoint {
         )
     }
     
-    static func getLoginEndpoint(sessionCredentials: SessionCredential) -> CodableEndpoint<CognitoAuthResponse> {
+    static private func getLoginEndpoint(sessionCredentials: SessionCredential) -> CodableEndpoint<CognitoAuthResponse> {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
@@ -294,7 +294,7 @@ extension CognitoEndpoint {
         )
     }
     
-    static func getSignUpEndpoint(model: UserSignUpAttributes) -> CodableEndpoint<CognitoSignUpResponse> {
+    static private func getSignUpEndpoint(model: UserSignUpAttributes) -> CodableEndpoint<CognitoSignUpResponse> {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
@@ -328,7 +328,7 @@ extension CognitoEndpoint {
         )
     }
     
-    static func getConfirmSignUpEndpoint(code: String, username: String) -> CodableEndpoint<CognitoConfirmSignUpResponse> {
+    static private func getConfirmSignUpEndpoint(code: String, username: String) -> CodableEndpoint<CognitoConfirmSignUpResponse> {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post

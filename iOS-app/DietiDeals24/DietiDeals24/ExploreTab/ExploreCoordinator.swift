@@ -50,7 +50,7 @@ class ExploreCoordinator: Coordinator {
     
     private func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
         .init {
-            let vm = self.appContainer.unsafeResolve(ExploreAuctionVM.self)
+            let vm = self.appContainer.unsafeResolve(ExploreAuctionVM.self, tag: .init("Explore"))
             vm.setAuction(auction)
             return AuctionDetailMainView(viewModel: vm)
             

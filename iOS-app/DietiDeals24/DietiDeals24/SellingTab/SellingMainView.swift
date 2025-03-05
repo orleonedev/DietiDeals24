@@ -43,14 +43,14 @@ extension SellingMainView {
                     .padding()
                     .foregroundStyle(.dietiYellow)
                 
-                Text("Start Selling on \nDietiDeals24")
+                Text("Become a Vendor on \nDietiDeals24")
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .fontWeight(.bold)
                     .foregroundStyle(.dietiYellow)
             }
             
-            Text("Join our seller community and start listing your items for auction. Tap the button below to begin.")
+            Text("Join our vendor community and start listing your items for auction. Tap the button below to begin.")
                 .font(.title3)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
@@ -86,7 +86,7 @@ extension SellingMainView {
                     .padding()
                     .foregroundStyle(.dietiYellow)
                 
-                Text("Welcome, Seller!")
+                Text("Welcome, Vendor!")
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .fontWeight(.bold)

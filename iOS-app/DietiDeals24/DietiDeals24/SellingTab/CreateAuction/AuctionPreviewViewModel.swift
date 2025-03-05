@@ -13,8 +13,10 @@ class AuctionPreviewViewModel: LoadableViewModel {
     
     var sellingCoordinator: SellingCoordinator
     var auction: CreateAuctionModel?
-    init(sellingCoordinator: SellingCoordinator) {
+    var auctionService: AuctionService
+    init(sellingCoordinator: SellingCoordinator, auctionService: AuctionService) {
         self.sellingCoordinator = sellingCoordinator
+        self.auctionService = auctionService
     }
     
     public func setAuction(_ auction: CreateAuctionModel) {
@@ -23,19 +25,18 @@ class AuctionPreviewViewModel: LoadableViewModel {
     
     @MainActor
     func tryToDismiss() {
-        self.sellingCoordinator.dismiss(to: .toRoot)
+        self.sellingCoordinator.dismiss()
     }
     
     @MainActor
     func publishAuction() {
-        guard let auction = self.auction else { return }
-        self.isLoading = true
         Task {
-            try? await Task.sleep(for: .seconds(2))
+            guard let auction = self.auction, let userData = await sellingCoordinator.getUserData(), let vendorId = userData.vendorId, let uuid = UUID(uuidString: vendorId) else { return }
+            self.isLoading = true
+            let auctioDTO = try await auctionService.createAuction(auction: auction, vendor: uuid)
+            let auctioCreated = try AuctionDetailModel(from: auctioDTO)
             self.isLoading = false
-            
-            //if successful show alert and dismiss
-            self.sellingCoordinator.dismiss(to: .toRoot)
+            self.sellingCoordinator.goToPublishedAuction(auction: auctioCreated)
         }
     }
     

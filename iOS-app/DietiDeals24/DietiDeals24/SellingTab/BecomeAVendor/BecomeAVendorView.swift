@@ -65,13 +65,7 @@ extension BecomeAVendorView {
     func submitVendorDetailButton() -> some View {
         VStack {
             Button(action: {
-                Task{
-                    do {
-                        
-                    } catch {
-                        print(error)
-                    }
-                }
+                viewModel.submitVendorDetail()
             }) {
                 Text("Submit Vendor Details")
                     .font(.headline)
@@ -87,7 +81,7 @@ extension BecomeAVendorView {
             Button("Skip Submit") {
                 Task{
                     do {
-                        viewModel.dismiss()
+                        viewModel.skipSubmitVendorDetail()
                     } catch {
                         print(error)
                     }
@@ -100,5 +94,5 @@ extension BecomeAVendorView {
 }
 
 #Preview {
-    BecomeAVendorView(viewModel: .init(sellingCoordinator: .init(appContainer: .init())))
+    BecomeAVendorView(viewModel: .init(sellingCoordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource())))
 }

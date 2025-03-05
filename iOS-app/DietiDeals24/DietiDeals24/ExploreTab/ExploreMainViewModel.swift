@@ -30,17 +30,23 @@ class ExploreMainViewModel: LoadableViewModel {
     var isSearching: Bool = false
     
     var exploreItems: [AuctionCardModel] = []
+    let maxExploreItems: Int = 100
+    var explorePage: Int = 1
+    var explorePageSize: Int = 20
     var isFetchingExploreItems: Bool = false
     var shouldFetchMoreExploreItem: Bool = true
     
     var searchItems: [AuctionCardModel] = []
+    var searchItemsCount: Int = 0
+    var searchPage: Int = 1
+    var searchPageSize: Int = 20
     var searchText: String = ""
     var filterModel: SearchFilterModel = .init()
     let filteringOptions: [FilterType] = [.auctionType, .category, .sortOrder] //price range halt
     var isFetchingSearchResults: Bool = false
     var shouldFetchMoreSearchItem: Bool = true
     
-    var auctionService: AuctionService
+    let auctionService: AuctionService
     
     init(coordinator: ExploreCoordinator, auctionService: AuctionService) {
         self.coordinator = coordinator
@@ -49,6 +55,8 @@ class ExploreMainViewModel: LoadableViewModel {
     
     func resetSearchState(preserveFilters: Bool = false) {
         self.searchItems.removeAll()
+        self.searchItemsCount = 0
+        self.searchPage = 1
         self.isFetchingSearchResults = false
         self.shouldFetchMoreSearchItem = true
         if !preserveFilters {
@@ -89,10 +97,12 @@ class ExploreMainViewModel: LoadableViewModel {
                 self.isLoading = false
                 self.isFetchingSearchResults = false
             }
-            try? await Task.sleep(for: .seconds(2))
-            self.searchItems = AuctionCardModel.mockData //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreSearchItem = false//self.searchItems.count < 230
-            let _ = try? await auctionService.fetchAuctions(filters: filterModel, page: 1, pageSize: 20)
+            let searchItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.searchPage, pageSize: self.searchPageSize)
+            let newSearchItems: [AuctionCardModel] = searchItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
+            self.searchItemsCount = searchItemsDto.totalRecords
+            self.searchPage = searchItemsDto.page
+            self.searchItems.append(contentsOf: newSearchItems)
+            self.shouldFetchMoreSearchItem = searchItemsCount > searchItems.count
         }
     }
     
@@ -103,10 +113,13 @@ class ExploreMainViewModel: LoadableViewModel {
             isFetchingExploreItems = true
             defer {
                 self.isFetchingExploreItems = false
+                self.isLoading = false
             }
-            try? await Task.sleep(for: .seconds(2))
-            self.exploreItems.append(contentsOf: AuctionCardModel.mockData)   //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreExploreItem = self.exploreItems.count < 128
+            let exploreItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.explorePage, pageSize: self.explorePageSize)
+            let newExploreItems: [AuctionCardModel] = exploreItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
+            self.explorePage = exploreItemsDto.page
+            self.exploreItems.append(contentsOf: newExploreItems)
+            self.shouldFetchMoreExploreItem = maxExploreItems > exploreItems.count
         }
     }
     
@@ -114,22 +127,12 @@ class ExploreMainViewModel: LoadableViewModel {
         Task {
             print(auctionID)
             self.isLoading = true
-            try? await Task.sleep(for: .seconds(2))
-            let auction = AuctionDetailModel(
-                id: auctionID,
-                title: "TEST",
-                description: "long description long very long description very ver long description vd long description long very long description very ver long description vd long description long very long description very ver long description vd",
-                category: .Electronics,
-                images: [],
-                currentPrice: 12345,
-                threshold: 12,
-                timer: 34,
-                endTime: .now.advanced(by: 60*60*34),
-                vendorID: UUID(),
-                vendorName: "Venditore Test"
-            )
+            
+            let auctionDTO = try await auctionService.fetchAuctionDetails(by: auctionID)
+            let model = try AuctionDetailModel(from: auctionDTO)
+            
             self.isLoading = false
-            await self.coordinator.goToAuction(auction)
+            await self.coordinator.goToAuction(model)
             
         }
     }

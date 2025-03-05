@@ -55,7 +55,6 @@ class AppState: LoadableViewModel {
     
     private var credentialService: CredentialService
     private var authService: AuthService
-    private var userAccount: UserAccount?
     
     init(credentialService: CredentialService, authService: AuthService) {
         self.credentialService = credentialService
@@ -70,12 +69,12 @@ class AppState: LoadableViewModel {
         guard let rfToken = self.credentialService.getRefreshToken() else {
             Logger.log("Refresh token missing", tag: .appState)
             isLoading = false
+            self.isAuthenticated = false
             throw AuthServiceError.RefreshTokenMissing
         }
         do {
             let sessionToken = try await self.authService.refreshAccessToken(refreshToken: rfToken)
             self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
-            self.userAccount = self.credentialService.getAccountModel()
             self.isAuthenticated = true
             isLoading = false
         } catch {
@@ -88,7 +87,6 @@ class AppState: LoadableViewModel {
     public func SignInInteractively(email: String, password: String) async throws {
         let sessionToken = try await self.authService.signIn(username: email, password: password)
         self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
-        self.userAccount = self.credentialService.getAccountModel()
         self.isAuthenticated = true
     }
     
@@ -139,9 +137,9 @@ class AppState: LoadableViewModel {
     }
     
     public func getUserDataModel() async -> UserDataModel? {
-        guard let account = self.userAccount else {return nil}
+        guard let account = self.credentialService.getAccountModel() else {return nil}
         let role = Int(account.customRole ?? "0")
-        return UserDataModel(name: account.name ?? "", username: account.preferredUsername ?? "", email: account.email ?? "", role: UserRole(rawValue: role ?? 0) ?? .buyer)
+        return UserDataModel(name: account.name ?? "", username: account.preferredUsername ?? "", email: account.email ?? "", role: UserRole(rawValue: role ?? 0) ?? .buyer, userID: account.sub, vendorId: account.vendorId)
     }
     
     public func logOut() async {

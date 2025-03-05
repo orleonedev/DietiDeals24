@@ -57,6 +57,9 @@
     "Become a Vendor" : {
 
     },
+    "Become a Vendor on \nDietiDeals24" : {
+
+    },
     "Cancel" : {
 
     },
@@ -93,7 +96,7 @@
     "Images (optional)" : {
 
     },
-    "Join our seller community and start listing your items for auction. Tap the button below to begin." : {
+    "Join our vendor community and start listing your items for auction. Tap the button below to begin." : {
 
     },
     "Joined since %@" : {
@@ -103,9 +106,6 @@
 
     },
     "Logout" : {
-
-    },
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor quam id massa faucibus dignissim. Nullam eget metus id nisl malesuada condimentum. Nam viverra fringilla erat, ut fermentum nunc feugiat eu." : {
 
     },
     "More" : {
@@ -180,9 +180,6 @@
     "Start Selling" : {
 
     },
-    "Start Selling on \nDietiDeals24" : {
-
-    },
     "Starting Price" : {
 
     },
@@ -213,7 +210,7 @@
     "We Would love to hear more about you, to enrich the experience for all our users!" : {
 
     },
-    "Welcome, Seller!" : {
+    "Welcome, Vendor!" : {
 
     }
   },

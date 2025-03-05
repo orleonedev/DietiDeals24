@@ -15,26 +15,31 @@ struct AuctionDetailDTO: Decodable {
     public var type: AuctionType?
     public var currentPrice: Double?
     public var threshold: Double?
-    public var startDate: Date?
+    public var startingDate: Date?
     public var endingDate: Date?
     public var thresholdTimer: Int?
     public var bids: Int?
     public var description: String?
+    public var secretPrice: Double?
+    public var vendorId: UUID?
+    public var vendorName: String?
     
     enum CodingKeys: String, CodingKey {
-        case imagesUrls = "ImagesUrls"
-        case id = "Id"
-        case title = "Title"
-        case type = "Type"
-        case currentPrice = "CurrentPrice"
-        case startDate = "StartDate"
-        case threshold = "Threshold"
-        case thresholdTimer = "ThresholdTimer"
-        case bids = "Bids"
-        case description = "Description"
-        case category = "Category"
-        case endingDate = "EndingDate"
-        
+        case imagesUrls
+        case id
+        case title
+        case type
+        case currentPrice
+        case startingDate
+        case threshold
+        case thresholdTimer
+        case bids
+        case description
+        case category
+        case endingDate 
+        case secretPrice
+        case vendorId
+        case vendorName
     }
     
     public init(from decoder: Decoder) throws {
@@ -45,13 +50,16 @@ struct AuctionDetailDTO: Decodable {
         imagesUrls = try container.decodeIfPresent([String].self, forKey: .imagesUrls)
         currentPrice = try container.decodeIfPresent(Double.self, forKey: .currentPrice)
         threshold = try container.decodeIfPresent(Double.self, forKey: .threshold)
-        startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
+        startingDate = try container.decodeIfPresent(Date.self, forKey: .startingDate)
         endingDate = try container.decodeIfPresent(Date.self, forKey: .endingDate)
         thresholdTimer = try container.decodeIfPresent(Int.self, forKey: .thresholdTimer)
         bids = try container.decodeIfPresent(Int.self, forKey: .bids)
         description = try container.decodeIfPresent(String.self, forKey: .description)
+        secretPrice = try container.decodeIfPresent(Double.self, forKey: .secretPrice)
+        vendorId = try container.decodeIfPresent(UUID.self, forKey: .vendorId)
+        vendorName = try container.decodeIfPresent(String.self, forKey: .vendorName)
         
-        if let categoryRawValue = try container.decodeIfPresent(String.self, forKey: .category) {
+        if let categoryRawValue = try container.decodeIfPresent(Int.self, forKey: .category) {
             category = AuctionCategory(rawValue: categoryRawValue)
         }
         
@@ -80,7 +88,7 @@ extension AuctionDetailModel {
         guard let category = dto.category else {
             throw AuctionDetailModelError.missingValue("category")
         }
-        guard let images = dto.imagesUrls, !images.isEmpty else {
+        guard let images = dto.imagesUrls else {
             throw AuctionDetailModelError.missingValue("imagesUrls")
         }
         guard let auctionType = dto.type else {
@@ -98,6 +106,12 @@ extension AuctionDetailModel {
         guard let endTime = dto.endingDate else {
             throw AuctionDetailModelError.missingValue("endingDate")
         }
+        guard let vendorId = dto.vendorId else {
+            throw AuctionDetailModelError.missingValue("vendorId")
+        }
+        guard let vendorName = dto.vendorName else {
+            throw AuctionDetailModelError.missingValue("vendorName")
+        }
         
         self.id = id
         self.title = title
@@ -108,9 +122,10 @@ extension AuctionDetailModel {
         self.currentPrice = currentPrice
         self.threshold = threshold
         self.timer = timer
-        self.secretPrice = nil //dto.secretPrice
+        self.secretPrice = dto.secretPrice
         self.endTime = endTime
-        self.vendorID = UUID()
-        self.vendorName = "Vendor Name"
+        self.vendorID = vendorId
+        self.vendorName = vendorName
+        
     }
 }

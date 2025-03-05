@@ -171,7 +171,9 @@ extension AuctionDetailView {
             Text(auction.description)
                 .font(.body)
                 .lineLimit(nil)
+                .multilineTextAlignment(.leading)
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.secondary.quinary)
                 .clipShape(.rect(cornerRadius: 12))
         }
@@ -286,7 +288,7 @@ extension AuctionDetailView {
             auction: AuctionDetailModel(
                 id: UUID(),
                 title: "Title",
-                description: "long description goes here long description goes here long description goes here long description goes here",
+                description: "long description ",
                 category: .Furniture,
                 images: [],
                 auctionType: .incremental,

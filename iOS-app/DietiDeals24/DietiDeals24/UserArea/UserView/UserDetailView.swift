@@ -11,6 +11,8 @@ struct UserDataModel: Equatable {
     var username: String
     var email: String
     var role: UserRole
+    var userID: String? = nil
+    var vendorId: String? = nil
     var shortBio: String? = nil
     var url: String? = nil
     var auctionCreated: Int? = nil

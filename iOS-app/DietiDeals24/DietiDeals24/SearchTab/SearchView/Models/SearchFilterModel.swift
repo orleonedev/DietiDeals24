@@ -5,13 +5,15 @@
 //  Created by Oreste Leone on 2/24/25.
 //
 
+import Foundation
+
 struct SearchFilterModel {
     var serchTerm: String?
     var activeAuctionTypeFilter: AuctionType = .all
     var activeSortOrderFilter: SortOrderFilter = .relevance
     var activeCategoryFilter: AuctionCategory = .all
     var activePriceRangeFilter: PriceRangeFilter?
-    
+    var vendorIdFilter: UUID?
 }
 
 enum AuctionType: Int, FilterModelProtocol {
@@ -76,7 +78,7 @@ enum SortOrderFilter: Int, FilterModelProtocol {
     }
 }
 
-enum AuctionCategory: String, FilterModelProtocol {
+enum AuctionCategory: Int, FilterModelProtocol {
     
     var value: Any {return self.rawValue}
     
@@ -85,11 +87,11 @@ enum AuctionCategory: String, FilterModelProtocol {
     var description: String {
         return self.label
     }
-    case all
-    case services = "services" //TODO: MAPPARE con UUID
-    case Electronics = "Electronics"
-    case Furniture = "Furniture"
-    case Clothing = "Clothing"
+    case all = 0
+    case services = 1
+    case Electronics = 2
+    case Furniture = 3
+    case Clothing = 4
     
     var label: String {
         switch self {

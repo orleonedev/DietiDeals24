@@ -125,7 +125,7 @@ extension AuctionPreviewView {
                 if let secrePrice = auction.secretPrice, auction.auctionType == .descending {
                     secrePriceRow(secrePrice)
                 }
-                descriptionView()
+                descriptionView(auction.baseDetail.description)
             }
             .padding(.horizontal)
             
@@ -168,7 +168,7 @@ extension AuctionPreviewView {
                 Text("Timer")
                     .font(.body)
                 Spacer()
-                Text("\(timer)" + " Hour\(timer == 1 ? "" : "s")")
+                Text(formatTimer(timer))
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(.accent)
@@ -185,18 +185,42 @@ extension AuctionPreviewView {
         }
     }
     
+    private func formatTimer(_ timer: Int) -> String {
+        
+        if timer > 86400 {
+            // More than 1 day: show day and hours.
+            let days = Int(timer) / 86400
+            let hours = (Int(timer) % 86400) / 3600
+            return "\(days) day\(days != 1 ? "s" : ""), \(hours)h"
+        } else if timer > 3600 {
+            // More than 1 hour: show hours and minutes.
+            let hours = Int(timer) / 3600
+            let minutes = (Int(timer) % 3600) / 60
+            return "\(hours)h \(minutes)m"
+        } else {
+            // Less than 1 hour: show minutes and seconds.
+            let minutes = Int(timer) / 60
+            let seconds = Int(timer) % 60
+            return "\(minutes)m \(seconds)s"
+        }
+
+    }
+    
     @ViewBuilder
-    func descriptionView() -> some View {
+    func descriptionView(_ description: String) -> some View {
         VStack(alignment: .leading, spacing: 12){
             Text("Description")
                 .font(.headline)
             
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor quam id massa faucibus dignissim. Nullam eget metus id nisl malesuada condimentum. Nam viverra fringilla erat, ut fermentum nunc feugiat eu.")
+            Text(description)
                 .font(.body)
+                .multilineTextAlignment(.leading)
                 .lineLimit(nil)
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.secondary.quinary)
                 .clipShape(.rect(cornerRadius: 12))
+                
         }
         
     }
@@ -228,7 +252,7 @@ extension AuctionPreviewView {
     
     
     
-    @Previewable @State var vm: AuctionPreviewViewModel =  .init(sellingCoordinator: .init(appContainer: .init()))
+    @Previewable @State var vm: AuctionPreviewViewModel =  .init(sellingCoordinator: .init(appContainer: .init()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
     let imgUrl = "https://s.yimg.com/ny/api/res/1.2/Onq1adoghZAHhpsXXmF8Pw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05MzE-/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f"
     vm.setAuction(
         CreateAuctionModel(
@@ -249,5 +273,5 @@ extension AuctionPreviewView {
         )
     )
     
-    return NavigationStack{AuctionPreviewView(viewModel: vm)}
+     return AuctionPreviewView(viewModel: vm)
 }

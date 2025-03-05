@@ -38,8 +38,15 @@ class SellingCoordinator: Coordinator {
     }
     
     @MainActor
-    func dismiss(to option: RoutingKit.DismissOptions = .toPreviousView) {
-        self.router.dismiss( option: option )
+    func dismiss(shouldReloadUserData: Bool = false) {
+        if shouldReloadUserData {
+            Task {
+                try await self.appState.trySilentSignIn()
+                self.router.dismiss( option: .toRoot )
+            }
+        } else {
+            self.router.dismiss( option: .toRoot )
+        }
     }
     
     @MainActor
@@ -57,7 +64,11 @@ class SellingCoordinator: Coordinator {
         self.router.navigate(to: auctionPreviewDestination(auction: auction), type: .push)
     }
     
-    
+    @MainActor
+    func goToPublishedAuction(auction: AuctionDetailModel) {
+        self.router.dismiss(option: .toRoot)
+        self.router.navigate(to: publishedAuctionDestination(auction: auction), type: .sheet)
+    }
     
     //MARK: DESTINATIONS
     private func becomeAVendorDestination() -> RoutingKit.Destination {
@@ -85,6 +96,14 @@ class SellingCoordinator: Coordinator {
             let vm : AuctionPreviewViewModel = self.appContainer.unsafeResolve()
             vm.setAuction(auction)
             return AuctionPreviewView(viewModel: vm)
+        }
+    }
+    
+    private func publishedAuctionDestination(auction: AuctionDetailModel) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(SellingAuctionVM.self, tag: .init("Selling"))
+            vm.setAuction(auction)
+            return AuctionDetailMainView(viewModel: vm)
         }
     }
 }

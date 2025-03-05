@@ -101,7 +101,7 @@ extension AuctionDetailMainView {
         AuctionDetailModel(
             id: UUID(),
             title: "Title",
-            description: "long description goes here long description goes here long description goes here long description goes here",
+            description: "long description",
             category: .Furniture,
             images: [],
             auctionType: .incremental,

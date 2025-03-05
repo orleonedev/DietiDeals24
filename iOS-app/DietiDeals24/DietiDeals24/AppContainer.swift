@@ -47,6 +47,10 @@ extension AppContainer {
             DefaultAuctionService(rest: self.unsafeResolve())
         }
         
+        register(for: VendorService.self) {
+            DefaultVendorService(rest: self.unsafeResolve())
+        }
+        
         register(for: AppState.self, scope: .singleton) {
             AppState(credentialService: self.unsafeResolve(), authService: self.unsafeResolve())
         }
@@ -115,7 +119,7 @@ extension AppContainer {
         }
         
         register(for: UserAreaMainViewModel.self) {
-            UserAreaMainViewModel(coordinator: self.unsafeResolve())
+            UserAreaMainViewModel(coordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
         }
     }
     
@@ -131,7 +135,7 @@ extension AppContainer {
         }
         
         register(for: BecomeAVendorViewModel.self) {
-            BecomeAVendorViewModel(sellingCoordinator: self.unsafeResolve())
+            BecomeAVendorViewModel(sellingCoordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
         }
         register(for: SellingMainViewModel.self) {
             SellingMainViewModel(sellingCoordinator: self.unsafeResolve())
@@ -146,10 +150,10 @@ extension AppContainer {
         }
         
         register(for: AuctionPreviewViewModel.self) {
-            AuctionPreviewViewModel(sellingCoordinator: self.unsafeResolve())
+            AuctionPreviewViewModel(sellingCoordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         
-        register(for: SellingCoordinator.SellingAuctionVM.self) {
+        register(for: SellingCoordinator.SellingAuctionVM.self, tag: .init("Selling")) {
             AuctionDetailMainViewModel(sellingCoordinator: self.unsafeResolve())
         }
         
@@ -170,7 +174,7 @@ extension AppContainer {
             ExploreMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         
-        register(for: ExploreCoordinator.ExploreAuctionVM.self) {
+        register(for: ExploreCoordinator.ExploreAuctionVM.self, tag: .init("Explore")) {
             AuctionDetailMainViewModel(exploreCoordinator: self.unsafeResolve())
         }
     }
@@ -187,9 +191,9 @@ extension AppContainer {
         }
         
         register(for: SearchMainViewModel.self) {
-            SearchMainViewModel(coordinator: self.unsafeResolve())
+            SearchMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
-        register(for: SearchCoordinator.SearchAuctionVM.self) {
+        register(for: SearchCoordinator.SearchAuctionVM.self, tag: .init("Search")) {
             AuctionDetailMainViewModel(searchCoordinator: self.unsafeResolve())
         }
     }

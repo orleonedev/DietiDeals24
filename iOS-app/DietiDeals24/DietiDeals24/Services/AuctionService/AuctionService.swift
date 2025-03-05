@@ -29,5 +29,13 @@ protocol AuctionService {
     /// - Returns: An `Auction` object containing detailed information about the auction.
     /// - Throws: An error if the request fails or the auction is not found.
     func fetchAuctionDetails(by id: UUID) async throws -> AuctionDetailDTO
+    
+    /// Sends the details of a newly created auction and returns it.
+    ///
+    /// - Parameter auction: the model of the compiled form.
+    /// - Returns: An `Auction` object containing detailed information about the auction.
+    /// - Throws: An error if the request fails.
+    func createAuction(auction: CreateAuctionModel, vendor: UUID) async throws -> AuctionDetailDTO
+    
 }
 

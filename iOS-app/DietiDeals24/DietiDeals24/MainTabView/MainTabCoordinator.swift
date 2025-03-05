@@ -43,13 +43,4 @@ class MainTabCoordinator {
         )
     }
     
-    func sellerStatusCheck() async -> Bool? {
-        guard let userData = await self.appState.getUserDataModel() else {return nil}
-        return userData.role == .seller
-    }
-    
-    @MainActor
-    func becomeAVendor(onDismiss:@escaping () -> Void) {
-        sellingCoordinator.becomeAVendor(onDismiss: onDismiss)
-    }
 }

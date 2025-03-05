@@ -105,7 +105,7 @@ extension SearchMainView {
 
 #Preview {
     NavigationStack{
-        SearchMainView(viewModel: .init(coordinator: .init(appContainer: .init())))
+        SearchMainView(viewModel: .init(coordinator: .init(appContainer: .init()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource())))
         
     }
     

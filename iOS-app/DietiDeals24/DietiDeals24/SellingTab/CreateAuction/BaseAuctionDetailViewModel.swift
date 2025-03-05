@@ -37,7 +37,7 @@ class BaseAuctionDetailViewModel: LoadableViewModel {
     
     @MainActor
     func tryToDismiss() {
-        self.sellingCoordinator.dismiss(to: .toRoot)
+        self.sellingCoordinator.dismiss()
     }
     
     @MainActor

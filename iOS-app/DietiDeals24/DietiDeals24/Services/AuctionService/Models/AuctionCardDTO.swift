@@ -14,21 +14,17 @@ struct AuctionCardDTO: Decodable {
     public var title: String?
     public var type: AuctionType?
     public var currentPrice: Double?
-    public var startDate: Date?
-    public var threshold: Double?
-    public var timer: Int?
-    public var offers: Int?
+    public var endingDate: Date?
+    public var bids: Int?
     
     private enum CodingKeys: String, CodingKey {
-        case mainImageUrl = "MainImageUrl"
-        case id = "Id"
-        case title = "Title"
-        case type = "Type"
-        case currentPrice = "CurrentPrice"
-        case startDate = "StartDate"
-        case threshold = "Threshold"
-        case timer = "ThresholdTimer"
-        case offers = "Bids"
+        case mainImageUrl
+        case id
+        case title
+        case type
+        case currentPrice
+        case endingDate
+        case bids
     }
     
     init(from decoder: any Decoder) throws {
@@ -37,10 +33,8 @@ struct AuctionCardDTO: Decodable {
         id = try container.decodeIfPresent(UUID.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         currentPrice = try container.decodeIfPresent(Double.self, forKey: .currentPrice)
-        startDate = try container.decodeIfPresent(Date.self, forKey: .startDate)
-        threshold = try container.decodeIfPresent(Double.self, forKey: .threshold)
-        timer = try container.decodeIfPresent(Int.self, forKey: .timer)
-        offers = try container.decodeIfPresent(Int.self, forKey: .offers)
+        endingDate = try container.decodeIfPresent(Date.self, forKey: .endingDate)
+        bids = try container.decodeIfPresent(Int.self, forKey: .bids)
         
         if let rawValue = try container.decodeIfPresent(Int.self, forKey: .type) {
             type = AuctionType(rawValue: rawValue)
@@ -72,25 +66,19 @@ extension AuctionCardModel {
         guard let currentPrice = dto.currentPrice else {
             throw AuctionViewModelError.missingValue("currentPrice")
         }
-        guard let startDate = dto.startDate else {
-            throw AuctionViewModelError.missingValue("startDate")
+        guard let endingDate = dto.endingDate else {
+            throw AuctionViewModelError.missingValue("endingDate")
         }
-        guard let threshold = dto.threshold else {
-            throw AuctionViewModelError.missingValue("threshold")
-        }
-        guard let timer = dto.timer else {
-            throw AuctionViewModelError.missingValue("timer")
-        }
-        guard let offers = dto.offers else {
-            throw AuctionViewModelError.missingValue("offers")
+        guard let bids = dto.bids else {
+            throw AuctionViewModelError.missingValue("bids")
         }
 
         self.coverUrl = mainImageUrl
         self.id = id
         self.name = title
         self.auctionType = type
-        self.price = String(currentPrice)
-        self.endTime = startDate
-        self.bidsCount = offers
+        self.price = currentPrice.formatted()
+        self.endTime = endingDate
+        self.bidsCount = bids
     }
 }

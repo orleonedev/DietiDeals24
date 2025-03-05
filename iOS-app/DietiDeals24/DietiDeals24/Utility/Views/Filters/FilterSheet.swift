@@ -50,7 +50,7 @@ struct FilterSelectionSheet<Option: FilterModelProtocol>: View {
         Button("Show Sheet") {
             isPresented.toggle()
         }
-        SearchMainView(viewModel: .init(coordinator: .init(appContainer: .init())))
+        SearchMainView(viewModel: .init(coordinator: .init(appContainer: .init()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource())))
             .sheet(isPresented: $isPresented) {
                 NavigationStack{
                     FilterSelectionSheet(title: "Test", options: AuctionType.allCases, selectedOption: selectedOption) { option in

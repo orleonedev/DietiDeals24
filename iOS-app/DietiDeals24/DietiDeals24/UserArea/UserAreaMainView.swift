@@ -49,6 +49,6 @@ struct UserAreaMainView: View, LoadableView {
 
 #Preview {
     NavigationStack{
-        UserAreaMainView(viewModel: .init(coordinator: .init(appContainer: .init())))
+        UserAreaMainView(viewModel: .init(coordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource())))
     }
 }

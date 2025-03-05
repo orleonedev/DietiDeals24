@@ -29,6 +29,7 @@ struct UserAccount: Codable {
     let customRole: String?
     let iat: Int?
     let jti, email: String?
+    let vendorId: String?
 
     enum CodingKeys: String, CodingKey {
         case sub
@@ -44,6 +45,7 @@ struct UserAccount: Codable {
         case name, exp
         case customRole = "custom:role"
         case iat, jti, email
+        case vendorId = "custom:vendor_id"
     }
 }
 

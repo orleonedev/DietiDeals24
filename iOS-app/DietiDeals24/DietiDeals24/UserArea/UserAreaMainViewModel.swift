@@ -12,14 +12,22 @@ class UserAreaMainViewModel: LoadableViewModel {
     var isLoading: Bool = false
     var coordinator: UserAreaCoordinator
     var userDataModel: UserDataModel? = nil
-    
-    init(coordinator: UserAreaCoordinator) {
+    let vendorService: VendorService
+    init(coordinator: UserAreaCoordinator, vendorService: VendorService) {
         self.coordinator = coordinator
+        self.vendorService = vendorService
     }
     
     func getUserData() async {
         isLoading = true
-        let user = await coordinator.getUserData()
+        var user = await coordinator.getUserData()
+        if let unwrap = user, unwrap.role == .seller, let sellerId = unwrap.vendorId, let uuid = UUID(uuidString: sellerId) {
+            let vendorDetail = try? await vendorService.getVendorProfile(id: uuid)
+            user?.geoLocation = vendorDetail?.geolocation
+            user?.joinedSince = vendorDetail?.joinedSince
+            user?.url = vendorDetail?.websiteUrl
+            user?.auctionCreated = vendorDetail?.numberOfAuctions
+        }
         self.userDataModel = user
         isLoading = false
     }

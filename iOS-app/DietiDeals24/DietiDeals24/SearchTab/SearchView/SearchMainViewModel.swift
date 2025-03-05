@@ -31,11 +31,16 @@ class SearchMainViewModel: LoadableViewModel {
     let filteringOptions: [FilterType] = [.auctionType, .category, .sortOrder] //price range halt
     
     var fetchedSearchResults: [AuctionCardModel] = []
+    var searchItemsCount: Int = 0
+    var searchPage: Int = 1
+    var searchPageSize: Int = 20
     var isFetchingSearchResults: Bool = false
     var shouldFetchMoreSearchItem: Bool = true
     
     func reset(preserveFilters: Bool = false) {
         self.fetchedSearchResults.removeAll()
+        self.searchItemsCount = 0
+        self.searchPage = 1
         self.isFetchingSearchResults = false
         self.shouldFetchMoreSearchItem = true
         if !preserveFilters {
@@ -43,8 +48,11 @@ class SearchMainViewModel: LoadableViewModel {
         }
     }
     
-    init(coordinator: SearchCoordinator) {
+    let auctionService: AuctionService
+    
+    init(coordinator: SearchCoordinator, auctionService: AuctionService) {
         self.coordinator = coordinator
+        self.auctionService = auctionService
     }
     
     func isFilterSet(for type: FilterType ) -> Bool {
@@ -102,9 +110,12 @@ class SearchMainViewModel: LoadableViewModel {
                 self.isLoading = false
                 self.isFetchingSearchResults = false
             }
-            try? await Task.sleep(for: .seconds(2))
-            self.fetchedSearchResults.append(contentsOf: AuctionCardModel.mockData) //try await self.coordinator.appContainer.resolve(SearchServiceProtocol.self).getSearchResults(searchText: self.searchText, filterModel: self.filterModel)
-            self.shouldFetchMoreSearchItem = false//self.fetchedSearchResults.count < 230
+            let searchItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.searchPage, pageSize: self.searchPageSize)
+            let newSearchItems: [AuctionCardModel] = searchItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
+            self.searchItemsCount = searchItemsDto.totalRecords
+            self.searchPage = searchItemsDto.page
+            self.fetchedSearchResults.append(contentsOf: newSearchItems)
+            self.shouldFetchMoreSearchItem = searchItemsCount > fetchedSearchResults.count
         }
     }
     
@@ -112,22 +123,12 @@ class SearchMainViewModel: LoadableViewModel {
         Task {
             print(auctionID)
             self.isLoading = true
-            try? await Task.sleep(for: .seconds(2))
-            let auction = AuctionDetailModel(
-                id: auctionID,
-                title: "TEST",
-                description: "long description long very long description very ver long description vd long description long very long description very ver long description vd long description long very long description very ver long description vd",
-                category: .Electronics,
-                images: [],
-                currentPrice: 12345,
-                threshold: 12,
-                timer: 34,
-                endTime: .now.advanced(by: 60*60*34),
-                vendorID: UUID(),
-                vendorName: "Venditore Test"
-            )
+            
+            let auctionDTO = try await auctionService.fetchAuctionDetails(by: auctionID)
+            let model = try AuctionDetailModel(from: auctionDTO)
+            
             self.isLoading = false
-            await self.coordinator.goToAuction(auction)
+            await self.coordinator.goToAuction(model)
             
         }
     }

@@ -29,12 +29,14 @@ public struct AuctionDetailMainView: View, LoadableView {
                 
             }
         }
+        .task {
+            viewModel.checkAuctionOwnership()
+        }
         .overlay {
             if viewModel.canPresentOffer {
                 presetOfferOverlay()
             }
         }
-        .scrollBounceBehavior(.basedOnSize)
         .navigationTitle(viewModel.auction?.title ?? "")
         .navigationBarTitleDisplayMode(.large)
     }

@@ -63,7 +63,7 @@ extension TypedAuctionDetailView {
             .keyboardType(.decimalPad)
             .focused(self.$isFocused)
             
-            ValidableTextField(validationError: $viewModel.thresholdValidationError, text: $viewModel.threshold, validation: viewModel.validateThreshold, label: "Threshold (min. 10)" )
+            ValidableTextField(validationError: $viewModel.thresholdValidationError, text: $viewModel.threshold, validation: viewModel.validateThreshold, label: "Threshold (min. 1)" )
                 .keyboardType(.numberPad)
             .focused(self.$isFocused)
             

@@ -215,7 +215,6 @@ extension AuctionDetailView {
                 .padding()
             }
             .scrollIndicators(.never)
-            .scrollBounceBehavior(.basedOnSize)
             .frame(height: 192)
         }
     }

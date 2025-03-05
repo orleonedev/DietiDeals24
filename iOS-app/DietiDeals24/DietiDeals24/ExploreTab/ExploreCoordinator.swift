@@ -13,10 +13,16 @@ class ExploreCoordinator: Coordinator {
     
     internal var appContainer: AppContainer
     private var router: ExploreRouter
+    private let appState: AppState
     
     init(appContainer: AppContainer) {
         self.appContainer = appContainer
         self.router = appContainer.unsafeResolve(ExploreRouter.self)
+        self.appState = appContainer.unsafeResolve(AppState.self)
+    }
+    
+    func getUserData() async -> UserDataModel? {
+        return await appState.getUserDataModel()
     }
     
     @MainActor @ViewBuilder

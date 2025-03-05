@@ -8,6 +8,6 @@
 struct PaginatedResult<T: Decodable>: Decodable {
     let results: [T]
     let totalRecords: Int
-    let page: Int
+    let pageNumber: Int
     let pageSize: Int
 }

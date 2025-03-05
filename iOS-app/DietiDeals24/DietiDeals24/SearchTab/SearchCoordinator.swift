@@ -13,10 +13,16 @@ class SearchCoordinator: Coordinator {
     
     internal var appContainer: AppContainer
     private var router: SearchRouter
+    let appState: AppState
     
     init(appContainer: AppContainer) {
         self.appContainer = appContainer
         self.router = appContainer.unsafeResolve(SearchRouter.self)
+        self.appState = appContainer.unsafeResolve(AppState.self)
+    }
+    
+    func getUserData() async -> UserDataModel? {
+        return await appState.getUserDataModel()
     }
     
     @MainActor @ViewBuilder

@@ -22,8 +22,9 @@ class AuctionDetailMainViewModel: LoadableViewModel {
     var exploreCoordinator: ExploreCoordinator?
     var searchCoordinator: SearchCoordinator?
     
+    
     var auction: AuctionDetailModel?
-    var canPresentOffer: Bool = true
+    var canPresentOffer: Bool = false
     
     init(sellingCoordinator: SellingCoordinator) {
         self.sellingCoordnator = sellingCoordinator
@@ -42,6 +43,25 @@ class AuctionDetailMainViewModel: LoadableViewModel {
     
     func setAuction(_ auction: AuctionDetailModel) {
         self.auction = auction
+    }
+    
+    @MainActor
+    func checkAuctionOwnership() {
+        guard let auction = self.auction else { return }
+        Task {
+            var userData: UserDataModel?
+            switch owner {
+                case .Selling:
+                    userData = await self.sellingCoordnator?.getUserData()
+                case .Explore:
+                    userData = await self.exploreCoordinator?.getUserData()
+                case .Search:
+                    userData = await self.searchCoordinator?.getUserData()
+            }
+            guard let userDataModel = userData else { return }
+            
+            self.canPresentOffer = userDataModel.vendorId != auction.vendorID.uuidString.lowercased()
+        }
     }
     
     @MainActor

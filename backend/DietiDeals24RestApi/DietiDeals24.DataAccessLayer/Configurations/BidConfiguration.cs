@@ -24,7 +24,7 @@ public class BidConfiguration : IEntityTypeConfiguration<Bid>
             .IsRequired()
             .HasColumnType("decimal(10,2)");
 
-        builder.Property(b => b.OfferDate)
+        builder.Property(b => b.BidDate)
             .IsRequired()
             .ValueGeneratedOnAdd()
             .HasColumnType("timestamp without time zone")

@@ -3,6 +3,7 @@ using System;
 using DietiDeals24.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DietiDeals24.DataAccessLayer.Migrations
 {
     [DbContext(typeof(DietiDeals24DbContext))]
-    partial class DietiDeals24DbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305160510_categoryAndVendorMigrationFix")]
+    partial class categoryAndVendorMigrationFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

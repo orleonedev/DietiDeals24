@@ -63,15 +63,15 @@ public class AuctionConfiguration : IEntityTypeConfiguration<Auction>
         builder.Property(a => a.EndingDate)
             .IsRequired()
             .HasColumnType("timestamp without time zone");
+        
+        builder.Property(a => a.Category)
+            .IsRequired()
+            .HasColumnType("integer");
 
         // Relationships
         builder.HasOne(a => a.Vendor)
             .WithMany(v => v.Auctions)
             .HasForeignKey(a => a.VendorId);
-
-        builder.HasOne(a => a.Category)
-            .WithMany(c => c.Auctions)
-            .HasForeignKey(a => a.CategoryId);
 
         builder.HasMany(a => a.AuctionImages)
             .WithOne(ai => ai.Auction)

@@ -21,7 +21,6 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped<ICheckService, CheckService>();
         serviceCollection.AddScoped<IAuctionService, AuctionService>();
         serviceCollection.AddScoped<IVendorService, VendorService>();
-        serviceCollection.AddScoped<ICategoryService, CategoryService>();
         serviceCollection.AddScoped<IBidService, BidService>();
         serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddAWSService<IAmazonCognitoIdentityProvider>();

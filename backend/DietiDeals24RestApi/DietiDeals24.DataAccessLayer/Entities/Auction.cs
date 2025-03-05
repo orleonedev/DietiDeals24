@@ -15,15 +15,13 @@ public class Auction
     public int Timer { get; set; }
     public decimal? SecretPrice { get; set; }
     public Guid VendorId { get; set; }
-    public Guid CategoryId { get; set; }
-    //public AuctionCategory Category { get; set; }
+    public AuctionCategory Category { get; set; }
     public AuctionState AuctionState { get; set; }
     public DateTime StartingDate { get; set; }
     public DateTime EndingDate { get; set; }
 
     // Navigation Properties
     public Vendor Vendor { get; set; }
-    public Category Category { get; set; }
     public ICollection<AuctionImage> AuctionImages { get; set; } = new List<AuctionImage>();
     public ICollection<Bid> Bids { get; set; } = new List<Bid>();
     //public ICollection<Transaction> Transactions { get; set; }

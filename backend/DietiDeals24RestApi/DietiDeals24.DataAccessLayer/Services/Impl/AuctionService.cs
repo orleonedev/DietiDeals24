@@ -45,7 +45,6 @@ public class AuctionService : IAuctionService
                     StartingDate = auction.Vendor.StartingDate,
                     SuccessfulAuctions = auction.Vendor.SuccessfulAuctions
                 },
-                CategoryId = auction.CategoryId,
                 Category = auction.Category,
                 AuctionState = auction.AuctionState,
                 StartingDate = auction.StartingDate,
@@ -62,7 +61,7 @@ public class AuctionService : IAuctionService
                     Price = bid.Price,
                     AuctionId = bid.AuctionId,
                     BuyerId = bid.BuyerId,
-                    OfferDate = bid.OfferDate
+                    BidDate = bid.BidDate
                 }).ToArray()
             })
             .SingleOrDefaultAsync();
@@ -82,7 +81,6 @@ public class AuctionService : IAuctionService
             SecretPrice = auction.SecretPrice,
             VendorId = auction.VendorId,
             Vendor = auction.Vendor,
-            CategoryId = auction.CategoryId,
             Category = auction.Category,
             AuctionState = auction.AuctionState,
             StartingDate = auction.StartingDate,
@@ -120,10 +118,10 @@ public class AuctionService : IAuctionService
                 .Get(
                     auction => (auction.AuctionState == AuctionState.Open) && 
                         (filters.SearchText == null || auction.Title.ToLower().Contains(filters.SearchText.ToLower())) &&
-                        //(filters.Category == null || auction.Category == filters.Category) && 
+                        (filters.Category == null || auction.Category == filters.Category) && 
                         (filters.Type == null || auction.AuctionType == filters.Type.Value) &&
-                        (filters.MinPrice == 0 || auction.CurrentPrice >= filters.MinPrice) &&
-                        (filters.MaxPrice == 0 || auction.CurrentPrice <= filters.MaxPrice) &&
+                        (filters.MinPrice == null || auction.CurrentPrice >= filters.MinPrice) &&
+                        (filters.MaxPrice == null || auction.CurrentPrice <= filters.MaxPrice) &&
                         (filters.VendorId == null || auction.VendorId == filters.VendorId)
                 );
             

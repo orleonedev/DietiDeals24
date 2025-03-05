@@ -9,7 +9,6 @@ public class AuctionWorker: IAuctionWorker
     private readonly ILogger<AuctionWorker> _logger;
     private readonly IAuctionService _auctionService;
     private readonly IVendorService _vendorService;
-    private readonly ICategoryService _categoryService;
     private readonly IBidService _bidService;
     private readonly IImageService _imageService;
 
@@ -17,14 +16,12 @@ public class AuctionWorker: IAuctionWorker
         ILogger<AuctionWorker> logger, 
         IAuctionService auctionService,
         IVendorService vendorService,
-        ICategoryService categoryService,
         IBidService bidService,
         IImageService imageService)
     {
         _logger = logger;
         _auctionService = auctionService;
         _vendorService = vendorService;
-        _categoryService = categoryService;
         _bidService = bidService;
         _imageService = imageService;
     }

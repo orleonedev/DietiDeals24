@@ -29,6 +29,15 @@ public class VendorConfiguration : IEntityTypeConfiguration<Vendor>
         builder.Property(v => v.SuccessfulAuctions)
             .HasDefaultValue(0);
 
+        builder.Property(v => v.GeoLocation)
+            .HasColumnType("text");
+        
+        builder.Property(v => v.WebSiteUrl)
+            .HasColumnType("text");
+        
+        builder.Property(v => v.ShortBio)
+            .HasColumnType("text");
+
         // Relationships
         builder.HasOne(v => v.User)
             .WithOne(u => u.Vendor)

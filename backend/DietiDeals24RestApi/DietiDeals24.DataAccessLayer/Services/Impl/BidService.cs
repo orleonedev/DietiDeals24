@@ -80,7 +80,7 @@ public class BidService: IBidService
                 AuctionId = bidDto.AuctionId,
                 BuyerId = bidDto.BuyerId,
                 Price = bidDto.Price,
-                OfferDate = bidDto.BidDate
+                BidDate = bidDto.BidDate
             };
             
             _unitOfWork.BeginTransaction();

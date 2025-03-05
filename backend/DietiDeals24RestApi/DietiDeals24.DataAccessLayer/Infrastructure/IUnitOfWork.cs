@@ -9,7 +9,6 @@ public interface IUnitOfWork
 {
     public IRepository<User, Guid> UserRepository { get; }
     public IRepository<Vendor, Guid> VendorRepository { get; }
-    public IRepository<Category, Guid> CategoryRepository { get; }
     public IRepository<Auction, Guid> AuctionRepository { get; }
     public IRepository<Bid, Guid> BidRepository { get; }
     public IRepository<AuctionImage, Guid> AuctionImageRepository { get; }

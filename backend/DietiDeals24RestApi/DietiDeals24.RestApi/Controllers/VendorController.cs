@@ -18,7 +18,7 @@ public class VendorController : ControllerBase
         _vendorWorker = vendorWorker;
     }
 
-    [HttpPost("become-a-bid", Name = "BecomeAVendor")]
+    [HttpPost("become-a-vendor", Name = "BecomeAVendor")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

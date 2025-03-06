@@ -38,7 +38,8 @@ public class VendorWorker: IVendorWorker
                         SuccessfulAuctions = vendor.SuccessfulAuctions,
                         JoinedSince = vendor.StartingDate,
                         GeoLocation = vendor.GeoLocation,
-                        WebSiteUrl = vendor.WebSiteUrl
+                        WebSiteUrl = vendor.WebSiteUrl,
+                        ShortBio = vendor.ShortBio
                     };
                 }
                 
@@ -71,7 +72,8 @@ public class VendorWorker: IVendorWorker
                 SuccessfulAuctions = vendor.SuccessfulAuctions,
                 JoinedSince = vendor.StartingDate,
                 GeoLocation = vendor.GeoLocation,
-                WebSiteUrl = vendor.WebSiteUrl
+                WebSiteUrl = vendor.WebSiteUrl,
+                ShortBio = vendor.ShortBio
             };
         }
         catch (Exception ex)

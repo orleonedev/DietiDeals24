@@ -7,12 +7,13 @@
 import RoutingKit
 import SwiftUI
 
-class SearchCoordinator: Coordinator {
+class SearchCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCoordinatorProtocol {
+    
     typealias SearchRouter = RoutingKit.Router
     typealias SearchAuctionVM = AuctionDetailMainViewModel
     
     internal var appContainer: AppContainer
-    private var router: SearchRouter
+    internal var router: SearchRouter
     let appState: AppState
     
     init(appContainer: AppContainer) {
@@ -32,10 +33,10 @@ class SearchCoordinator: Coordinator {
         }
     }
     
-    @MainActor
-    func goToAuction(_ auction: AuctionDetailModel) {
-        self.router.navigate(to: auctionDetailDestination(auction), type: .push)
-    }
+//    @MainActor
+//    func goToAuction(_ auction: AuctionDetailModel) {
+//        self.router.navigate(to: auctionDetailDestination(auction), type: .push)
+//    }
     
     @MainActor
     func dismiss() {
@@ -54,12 +55,20 @@ class SearchCoordinator: Coordinator {
         }
     }
     
-    private func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
+    internal func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(SearchAuctionVM.self, tag: .init("Search"))
             vm.setAuction(auction)
             return AuctionDetailMainView(viewModel: vm)
             
+        }
+    }
+    
+    func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Search"))
+            vm.setVendor(vendor)
+            return UserProfileView(viewModel: vm)
         }
     }
     

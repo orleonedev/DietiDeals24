@@ -23,7 +23,7 @@ extension AppContainer {
     func setupServices() {
 #if DEV || DEBUG
         Logger.shared.add(logger: ConsoleLogger(logLevel: .verbose))
-        #else
+#else
         Logger.shared.add(logger: ConsoleLogger(logLevel: .error))
 #endif
         typealias AuthRestDataSource = DefaultRESTDataSource
@@ -41,7 +41,7 @@ extension AppContainer {
         
         register(for: RESTDataSource.self) {
             DefaultRESTDataSource(credentialService: self.unsafeResolve(CredentialService.self), authService: self.unsafeResolve(AuthService.self))
-            }
+        }
         
         register(for: AuctionService.self) {
             DefaultAuctionService(rest: self.unsafeResolve())
@@ -102,10 +102,6 @@ extension AppContainer {
             MainTabCoordinator(appContainer: self)
         }
         
-        register(for: MainTabCoordinator.TabRouter.self) { @MainActor [self] in
-            MainTabCoordinator.TabRouter()
-        }
-        
         register(for: MainTabViewModel.self) { [self] in
             MainTabViewModel(mainCoordinator: self.unsafeResolve())
         }
@@ -158,7 +154,11 @@ extension AppContainer {
         }
         
         register(for: SellingCoordinator.SellingAuctionVM.self, tag: .init("Selling")) {
-            AuctionDetailMainViewModel(sellingCoordinator: self.unsafeResolve())
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SellingCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+        }
+        
+        register(for: UserProfileViewModel.self, tag: .init("Selling")) {
+            UserProfileViewModel(coordinator: self.unsafeResolve(SellingCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
         
     }
@@ -179,7 +179,11 @@ extension AppContainer {
         }
         
         register(for: ExploreCoordinator.ExploreAuctionVM.self, tag: .init("Explore")) {
-            AuctionDetailMainViewModel(exploreCoordinator: self.unsafeResolve())
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(ExploreCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+        }
+        
+        register(for: UserProfileViewModel.self, tag: .init("Explore")) {
+            UserProfileViewModel(coordinator: self.unsafeResolve(ExploreCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
     }
     
@@ -198,7 +202,11 @@ extension AppContainer {
             SearchMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         register(for: SearchCoordinator.SearchAuctionVM.self, tag: .init("Search")) {
-            AuctionDetailMainViewModel(searchCoordinator: self.unsafeResolve())
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SearchCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+        }
+        
+        register(for: UserProfileViewModel.self, tag: .init("Search")) {
+            UserProfileViewModel(coordinator: self.unsafeResolve(SearchCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
     }
     
@@ -211,5 +219,18 @@ extension AppContainer {
         register(for: NotificationCoordinator.NotificationRouter.self) { @MainActor [self] in
             NotificationCoordinator.NotificationRouter()
         }
+        
+//        register(for: NotificationMainViewModel.self) {
+//            NotificationMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
+//        }
+        
+//        register(for: NotificationCoordinator.NotificationAuctionVM.self, tag: .init("Notification")) {
+//            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+//        }
+//        
+//        register(for: UserProfileViewModel.self, tag: .init("Notification")) {
+//            UserProfileViewModel(coordinator: self.unsafeResolve(NotificationCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
+//        }
+        
     }
 }

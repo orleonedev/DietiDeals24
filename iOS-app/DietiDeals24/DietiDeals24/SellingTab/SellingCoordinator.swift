@@ -7,12 +7,13 @@
 import RoutingKit
 import SwiftUI
 
-class SellingCoordinator: Coordinator {
+class SellingCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCoordinatorProtocol {
+    
     typealias SellingRouter = RoutingKit.Router
     typealias SellingAuctionVM = AuctionDetailMainViewModel
     
     internal var appContainer: AppContainer
-    private var router: SellingRouter
+    internal var router: SellingRouter
     let appState: AppState
     
     init(appContainer: AppContainer) {
@@ -67,7 +68,7 @@ class SellingCoordinator: Coordinator {
     @MainActor
     func goToPublishedAuction(auction: AuctionDetailModel) {
         self.router.dismiss(option: .toRoot)
-        self.router.navigate(to: publishedAuctionDestination(auction: auction), type: .sheet)
+        self.router.navigate(to: auctionDetailDestination(auction), type: .sheet)
     }
     
     //MARK: DESTINATIONS
@@ -99,11 +100,20 @@ class SellingCoordinator: Coordinator {
         }
     }
     
-    private func publishedAuctionDestination(auction: AuctionDetailModel) -> RoutingKit.Destination {
+    internal func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(SellingAuctionVM.self, tag: .init("Selling"))
             vm.setAuction(auction)
             return AuctionDetailMainView(viewModel: vm)
+        }
+    }
+    
+    internal func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Selling"))
+            vm.setVendor(vendor)
+            return UserProfileView(viewModel: vm)
+            
         }
     }
 }

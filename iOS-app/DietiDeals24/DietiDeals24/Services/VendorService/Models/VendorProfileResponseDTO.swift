@@ -16,6 +16,7 @@ struct VendorProfileResponseDTO: Decodable {
     let joinedSince: Date?
     let geolocation: String?
     let websiteUrl: String?
+    let shortBio: String?
     
     enum CodingKeys: String, CodingKey {
         case vendorID
@@ -26,6 +27,7 @@ struct VendorProfileResponseDTO: Decodable {
         case joinedSince
         case geolocation
         case websiteUrl
+        case shortBio
     }
     
     init(from decoder: any Decoder) throws {
@@ -53,5 +55,18 @@ struct VendorProfileResponseDTO: Decodable {
         
         self.geolocation = try container.decodeIfPresent(String.self, forKey: .geolocation)
         self.websiteUrl = try container.decodeIfPresent(String.self, forKey: .websiteUrl)
+        self.shortBio = try container.decodeIfPresent(String.self, forKey: .shortBio)
+    }
+    
+    init(vendorID: UUID? = nil, vendorName: String? = nil, vendorUsername: String? = nil, vendorEmail: String? = nil, numberOfAuctions: Int? = nil, joinedSince: Date? = nil, geolocation: String? = nil, websiteUrl: String? = nil, shortBio: String? = nil) {
+        self.vendorID = vendorID
+        self.vendorName = vendorName
+        self.vendorUsername = vendorUsername
+        self.vendorEmail = vendorEmail
+        self.numberOfAuctions = numberOfAuctions
+        self.joinedSince = joinedSince
+        self.geolocation = geolocation
+        self.websiteUrl = websiteUrl
+        self.shortBio = shortBio
     }
 }

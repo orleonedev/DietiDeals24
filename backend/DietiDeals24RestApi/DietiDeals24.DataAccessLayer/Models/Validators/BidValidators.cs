@@ -16,8 +16,5 @@ public class CreateBidValidator: AbstractValidator<CreateBidDTO>
         
         RuleFor(bid => bid.Price)
             .GreaterThan(0).WithMessage("Price must be a positive value.");
-        
-        RuleFor(bid => bid.BidDate)
-            .NotEmpty().WithMessage("BidDate is required.");
     }
 }

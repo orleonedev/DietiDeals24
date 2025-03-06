@@ -53,8 +53,7 @@ public class BidWorker: IBidWorker
             {
                 AuctionId = bid.AuctionId,
                 BuyerId = bid.BuyerId,
-                Price = bid.Price,
-                BidDate = bid.BidDate
+                Price = bid.Price
             };
         }
         catch (Exception ex)

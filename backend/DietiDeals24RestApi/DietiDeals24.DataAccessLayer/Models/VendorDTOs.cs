@@ -18,6 +18,6 @@ public class DetailedVendorDTO
     public string Email { get; set; }
     public int? SuccessfulAuctions { get; set; }
     public DateTime JoinedSince { get; set; }
-    public string? Geolocation { get; set; }
+    public string? GeoLocation { get; set; }
     public string? WebSiteUrl { get; set; }
 }

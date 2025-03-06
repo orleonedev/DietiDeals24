@@ -30,7 +30,7 @@ public class VendorWorker: IVendorWorker
                 Email = vendor.User.Email, //to be fixed
                 SuccessfulAuctions = vendor.SuccessfulAuctions,
                 JoinedSince = vendor.StartingDate,
-                Geolocation = vendor.GeoLocation,
+                GeoLocation = vendor.GeoLocation,
                 WebSiteUrl = vendor.WebSiteUrl
             };
         }
@@ -57,7 +57,7 @@ public class VendorWorker: IVendorWorker
                 Email = vendor.User.Email,
                 SuccessfulAuctions = vendor.SuccessfulAuctions,
                 JoinedSince = vendor.StartingDate,
-                Geolocation = vendor.GeoLocation,
+                GeoLocation = vendor.GeoLocation,
                 WebSiteUrl = vendor.WebSiteUrl
             };
         }

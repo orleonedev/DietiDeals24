@@ -75,12 +75,15 @@ public class BidService: IBidService
 
         try
         {
+            DateTime now = DateTime.Now;
+            DateTime bidDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
             var newBid = new Bid
             {
                 AuctionId = bidDto.AuctionId,
                 BuyerId = bidDto.BuyerId,
                 Price = bidDto.Price,
-                BidDate = bidDto.BidDate
+                BidDate = bidDate
             };
             
             _unitOfWork.BeginTransaction();

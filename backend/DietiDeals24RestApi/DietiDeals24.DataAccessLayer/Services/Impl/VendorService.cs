@@ -29,6 +29,17 @@ public class VendorService: IVendorService
         {
             return await _unitOfWork.VendorRepository
                 .Get(vendor => vendor.Id == vendorId)
+                .Select(vendor => new Vendor
+                {
+                    Id = vendor.Id,
+                    UserId = vendor.UserId,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl,
+                    ShortBio = vendor.ShortBio,
+                    StartingDate = vendor.StartingDate,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    User = vendor.User
+                })
                 .FirstOrDefaultAsync() ?? throw new InvalidOperationException($"Vendor with id {vendorId} not found.");
         }
         catch (Exception ex)

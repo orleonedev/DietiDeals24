@@ -27,7 +27,7 @@ public class BidConfiguration : IEntityTypeConfiguration<Bid>
         builder.Property(b => b.BidDate)
             .IsRequired()
             .ValueGeneratedOnAdd()
-            .HasColumnType("timestamp without time zone")
+            .HasColumnType("timestamp(0) without time zone")
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Relationships

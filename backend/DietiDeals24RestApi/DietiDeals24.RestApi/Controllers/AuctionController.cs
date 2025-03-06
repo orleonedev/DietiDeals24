@@ -18,28 +18,7 @@ public class AuctionController : ControllerBase
         _auctionWorker = auctionWorker;
     }
 
-    [HttpGet("get-auction-by-id", Name = "GetAuctionById")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAuctionById(Guid id)
-    {
-        _logger.LogInformation("[CONTROLLER] Getting auction by id: {id}", id);
-
-        try
-        {
-            var result = await _auctionWorker.GetAuctionById(id);
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"[CONTROLLER] Failed to get auction by id: {id}. Exception occurred: {ex.Message}");
-            return BadRequest(ex.Message);
-        }
-    }
-
-    [HttpGet("get-all-auctions", Name = "GetAllAuctions")]
+    [HttpGet("test-get-all-auctions", Name = "TestGetAllAuctions")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

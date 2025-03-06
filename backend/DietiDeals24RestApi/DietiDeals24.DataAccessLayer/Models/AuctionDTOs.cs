@@ -40,8 +40,6 @@ public class DetailedAuctionDTO: HomePageAuctionDTO
     public DateTime StartingDate { get; set; }
     public decimal Threshold { get; set; }
     public int ThresholdTimer { get; set; }
-    public Guid VendorId { get; set; }
-    public string VendorName { get; set; }
     public decimal? SecretPrice { get; set; }
     public DetailedVendorDTO Vendor { get; set; }
 }

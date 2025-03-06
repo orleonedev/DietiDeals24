@@ -168,19 +168,36 @@ VALUES ('20250305154420_categoryAndVendorMigration', '9.0.0');
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20250305160510_categoryAndVendorMigrationFix', '9.0.0');
 
+ALTER TABLE "User" DROP COLUMN "CognitoSub";
+
+ALTER TABLE "Vendor" ALTER COLUMN "StartingDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "UserPushToken" ALTER COLUMN "RegistrationDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "User" ALTER COLUMN "Id" DROP DEFAULT;
+
+ALTER TABLE "Bid" ALTER COLUMN "BidDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "Auction" ALTER COLUMN "StartingDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "Auction" ALTER COLUMN "EndingDate" TYPE timestamp(0) without time zone;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250306183524_userAndAuctionFix', '9.0.0');
+
 COMMIT;
 
 
 START TRANSACTION;
 
 -- Insert sample data for User
-INSERT INTO "User" ("Id", "CognitoSub", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
+INSERT INTO "User" ("Id", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
 VALUES 
-(gen_random_uuid(), 'sub-12344', 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
-(gen_random_uuid(), 'sub-12345', 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
-(gen_random_uuid(), 'sub-12346', 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
-(gen_random_uuid(), 'sub-12347', 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
-(gen_random_uuid(), 'sub-12348', 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
+(gen_random_uuid(), 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
+(gen_random_uuid(), 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
+(gen_random_uuid(), 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
+(gen_random_uuid(), 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
+(gen_random_uuid(), 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
 
 -- Insert sample data for Vendor
 INSERT INTO "Vendor" ("Id", "UserId", "StartingDate", "SuccessfulAuctions", "GeoLocation", "WebSiteUrl", "ShortBio") 

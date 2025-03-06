@@ -102,6 +102,7 @@ public class AuctionWorker: IAuctionWorker
         try
         {
             var auction = await _auctionService.GetDetailedAuctionByIdAsync(id);
+            var vendor = await _vendorService.GetVendorByIdAsync(auction.VendorId);
             
             return new DetailedAuctionDTO
             {
@@ -118,8 +119,17 @@ public class AuctionWorker: IAuctionWorker
                 ThresholdTimer = auction.Timer,
                 //Bids = auctionBids,
                 Description = auction.AuctionDescription,
-                VendorId = auction.VendorId,
-                //VendorName = auction.Vendor.User.Username,
+                Vendor = new DetailedVendorDTO
+                {
+                    Id = vendor.Id,
+                    Name = vendor.User.Fullname,
+                    Username = vendor.User.Username,
+                    Email = vendor.User.Email,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    JoinedSince = vendor.StartingDate,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl
+                },
                 SecretPrice = auction.SecretPrice
             };
         }
@@ -152,8 +162,17 @@ public class AuctionWorker: IAuctionWorker
                 CurrentPrice = auction.CurrentPrice,
                 Threshold = auction.Threshold,
                 ThresholdTimer = auction.Timer,
-                VendorId = auction.VendorId,
-                //VendorName = vendor.User.Username,
+                Vendor = new DetailedVendorDTO
+                {
+                    Id = vendor.Id,
+                    Name = vendor.User.Fullname,
+                    Username = vendor.User.Username,
+                    Email = vendor.User.Email,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    JoinedSince = vendor.StartingDate,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl
+                },
                 SecretPrice = auction.SecretPrice,
                 //MainImageUrl = auction.AuctionImages.First().Url,
                 //ImagesUrls = 

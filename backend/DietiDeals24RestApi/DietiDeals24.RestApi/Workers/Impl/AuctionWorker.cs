@@ -103,12 +103,14 @@ public class AuctionWorker: IAuctionWorker
         {
             var auction = await _auctionService.GetDetailedAuctionByIdAsync(id);
             var vendor = await _vendorService.GetVendorByIdAsync(auction.VendorId);
+            var bids = await _bidService.GetBidsCountForAuctionAsync(id);
+            var images = await _imageService.GetImagesUrlsForAuctionAsync(id);
             
             return new DetailedAuctionDTO
             {
                 Id = auction.Id,
-                //MainImageUrl = auctionImagesUrls.FirstOrDefault(),
-                //ImagesUrls = auctionImagesUrls,
+                MainImageUrl = images.FirstOrDefault(),
+                ImagesUrls = images,
                 Title = auction.Title,
                 Category = auction.Category,
                 Type = auction.AuctionType,
@@ -117,7 +119,7 @@ public class AuctionWorker: IAuctionWorker
                 EndingDate = auction.EndingDate,
                 Threshold = auction.Threshold,
                 ThresholdTimer = auction.Timer,
-                //Bids = auctionBids,
+                Bids = bids,
                 Description = auction.AuctionDescription,
                 Vendor = new DetailedVendorDTO
                 {

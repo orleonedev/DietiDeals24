@@ -22,17 +22,22 @@ public class VendorWorker: IVendorWorker
         {
             var vendor = await _vendorService.CreateVendorAsync(vendorDto);
 
-            return new DetailedVendorDTO
+            if (vendor != null)
             {
-                Id = vendor.Id,
-                Name = vendor.User.Fullname,
-                Username = vendor.User.Username, // to be fixed
-                Email = vendor.User.Email, //to be fixed
-                SuccessfulAuctions = vendor.SuccessfulAuctions,
-                JoinedSince = vendor.StartingDate,
-                GeoLocation = vendor.GeoLocation,
-                WebSiteUrl = vendor.WebSiteUrl
-            };
+                return new DetailedVendorDTO
+                {
+                    Id = vendor.Id,
+                    Name = vendor.User.Fullname,
+                    Username = vendor.User.Username,
+                    Email = vendor.User.Email,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    JoinedSince = vendor.StartingDate,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl
+                };
+            }
+            
+            throw new Exception("[WORKER] Error creating new vendor: vendor not added correctly.");
         }
         catch (Exception ex)
         {

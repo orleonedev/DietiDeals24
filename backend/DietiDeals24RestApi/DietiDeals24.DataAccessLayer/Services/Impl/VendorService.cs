@@ -72,7 +72,7 @@ public class VendorService: IVendorService
 
         try
         {
-            var vendor = _unitOfWork.VendorRepository
+            var vendor = await _unitOfWork.VendorRepository
                 .Get(vendor => vendor.UserId == vendorDto.UserId)
                 .FirstOrDefaultAsync();
 
@@ -81,22 +81,47 @@ public class VendorService: IVendorService
                 throw new InvalidOperationException($"Vendor with UserId {vendorDto.UserId} already exists.");
             }
 
+            DateTime now = DateTime.Now;
+            DateTime startingDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            
             var newVendor = new Vendor
             {
                 UserId = vendorDto.UserId,
                 GeoLocation = vendorDto.GeoLocation,
                 WebSiteUrl = vendorDto.WebSiteUrl,
                 ShortBio = vendorDto.ShortBio,
-                StartingDate = DateTime.Now,
+                StartingDate = startingDate,
                 SuccessfulAuctions = 0
             };
             
+            var user = await _unitOfWork.UserRepository
+                .Get(user => user.Id == vendorDto.UserId)
+                .FirstOrDefaultAsync();
+
+            user.Role = UserRole.Seller;
+            
             _unitOfWork.BeginTransaction();
             await _unitOfWork.VendorRepository.Add(newVendor);
+            await _unitOfWork.UserRepository.Update(user);
             _unitOfWork.Commit();
             await _unitOfWork.Save();
+
+            var resultVendor = await _unitOfWork.VendorRepository
+                .Get(vendor => newVendor.Id == vendor.Id)
+                .Select(vendor => new Vendor
+                {
+                    Id = vendor.Id,
+                    UserId = vendor.UserId,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl,
+                    ShortBio = vendor.ShortBio,
+                    StartingDate = vendor.StartingDate,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    User = vendor.User
+                })
+                .FirstOrDefaultAsync();
             
-            return newVendor;
+            return resultVendor;
         }
         catch (Exception ex)
         {

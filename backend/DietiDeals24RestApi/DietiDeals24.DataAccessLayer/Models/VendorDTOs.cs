@@ -20,4 +20,5 @@ public class DetailedVendorDTO
     public DateTime JoinedSince { get; set; }
     public string? GeoLocation { get; set; }
     public string? WebSiteUrl { get; set; }
+    public string? ShortBio { get; set; }
 }

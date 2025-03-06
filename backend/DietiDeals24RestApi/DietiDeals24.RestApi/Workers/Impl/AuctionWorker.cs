@@ -109,9 +109,7 @@ public class AuctionWorker: IAuctionWorker
                 //MainImageUrl = auctionImagesUrls.FirstOrDefault(),
                 //ImagesUrls = auctionImagesUrls,
                 Title = auction.Title,
-                /*Category = Enum.TryParse(auction.Category.Name, true, out AuctionCategory parsedCategory) 
-                    ? parsedCategory 
-                    : throw new InvalidOperationException("[SERVICE] Invalid category name."),*/
+                Category = auction.Category,
                 Type = auction.AuctionType,
                 CurrentPrice = auction.CurrentPrice,
                 StartingDate = auction.StartingDate,
@@ -121,7 +119,7 @@ public class AuctionWorker: IAuctionWorker
                 //Bids = auctionBids,
                 Description = auction.AuctionDescription,
                 VendorId = auction.VendorId,
-                VendorName = auction.Vendor.User.Username,
+                //VendorName = auction.Vendor.User.Username,
                 SecretPrice = auction.SecretPrice
             };
         }
@@ -154,6 +152,9 @@ public class AuctionWorker: IAuctionWorker
                 CurrentPrice = auction.CurrentPrice,
                 Threshold = auction.Threshold,
                 ThresholdTimer = auction.Timer,
+                VendorId = auction.VendorId,
+                //VendorName = vendor.User.Username,
+                SecretPrice = auction.SecretPrice,
                 //MainImageUrl = auction.AuctionImages.First().Url,
                 //ImagesUrls = 
                 Bids = 0

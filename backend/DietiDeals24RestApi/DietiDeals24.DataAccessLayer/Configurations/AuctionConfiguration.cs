@@ -57,12 +57,12 @@ public class AuctionConfiguration : IEntityTypeConfiguration<Auction>
         builder.Property(a => a.StartingDate)
             .IsRequired()
             .ValueGeneratedOnAdd()
-            .HasColumnType("timestamp without time zone")
+            .HasColumnType("timestamp(0) without time zone")
             .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         builder.Property(a => a.EndingDate)
             .IsRequired()
-            .HasColumnType("timestamp without time zone");
+            .HasColumnType("timestamp(0) without time zone");
         
         builder.Property(a => a.Category)
             .IsRequired()

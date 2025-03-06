@@ -60,7 +60,7 @@ public class BidService: IBidService
         }
     }
 
-    public async Task<Bid> CreateBidAsync(CreateBidDTO bidDto, Auction auction)
+    public async Task<Bid> CreateBidAsync(CreateBidDTO bidDto)
     {
         _logger.LogInformation($"[SERVICE] Creating bid for Auction: {bidDto.AuctionId}");
 

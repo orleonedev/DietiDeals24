@@ -57,3 +57,9 @@ public class CreateAuctionDTO
     public decimal? SecretPrice { get; set; } = null;
     public Guid VendorId { get; set; }
 }
+
+public class UpdateAuctionDTO
+{
+    public Guid Id { get; set; }
+    
+}

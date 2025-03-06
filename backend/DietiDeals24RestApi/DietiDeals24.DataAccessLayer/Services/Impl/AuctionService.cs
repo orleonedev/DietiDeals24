@@ -20,74 +20,20 @@ public class AuctionService : IAuctionService
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
-
-    public async Task<Auction> GetAuctionByIdAsync(Guid id)
+    
+    public async Task<bool> AuctionExistsAsync(Guid auctionId)
     {
-        _logger.LogInformation("[SERVICE] Getting auction with id: {id}", id);
-        var auction = await _unitOfWork.AuctionRepository
-            .Get(auction => auction.Id == id)
-            .Select( auction => new Auction
-            {
-                Id = auction.Id,
-                Title = auction.Title,
-                AuctionDescription = auction.AuctionDescription,
-                StartingPrice = auction.StartingPrice,
-                CurrentPrice = auction.CurrentPrice,
-                AuctionType = auction.AuctionType,
-                Threshold = auction.Threshold,
-                Timer = auction.Timer,
-                SecretPrice = auction.SecretPrice,
-                VendorId = auction.VendorId,
-                Vendor = new Vendor
-                {
-                    Id = auction.Vendor.Id,
-                    UserId = auction.Vendor.UserId,
-                    StartingDate = auction.Vendor.StartingDate,
-                    SuccessfulAuctions = auction.Vendor.SuccessfulAuctions
-                },
-                Category = auction.Category,
-                AuctionState = auction.AuctionState,
-                StartingDate = auction.StartingDate,
-                EndingDate = auction.EndingDate,
-                AuctionImages = auction.AuctionImages.Select(image => new AuctionImage
-                {
-                    Id = image.Id,
-                    AuctionId = image.AuctionId,
-                    Url = image.Url,
-                }).ToArray(),
-                Bids = auction.Bids.Select(bid => new Bid
-                {
-                    Id = bid.Id,
-                    Price = bid.Price,
-                    AuctionId = bid.AuctionId,
-                    BuyerId = bid.BuyerId,
-                    BidDate = bid.BidDate
-                }).ToArray()
-            })
-            .SingleOrDefaultAsync();
-
-        if (auction == null) return null;
-        
-        return new Auction
+        try
         {
-            Id = auction.Id,
-            Title = auction.Title,
-            AuctionDescription = auction.AuctionDescription,
-            StartingPrice = auction.StartingPrice,
-            CurrentPrice = auction.CurrentPrice,
-            AuctionType = auction.AuctionType,
-            Threshold = auction.Threshold,
-            Timer = auction.Timer,
-            SecretPrice = auction.SecretPrice,
-            VendorId = auction.VendorId,
-            Vendor = auction.Vendor,
-            Category = auction.Category,
-            AuctionState = auction.AuctionState,
-            StartingDate = auction.StartingDate,
-            EndingDate = auction.EndingDate,
-            AuctionImages = auction.AuctionImages,
-            Bids = auction.Bids
-        };
+            return await _unitOfWork.AuctionRepository
+                .Get(auction => auction.Id == auctionId)
+                .AnyAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Checking auction with id {auctionId} failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Checking auction with id {auctionId} failed. Exception occurred: {ex.Message}.", ex);
+        }
     }
 
     public async Task<List<Auction>> GetAllAuctionsAsync(string? predicate = null, params object[] parameters)
@@ -102,8 +48,8 @@ public class AuctionService : IAuctionService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[SERVICE] Getting all auctions failed: {ex.Message}");
-            throw new Exception("[SERVICE] Getting all auctions failed.", ex);
+            _logger.LogError(ex, $"[SERVICE] Getting all auctions failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Getting all auctions failed. Exception occurred: {ex.Message}", ex);
         }
     }
 
@@ -144,12 +90,12 @@ public class AuctionService : IAuctionService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[SERVICE] Getting home page auctions failed: {ex.Message}");
-            throw new Exception("[SERVICE] Getting home page auctions failed.", ex);
+            _logger.LogError(ex, $"[SERVICE] Getting home page auctions failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Getting home page auctions failed. Exception occurred: {ex.Message}", ex);
         }
     }
 
-    public async Task<Auction> GetDetailedAuctionByIdAsync(Guid auctionId)
+    public async Task<Auction> GetAuctionByIdAsync(Guid auctionId)
     {
         try
         {
@@ -159,8 +105,8 @@ public class AuctionService : IAuctionService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[SERVICE] Getting detailed auction failed: {ex.Message}");
-            throw new Exception("[SERVICE] Getting detailed auction failed.", ex);
+            _logger.LogError(ex, $"[SERVICE] Getting auction with id {auctionId} failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Getting auction with id {auctionId} failed. Exception occurred: {ex.Message}.", ex);
         }
     }
     
@@ -200,9 +146,26 @@ public class AuctionService : IAuctionService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[SERVICE] Creating new auction failed: {ex.Message}");
-            throw new Exception("[SERVICE] Creating new auction failed.", ex);
+            _logger.LogError(ex, $"[SERVICE] Creating new auction failed. Exception occurred:: {ex.Message}");
+            throw new Exception($"[SERVICE] Creating new auction failed. Exception occurred: {ex.Message}", ex);
         }
     }
-    
+
+    public async Task<Auction> UpdateAuctionStateAsync(Auction auction)
+    {
+        try
+        {
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.AuctionRepository.Update(auction);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+
+            return await GetAuctionByIdAsync(auction.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Updating auction state with id: {auction.Id} failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Updating auction state with id: {auction.Id} failed. Exception occurred: {ex.Message}", ex);
+        }
+    }
 }

@@ -7,11 +7,14 @@ public class VendorWorker: IVendorWorker
 {
     private readonly ILogger<VendorWorker> _logger;
     private readonly IVendorService _vendorService;
+    private readonly IAuthenticationService _authenticationService;
 
-    public VendorWorker(ILogger<VendorWorker> logger, IVendorService vendorService)
+    public VendorWorker(ILogger<VendorWorker> logger, IVendorService vendorService, 
+        IAuthenticationService authenticationService)
     {
         _logger = logger;
         _vendorService = vendorService;
+        _authenticationService = authenticationService;
     }
 
     public async Task<DetailedVendorDTO> CreateVendorAsync(CreateVendorDTO vendorDto)
@@ -24,17 +27,22 @@ public class VendorWorker: IVendorWorker
 
             if (vendor != null)
             {
-                return new DetailedVendorDTO
+                if (await _authenticationService.UpdateVendorStatusAsync(vendor.Id, vendor.User.Username))
                 {
-                    Id = vendor.Id,
-                    Name = vendor.User.Fullname,
-                    Username = vendor.User.Username,
-                    Email = vendor.User.Email,
-                    SuccessfulAuctions = vendor.SuccessfulAuctions,
-                    JoinedSince = vendor.StartingDate,
-                    GeoLocation = vendor.GeoLocation,
-                    WebSiteUrl = vendor.WebSiteUrl
-                };
+                    return new DetailedVendorDTO
+                    {
+                        Id = vendor.Id,
+                        Name = vendor.User.Fullname,
+                        Username = vendor.User.Username,
+                        Email = vendor.User.Email,
+                        SuccessfulAuctions = vendor.SuccessfulAuctions,
+                        JoinedSince = vendor.StartingDate,
+                        GeoLocation = vendor.GeoLocation,
+                        WebSiteUrl = vendor.WebSiteUrl
+                    };
+                }
+                
+                throw new Exception("[WORKER] Error creating new vendor: updating vendor status cognito failed.");
             }
             
             throw new Exception("[WORKER] Error creating new vendor: vendor not added correctly.");

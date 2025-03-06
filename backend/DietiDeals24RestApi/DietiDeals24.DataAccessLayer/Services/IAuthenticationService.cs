@@ -14,6 +14,7 @@ public interface IAuthenticationService
     public Task ConfirmUserAsync(string email, string confirmationCode);
     public Task ResendConfirmationCodeAsync(string email);
     public Task<UserResponseDTO> GetUserAsync(string email);
-    public Task<Guid> GetCognitoSub(string email);
+    public Task<Guid> GetCognitoSubAsync(string email);
     public Task<TokenResponseDTO> RefreshTokenAsync(string refreshToken);
+    public Task<bool> UpdateVendorStatusAsync(Guid vendorId, string username);
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import AuthenticationServices
 
 @Observable
 class SignInViewModel: LoadableViewModel {
@@ -63,5 +64,26 @@ class SignInViewModel: LoadableViewModel {
     
     @MainActor func goToSignUp() {
         coordinator.goToSignUp()
+    }
+    
+    @MainActor
+    func handleSignInWithApple(_ credentials: ASAuthorizationAppleIDCredential) {
+        guard let authCode = credentials.authorizationCode,
+              let tokenString = String(data: authCode, encoding: .utf8) else {
+            print("Failed to get identity token")
+            return
+        }
+        print("Apple authcode: \(tokenString)")
+        Task {
+            isLoading = true
+            defer {
+                isLoading = false
+            }
+            do {
+                try await coordinator.SignInWithProvider(.apple, token: tokenString)
+            } catch {
+                print("Sign in with Apple failed: \(error)")
+            }
+        }
     }
 }

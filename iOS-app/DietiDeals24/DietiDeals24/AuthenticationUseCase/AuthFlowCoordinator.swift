@@ -25,6 +25,10 @@ class AuthFlowCoordinator {
         try await appState.SignInInteractively(email: email, password: password)
     }
     
+    public func SignInWithProvider(_ provider: AuthFederatedProvider, token: String) async throws {
+        try await appState.SignInWithProvider(provider, token: token)
+    }
+    
     public func signUp(model: UserSignUpAttributes) async throws {
         let response = try await appState.signUp(model: model)
         await self.gotoCodeConfirmation(email: response.codeDeliveryDetails?.destination)

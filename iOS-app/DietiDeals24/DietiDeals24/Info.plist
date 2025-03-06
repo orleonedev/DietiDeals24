@@ -6,6 +6,8 @@
 	<string>$(BACKEND_BASE_URL)</string>
 	<key>COGNITO_CLIENTID</key>
 	<string>$(COGNITO_CLIENTID)</string>
+	<key>COGNITO_OAUTH_BASE</key>
+	<string>$(COGNITO_OAUTH_BASE)</string>
 	<key>COGNITO_URL</key>
 	<string>$(COGNITO_URL)</string>
 </dict>

@@ -174,8 +174,8 @@ extension SignInView {
         } onCompletion: { result in
             switch result {
                 case .success(let authorization):
-                    let credentials = authorization.credential as? ASAuthorizationAppleIDCredential
-                    //TODO: Cognito provider
+                    guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
+                    viewModel.handleSignInWithApple(credentials)
                     
                 case .failure(let error):
                     print(error)

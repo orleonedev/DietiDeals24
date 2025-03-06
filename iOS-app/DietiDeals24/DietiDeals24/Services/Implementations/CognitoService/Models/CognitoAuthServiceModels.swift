@@ -106,7 +106,7 @@ struct CognitoAuthRequestBody: Codable, BodyParameters {
 
 enum CognitoLoginMethods {
     case usernamePassword(username: String, password: String)
-    case provider(provider: String, token: String)
+    case provider(provider: AuthFederatedProvider, token: String)
     case refreshToken(refreshToken: String)
     case session(credentials: SessionCredential)
 }
@@ -207,31 +207,39 @@ extension CognitoEndpoint {
         )
     }
     
-    static private func getLoginEndpoint(provider: String, token: String) -> CodableEndpoint<CognitoAuthResponse> {
+    static private func getLoginEndpoint(provider: AuthFederatedProvider, token: String) -> CodableEndpoint<CognitoAuthResponse> {
         let clientId = CognitoConfiguration.clientId
-        let baseURLString = URL(string: CognitoConfiguration.url)!
+        let baseURLString = URL(string: CognitoConfiguration.oauthUrl+"/oauth2/token")!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
-        let headers: [String: String] = [
-            "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
-        ]
-        let body = CognitoAuthRequestBody(
-            AuthFlow: "USER_SRP_AUTH",
-            AuthParameters: [
-                "USERNAME": provider + "_" + UUID().uuidString,  // Unique identifier for federated login
-                "IDP_TOKEN": token
-            ],
-            ClientId: clientId, Session: nil
-        ).jsonObject
+        let encoding = Endpoint.Encoding.form
+        
+        var body: [String: String] = [:]
+        
+        switch provider {
+            case .apple:
+                body = [
+                    "grant_type": "authorization_code",
+                    "client_id": clientId,
+                    "code": token,
+                    "redirect_uri": "https://d84l1y8p4kdic.cloudfront.net"
+                ]
+            case .facebook, .google:
+                body = [
+                    "grant_type": "urn:ietf:params:oauth:grant-type:token-exchange",
+                    "client_id": clientId,
+                    "subject_token": token,
+                    "subject_token_type": "urn:ietf:params:oauth:token-type:access_token"
+                ]
+            
+        }
         
         return CodableEndpoint<CognitoAuthResponse>(
             Endpoint(
                 baseURL: baseURLString,
                 path: "",
-                parameters: body ?? [:],
+                parameters: body ,
                 encoding: encoding,
-                method: httpMethod,
-                headers: headers
+                method: httpMethod
             )
         )
     }

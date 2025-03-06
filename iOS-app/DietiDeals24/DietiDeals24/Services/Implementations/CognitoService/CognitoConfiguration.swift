@@ -23,4 +23,10 @@ struct CognitoConfiguration {
         return clientId
     }
     
+    static var oauthUrl: String {
+        guard let oauthUrlBase = Bundle.main.object(forInfoDictionaryKey: "COGNITO_OAUTH_BASE") as? String else {
+            return ""
+        }
+        return "https://"+oauthUrlBase
+    }
 }

@@ -33,7 +33,22 @@ struct AuctionCardDTO: Decodable {
         id = try container.decodeIfPresent(UUID.self, forKey: .id)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         currentPrice = try container.decodeIfPresent(Double.self, forKey: .currentPrice)
-        endingDate = try container.decodeIfPresent(Date.self, forKey: .endingDate)
+        let dateString = try container.decodeIfPresent(String.self, forKey: .endingDate)
+        if let dateString = dateString {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            guard let date = formatter.date(from: dateString) else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .endingDate,
+                    in: container,
+                    debugDescription: "Invalid date format: \(dateString)"
+                )
+            }
+            self.endingDate = date
+        } else {
+            self.endingDate = nil
+        }
+        
         bids = try container.decodeIfPresent(Int.self, forKey: .bids)
         
         if let rawValue = try container.decodeIfPresent(Int.self, forKey: .type) {

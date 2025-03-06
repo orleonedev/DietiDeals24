@@ -28,7 +28,7 @@ final class CognitoAuthService: AuthService {
     func signIn(withProvider provider: AuthFederatedProvider, thirdPartyToken: String) async throws -> AuthTokenSession {
         let response: CognitoAuthResponse = try await rest.getCodable(
             at: CognitoEndpoint.login(
-                method: .provider(provider: provider.rawValue, token: thirdPartyToken)
+                method: .provider(provider: provider, token: thirdPartyToken)
             ).endpoint
         )
         let result: AuthTokenSession = response.authResult.generateSessionToken()

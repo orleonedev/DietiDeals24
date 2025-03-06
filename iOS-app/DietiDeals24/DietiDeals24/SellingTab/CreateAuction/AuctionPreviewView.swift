@@ -21,7 +21,6 @@ public struct AuctionPreviewView: View, LoadableView {
                         .frame(height: 100)
                 }
             }
-            .scrollBounceBehavior(.basedOnSize)
             .overlay {
                 ZStack(alignment: .bottom){
                     Color.clear
@@ -239,7 +238,6 @@ extension AuctionPreviewView {
             .padding()
         }
         .scrollIndicators(.never)
-        .scrollBounceBehavior(.basedOnSize)
         .frame(height: 192)
         
     }

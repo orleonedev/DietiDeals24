@@ -63,7 +63,7 @@ extension AuctionEndpoint {
         return CodableEndpoint<AuctionDetailDTO>(
             Endpoint(
                 baseURL: baseURLString,
-                path: "Auction/get-auction-by-id",
+                path: "Auction/get-detailed-auction-by-id",
                 queryParameters: ["id" : id.uuidString],
                 method: httpMethod,
                 authorizationType: .bearer

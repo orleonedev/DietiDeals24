@@ -10,8 +10,8 @@ import SwiftUI
 class MainTabCoordinator {
     typealias TabRouter = RoutingKit.Router
     
-    private let router: TabRouter
-    private let appContainer: AppContainer
+    //private let router: TabRouter
+    internal let appContainer: AppContainer
     private let appState: AppState
     
     private let exploreCoordinator: ExploreCoordinator
@@ -21,7 +21,7 @@ class MainTabCoordinator {
     private let userAreaCoordinator: UserAreaCoordinator
     
     init(appContainer: AppContainer) {
-        self.router = appContainer.unsafeResolve(TabRouter.self)
+        //self.router = appContainer.unsafeResolve(TabRouter.self)
         self.appContainer = appContainer
         self.userAreaCoordinator = appContainer.unsafeResolve()
         self.sellingCoordinator = appContainer.unsafeResolve()

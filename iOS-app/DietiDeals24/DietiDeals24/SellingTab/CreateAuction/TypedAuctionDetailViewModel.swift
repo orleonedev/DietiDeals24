@@ -33,7 +33,7 @@ class TypedAuctionDetailViewModel: LoadableViewModel {
     }
     
     func validateStartingPrice()  {
-        startingPriceValidationError = startingPrice.isEmpty
+        startingPriceValidationError = startingPrice.isEmpty || !(1.0...9999999.99).contains(Double(startingPrice) ?? -1.0)
     }
     
     func validateTimer()  {
@@ -41,11 +41,11 @@ class TypedAuctionDetailViewModel: LoadableViewModel {
     }
     
     func validateThreshold()  {
-        thresholdValidationError = timer.isEmpty || Int(timer) ?? 0 < 1
+        thresholdValidationError = threshold.isEmpty || Double(threshold) ?? 0 < 1
     }
     
     func validateSecretPrice()  {
-        secretPriceValidationError = auctionType == .descending ? secretPrice.isEmpty || Double(secretPrice) ?? 0.0 > Double(startingPrice) ?? -1.0 : false
+        secretPriceValidationError = auctionType == .descending ? secretPrice.isEmpty || (Double(secretPrice) ?? 0.0) > (Double(startingPrice) ?? -1.0)-1.0 : false
     }
     
     @discardableResult

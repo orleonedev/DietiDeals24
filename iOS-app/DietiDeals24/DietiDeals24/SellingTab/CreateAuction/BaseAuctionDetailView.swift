@@ -25,7 +25,6 @@ struct BaseAuctionDetailView: View, LoadableView {
             .onTapGesture {
                 self.isFocused = false
             }
-            .scrollBounceBehavior(.basedOnSize)
         }
         .interactiveDismissDisabled(true)
         .navigationTitle("Create Auction")
@@ -122,7 +121,6 @@ extension BaseAuctionDetailView {
                 
                 
             }
-            .scrollBounceBehavior(.basedOnSize)
             .defaultScrollAnchor(viewModel.baseAuction.images.isEmpty ? .center : .leading)
             .background(
                 RoundedRectangle(cornerRadius: 12)

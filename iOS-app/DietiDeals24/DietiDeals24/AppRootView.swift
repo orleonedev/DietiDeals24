@@ -90,6 +90,13 @@ class AppState: LoadableViewModel {
         self.isAuthenticated = true
     }
     
+    public func SignInWithProvider(_ provider: AuthFederatedProvider, token: String) async throws {
+        let sessionToken = try await self.authService.signIn(withProvider: provider, thirdPartyToken: token)
+        self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
+        self.isAuthenticated = true
+        
+    }
+    
     public func signUp(model: UserSignUpAttributes) async throws -> CognitoSignUpResponse {
         guard let response = try await self.authService.signUp(model: model) as? CognitoSignUpResponse else {throw AuthServiceError.UnknownError("SignUp Failed")}
         self.credentialService.setSessionCredentials(session: .init(session: response.session, username: model.username))

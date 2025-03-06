@@ -12,7 +12,6 @@ import RoutingKit
 struct SignInView: View, LoadableView {
     
     @State var viewModel: SignInViewModel
-    @FocusState var isFocused: Bool
     
     var body: some View {
         ScrollView {
@@ -30,11 +29,6 @@ struct SignInView: View, LoadableView {
                 }
                 .background(.clear)
                 .contentShape(Rectangle())
-                .simultaneousGesture(
-                    TapGesture().onEnded {
-                        isFocused = false
-                    }
-                )
                 socialLoginStack()
             }
             .padding()
@@ -66,7 +60,6 @@ extension SignInView {
                 ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email")
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
-                    .focused(self.$isFocused)
             }
             
             SecureValidableTextField(
@@ -76,7 +69,6 @@ extension SignInView {
             )
             .textContentType(.password)
             .autocorrectionDisabled(true)
-            .focused(self.$isFocused)
         }
         
     }
@@ -182,8 +174,8 @@ extension SignInView {
         } onCompletion: { result in
             switch result {
                 case .success(let authorization):
-                    let credentials = authorization.credential as? ASAuthorizationAppleIDCredential
-                    //TODO: Cognito provider
+                    guard let credentials = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
+                    viewModel.handleSignInWithApple(credentials)
                     
                 case .failure(let error):
                     print(error)

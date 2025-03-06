@@ -21,8 +21,7 @@ struct AuctionDetailDTO: Decodable {
     public var bids: Int?
     public var description: String?
     public var secretPrice: Double?
-    public var vendorId: UUID?
-    public var vendorName: String?
+    public var vendor: VendorProfileResponseDTO?
     
     enum CodingKeys: String, CodingKey {
         case imagesUrls
@@ -38,8 +37,7 @@ struct AuctionDetailDTO: Decodable {
         case category
         case endingDate 
         case secretPrice
-        case vendorId
-        case vendorName
+        case vendor
     }
     
     public init(from decoder: Decoder) throws {
@@ -50,14 +48,44 @@ struct AuctionDetailDTO: Decodable {
         imagesUrls = try container.decodeIfPresent([String].self, forKey: .imagesUrls)
         currentPrice = try container.decodeIfPresent(Double.self, forKey: .currentPrice)
         threshold = try container.decodeIfPresent(Double.self, forKey: .threshold)
-        startingDate = try container.decodeIfPresent(Date.self, forKey: .startingDate)
-        endingDate = try container.decodeIfPresent(Date.self, forKey: .endingDate)
+        let startingDateString = try container.decodeIfPresent(String.self, forKey: .startingDate)
+        if let startingDateString = startingDateString {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            guard let date = formatter.date(from: startingDateString) else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .startingDate,
+                    in: container,
+                    debugDescription: "Invalid date format: \(startingDateString)"
+                )
+            }
+            self.startingDate = date
+        } else {
+            self.startingDate = nil
+        }
+        
+        
+        let endingDateString = try container.decodeIfPresent(String.self, forKey: .endingDate)
+        if let endingDateString = endingDateString {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            guard let date = formatter.date(from: endingDateString) else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .endingDate,
+                    in: container,
+                    debugDescription: "Invalid date format: \(endingDateString)"
+                )
+            }
+            self.endingDate = date
+        } else {
+            self.endingDate = nil
+        }
+        
         thresholdTimer = try container.decodeIfPresent(Int.self, forKey: .thresholdTimer)
         bids = try container.decodeIfPresent(Int.self, forKey: .bids)
         description = try container.decodeIfPresent(String.self, forKey: .description)
         secretPrice = try container.decodeIfPresent(Double.self, forKey: .secretPrice)
-        vendorId = try container.decodeIfPresent(UUID.self, forKey: .vendorId)
-        vendorName = try container.decodeIfPresent(String.self, forKey: .vendorName)
+        vendor = try container.decodeIfPresent(VendorProfileResponseDTO.self, forKey: .vendor)
         
         if let categoryRawValue = try container.decodeIfPresent(Int.self, forKey: .category) {
             category = AuctionCategory(rawValue: categoryRawValue)
@@ -88,11 +116,8 @@ extension AuctionDetailModel {
         guard let category = dto.category else {
             throw AuctionDetailModelError.missingValue("category")
         }
-        guard let images = dto.imagesUrls else {
-            throw AuctionDetailModelError.missingValue("imagesUrls")
-        }
         guard let auctionType = dto.type else {
-            throw AuctionDetailModelError.missingValue("type")
+            throw AuctionDetailModelError.missingValue("auctionType")
         }
         guard let currentPrice = dto.currentPrice else {
             throw AuctionDetailModelError.missingValue("currentPrice")
@@ -106,26 +131,24 @@ extension AuctionDetailModel {
         guard let endTime = dto.endingDate else {
             throw AuctionDetailModelError.missingValue("endingDate")
         }
-        guard let vendorId = dto.vendorId else {
-            throw AuctionDetailModelError.missingValue("vendorId")
-        }
-        guard let vendorName = dto.vendorName else {
-            throw AuctionDetailModelError.missingValue("vendorName")
+        
+        guard let vendor = dto.vendor else {
+            throw AuctionDetailModelError.missingValue("vendor")
         }
         
         self.id = id
         self.title = title
         self.description = description
         self.category = category
-        self.images = images
+        self.images = dto.imagesUrls ?? []
         self.auctionType = auctionType
         self.currentPrice = currentPrice
         self.threshold = threshold
         self.timer = timer
         self.secretPrice = dto.secretPrice
         self.endTime = endTime
-        self.vendorID = vendorId
-        self.vendorName = vendorName
+        self.vendorID = vendor.vendorID!
+        self.vendorName = vendor.vendorName ?? ""
         
     }
 }

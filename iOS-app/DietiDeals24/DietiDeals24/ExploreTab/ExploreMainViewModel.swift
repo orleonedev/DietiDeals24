@@ -96,11 +96,12 @@ class ExploreMainViewModel: LoadableViewModel {
                 self.state = .searching
                 self.isLoading = false
                 self.isFetchingSearchResults = false
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             let searchItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.searchPage, pageSize: self.searchPageSize)
             let newSearchItems: [AuctionCardModel] = searchItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
             self.searchItemsCount = searchItemsDto.totalRecords
-            self.searchPage = searchItemsDto.page
+            self.searchPage = searchItemsDto.pageNumber
             self.searchItems.append(contentsOf: newSearchItems)
             self.shouldFetchMoreSearchItem = searchItemsCount > searchItems.count
         }
@@ -117,9 +118,9 @@ class ExploreMainViewModel: LoadableViewModel {
             }
             let exploreItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.explorePage, pageSize: self.explorePageSize)
             let newExploreItems: [AuctionCardModel] = exploreItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
-            self.explorePage = exploreItemsDto.page
+            self.explorePage = exploreItemsDto.pageNumber
             self.exploreItems.append(contentsOf: newExploreItems)
-            self.shouldFetchMoreExploreItem = maxExploreItems > exploreItems.count
+            self.shouldFetchMoreExploreItem = maxExploreItems < exploreItemsDto.totalRecords ? maxExploreItems > exploreItems.count : exploreItems.count < exploreItemsDto.totalRecords
         }
     }
     

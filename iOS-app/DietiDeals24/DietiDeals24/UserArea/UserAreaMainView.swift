@@ -20,8 +20,9 @@ struct UserAreaMainView: View, LoadableView {
             VStack {
                 UserDetailView(userModel: viewModel.userDataModel)
             }
+            .padding()
         }
-        .padding()
+        
         .task {
             await viewModel.getUserData()
         }

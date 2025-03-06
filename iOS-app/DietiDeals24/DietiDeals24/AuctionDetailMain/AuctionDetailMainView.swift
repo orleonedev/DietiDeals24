@@ -29,12 +29,14 @@ public struct AuctionDetailMainView: View, LoadableView {
                 
             }
         }
+        .task {
+            viewModel.checkAuctionOwnership()
+        }
         .overlay {
             if viewModel.canPresentOffer {
                 presetOfferOverlay()
             }
         }
-        .scrollBounceBehavior(.basedOnSize)
         .navigationTitle(viewModel.auction?.title ?? "")
         .navigationBarTitleDisplayMode(.large)
     }
@@ -95,7 +97,7 @@ extension AuctionDetailMainView {
 
 #Preview {
     
-    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(sellingCoordinator: .init(appContainer: .init()))
+    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(auctionCoordinator: ExploreCoordinator(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()))
     let imgUrl = "https://s.yimg.com/ny/api/res/1.2/Onq1adoghZAHhpsXXmF8Pw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05MzE-/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f"
     vm.setAuction(
         AuctionDetailModel(

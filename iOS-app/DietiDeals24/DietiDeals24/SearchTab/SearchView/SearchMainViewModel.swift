@@ -109,11 +109,12 @@ class SearchMainViewModel: LoadableViewModel {
                 self.viewState = .fetched
                 self.isLoading = false
                 self.isFetchingSearchResults = false
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
             let searchItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.searchPage, pageSize: self.searchPageSize)
             let newSearchItems: [AuctionCardModel] = searchItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
             self.searchItemsCount = searchItemsDto.totalRecords
-            self.searchPage = searchItemsDto.page
+            self.searchPage = searchItemsDto.pageNumber
             self.fetchedSearchResults.append(contentsOf: newSearchItems)
             self.shouldFetchMoreSearchItem = searchItemsCount > fetchedSearchResults.count
         }

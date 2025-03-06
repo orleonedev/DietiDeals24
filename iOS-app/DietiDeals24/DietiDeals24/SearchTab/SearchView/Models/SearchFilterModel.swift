@@ -25,9 +25,9 @@ enum AuctionType: Int, FilterModelProtocol {
     var description: String {
         return self.label
     }
-    case all
-    case incremental
-    case descending
+    case all = 0
+    case incremental = 1
+    case descending = 2
     
     var label: String {
         switch self {
@@ -55,10 +55,10 @@ enum SortOrderFilter: Int, FilterModelProtocol {
         return self.label
     }
     
-    case relevance
-    case priceAscending
-    case priceDescending
-    case newer
+    case relevance = 0
+    case newer = 1
+    case priceAscending = 2
+    case priceDescending = 3
     
     var label: String {
         switch self {

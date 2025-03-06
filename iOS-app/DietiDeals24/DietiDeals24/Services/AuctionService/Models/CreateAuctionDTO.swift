@@ -29,6 +29,7 @@ struct CreateAuctionDTO: Encodable, BodyParameters {
         case thresholdTimer
         case imagesUrls
         case secretPrice
+        case vendorId
     }
     
     func encode(to encoder: any Encoder) throws {
@@ -43,6 +44,7 @@ struct CreateAuctionDTO: Encodable, BodyParameters {
         try container.encodeIfPresent(thresholdTimer, forKey: .thresholdTimer)
         try container.encodeIfPresent(imagesUrls, forKey: .imagesUrls)
         try container.encodeIfPresent(secretPrice, forKey: .secretPrice)
+        try container.encodeIfPresent(vendorId, forKey: .vendorId)
 
     }
     

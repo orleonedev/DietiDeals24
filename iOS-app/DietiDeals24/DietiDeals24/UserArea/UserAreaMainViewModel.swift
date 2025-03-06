@@ -23,10 +23,10 @@ class UserAreaMainViewModel: LoadableViewModel {
         var user = await coordinator.getUserData()
         if let unwrap = user, unwrap.role == .seller, let sellerId = unwrap.vendorId, let uuid = UUID(uuidString: sellerId) {
             let vendorDetail = try? await vendorService.getVendorProfile(id: uuid)
-            user?.geoLocation = vendorDetail?.geolocation
+            user?.geoLocation = vendorDetail?.geoLocation
             user?.joinedSince = vendorDetail?.joinedSince
             user?.url = vendorDetail?.websiteUrl
-            user?.auctionCreated = vendorDetail?.numberOfAuctions
+            user?.auctionCreated = vendorDetail?.successfulAuctions
         }
         self.userDataModel = user
         isLoading = false

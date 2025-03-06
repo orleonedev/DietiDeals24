@@ -8,21 +8,27 @@
 import RoutingKit
 import SwiftUI
 
-class AuthFlowCoordinator {
+class AuthFlowCoordinator: Coordinator {
+    
+    
     typealias AuthRouter = RoutingKit.Router
     
-    let container: AppContainer
+    var appContainer: AppContainer
     var router: AuthRouter
     var appState: AppState
     
     init(container: AppContainer) {
-        self.container = container
+        self.appContainer = container
         self.appState = container.unsafeResolve()
         self.router = container.unsafeResolve(AuthRouter.self)
     }
     
     public func SignInInteractively(email: String, password: String) async throws {
         try await appState.SignInInteractively(email: email, password: password)
+    }
+    
+    public func SignInWithProvider(_ provider: AuthFederatedProvider, token: String) async throws {
+        try await appState.SignInWithProvider(provider, token: token)
     }
     
     public func signUp(model: UserSignUpAttributes) async throws {
@@ -47,7 +53,7 @@ class AuthFlowCoordinator {
     @MainActor @ViewBuilder
     func rootView() -> some View {
         RoutingKit.RoutableRootView(router: router) {
-            SignInView(viewModel: self.container.unsafeResolve())
+            SignInView(viewModel: self.appContainer.unsafeResolve())
         }
     }
     
@@ -68,7 +74,7 @@ class AuthFlowCoordinator {
     
     private func signUpDestination() -> RoutingKit.Destination {
         .init {
-            SignUpView(viewModel: self.container.unsafeResolve())
+            SignUpView(viewModel: self.appContainer.unsafeResolve())
         }
     }
     
@@ -79,7 +85,7 @@ class AuthFlowCoordinator {
     
     private func codeConfirmationDestination(email: String?) -> RoutingKit.Destination {
         .init {
-            let viewModel = self.container.unsafeResolve(CodeVerificationViewModel.self)
+            let viewModel = self.appContainer.unsafeResolve(CodeVerificationViewModel.self)
             viewModel.setFromSignUpResponse( email: email)
             return CodeVerificationView(viewModel: viewModel)
         }

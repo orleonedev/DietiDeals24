@@ -23,7 +23,7 @@ public class UserPushTokenConfiguration : IEntityTypeConfiguration<UserPushToken
 
         builder.Property(t => t.RegistrationDate)
             .IsRequired()
-            .HasColumnType("timestamp without time zone");
+            .HasColumnType("timestamp(0) without time zone");
 
         // Relationships
         builder.HasOne(t => t.User)

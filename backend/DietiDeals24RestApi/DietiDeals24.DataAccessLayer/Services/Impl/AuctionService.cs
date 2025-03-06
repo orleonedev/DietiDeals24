@@ -171,6 +171,9 @@ public class AuctionService : IAuctionService
             if (auction == null) throw new ArgumentNullException(nameof(auction), "[SERVICE] CreateAuctionDTO is null.");
             if (vendor == null) throw new ArgumentNullException(nameof(vendor), "[SERVICE] Vendor does not exist.");
 
+            DateTime now = DateTime.Now;
+            DateTime startingDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            
             var newAuction = new Auction
             {
                 Title = auction.Title,
@@ -183,9 +186,9 @@ public class AuctionService : IAuctionService
                 SecretPrice = auction.SecretPrice,
                 VendorId = vendor.Id,
                 AuctionState = AuctionState.Open,
-                StartingDate = DateTime.Now,
-                EndingDate = DateTime.Now.AddHours(auction.ThresholdTimer)
-                //Category = auction.Category,
+                StartingDate = startingDate,
+                EndingDate = startingDate.AddHours(auction.ThresholdTimer),
+                Category = auction.Category
             };
 
             _unitOfWork.BeginTransaction();

@@ -13,14 +13,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(u => u.Id);
 
         builder.Property(u => u.Id)
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .HasDefaultValueSql("gen_random_uuid()");
-
-        builder.Property(u => u.CognitoSub)
-            .HasMaxLength(255)
             .IsRequired();
-
+            
         builder.Property(u => u.Username)
             .HasMaxLength(100)
             .IsRequired();

@@ -23,7 +23,7 @@ public class VendorConfiguration : IEntityTypeConfiguration<Vendor>
 
         builder.Property(v => v.StartingDate)
             .HasDefaultValueSql("CURRENT_TIMESTAMP")
-            .HasColumnType("timestamp without time zone")
+            .HasColumnType("timestamp(0) without time zone")
             .ValueGeneratedOnAdd();
 
         builder.Property(v => v.SuccessfulAuctions)

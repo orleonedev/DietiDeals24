@@ -6,7 +6,6 @@ namespace DietiDeals24.DataAccessLayer.Entities;
 public class User
 {
     public Guid Id { get; set; } 
-    public string CognitoSub { get; set; }
     public string Username { get; set; }
     public string Fullname { get; set; }
     public string Email { get; set; }

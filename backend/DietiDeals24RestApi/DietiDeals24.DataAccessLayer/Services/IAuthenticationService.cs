@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using DietiDeals24.DataAccessLayer.Models;
@@ -13,6 +14,6 @@ public interface IAuthenticationService
     public Task ConfirmUserAsync(string email, string confirmationCode);
     public Task ResendConfirmationCodeAsync(string email);
     public Task<UserResponseDTO> GetUserAsync(string email);
-    public Task<string> GetCognitoSub(string email);
+    public Task<Guid> GetCognitoSub(string email);
     public Task<TokenResponseDTO> RefreshTokenAsync(string refreshToken);
 }

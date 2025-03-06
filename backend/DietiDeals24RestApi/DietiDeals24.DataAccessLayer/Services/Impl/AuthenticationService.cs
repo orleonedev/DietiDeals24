@@ -150,7 +150,7 @@ public class AuthenticationService: IAuthenticationService
                 
             var user = new User
             {
-                CognitoSub = GetCognitoSub(registrationDto.Email).Result,
+                Id = GetCognitoSub(registrationDto.Email).Result,
                 Username = registrationDto.Username,
                 Fullname = registrationDto.FullName,
                 Email = registrationDto.Email,
@@ -168,7 +168,7 @@ public class AuthenticationService: IAuthenticationService
             
             return new UserResponseDTO
             {
-                CognitoSub = user.CognitoSub,
+                CognitoSub = user.Id.ToString(),
                 FullName = user.Fullname,
                 Username = user.Username,
                 Email = user.Email,
@@ -410,7 +410,7 @@ public class AuthenticationService: IAuthenticationService
     /// <param name="email"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<string> GetCognitoSub(string email)
+    public async Task<Guid> GetCognitoSub(string email)
     {
         var secrets = await _secretsService.GetSecretsAsync();
 
@@ -427,7 +427,7 @@ public class AuthenticationService: IAuthenticationService
 
             // Extract the CognitoSub (sub) attribute
             var subAttribute = response.UserAttributes.FirstOrDefault(attr => attr.Name == "sub");
-            return subAttribute?.Value;
+            return Guid.Parse(subAttribute?.Value);
         }
         catch (Exception ex)
         { 

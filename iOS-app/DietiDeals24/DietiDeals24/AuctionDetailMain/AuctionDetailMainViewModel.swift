@@ -55,9 +55,9 @@ class AuctionDetailMainViewModel: LoadableViewModel {
                 vendorName: "Vendor Name",
                 vendorUsername: "vendorUsername",
                 vendorEmail: "vendor.email@email.com",
-                numberOfAuctions: 0,
+                successfulAuctions: 0,
                 joinedSince: Date.now,
-                geolocation: "Napoli",
+                geoLocation: "Napoli",
                 websiteUrl: "chill.com",
                 shortBio: "un ragazzo nel chill"
             ) )

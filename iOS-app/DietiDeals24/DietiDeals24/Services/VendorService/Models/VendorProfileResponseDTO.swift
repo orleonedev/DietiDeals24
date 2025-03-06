@@ -12,9 +12,9 @@ struct VendorProfileResponseDTO: Decodable {
     let vendorName: String?
     let vendorUsername: String?
     let vendorEmail: String?
-    let numberOfAuctions: Int?
+    let successfulAuctions: Int?
     let joinedSince: Date?
-    let geolocation: String?
+    let geoLocation: String?
     let websiteUrl: String?
     let shortBio: String?
     
@@ -23,9 +23,9 @@ struct VendorProfileResponseDTO: Decodable {
         case vendorName
         case vendorUsername
         case vendorEmail
-        case numberOfAuctions
+        case successfulAuctions
         case joinedSince
-        case geolocation
+        case geoLocation
         case websiteUrl
         case shortBio
     }
@@ -36,7 +36,7 @@ struct VendorProfileResponseDTO: Decodable {
         self.vendorName = try container.decodeIfPresent(String.self, forKey: .vendorName)
         self.vendorUsername = try container.decodeIfPresent(String.self, forKey: .vendorUsername)
         self.vendorEmail = try container.decodeIfPresent(String.self, forKey: .vendorEmail)
-        self.numberOfAuctions = try container.decodeIfPresent(Int.self, forKey: .numberOfAuctions)
+        self.successfulAuctions = try container.decodeIfPresent(Int.self, forKey: .successfulAuctions)
         let joinedString = try container.decodeIfPresent(String.self, forKey: .joinedSince)
         if let joinedString = joinedString {
             let dateFormatter = DateFormatter()
@@ -53,19 +53,19 @@ struct VendorProfileResponseDTO: Decodable {
             self.joinedSince = nil
         }
         
-        self.geolocation = try container.decodeIfPresent(String.self, forKey: .geolocation)
+        self.geoLocation = try container.decodeIfPresent(String.self, forKey: .geoLocation)
         self.websiteUrl = try container.decodeIfPresent(String.self, forKey: .websiteUrl)
         self.shortBio = try container.decodeIfPresent(String.self, forKey: .shortBio)
     }
     
-    init(vendorID: UUID? = nil, vendorName: String? = nil, vendorUsername: String? = nil, vendorEmail: String? = nil, numberOfAuctions: Int? = nil, joinedSince: Date? = nil, geolocation: String? = nil, websiteUrl: String? = nil, shortBio: String? = nil) {
+    init(vendorID: UUID? = nil, vendorName: String? = nil, vendorUsername: String? = nil, vendorEmail: String? = nil, successfulAuctions: Int? = nil, joinedSince: Date? = nil, geoLocation: String? = nil, websiteUrl: String? = nil, shortBio: String? = nil) {
         self.vendorID = vendorID
         self.vendorName = vendorName
         self.vendorUsername = vendorUsername
         self.vendorEmail = vendorEmail
-        self.numberOfAuctions = numberOfAuctions
+        self.successfulAuctions = successfulAuctions
         self.joinedSince = joinedSince
-        self.geolocation = geolocation
+        self.geoLocation = geoLocation
         self.websiteUrl = websiteUrl
         self.shortBio = shortBio
     }

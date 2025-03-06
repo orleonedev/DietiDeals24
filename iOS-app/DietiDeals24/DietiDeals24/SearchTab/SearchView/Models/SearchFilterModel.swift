@@ -56,9 +56,9 @@ enum SortOrderFilter: Int, FilterModelProtocol {
     }
     
     case relevance = 0
-    case priceDescending = 1
+    case newer = 1
     case priceAscending = 2
-    case newer = 3
+    case priceDescending = 3
     
     var label: String {
         switch self {

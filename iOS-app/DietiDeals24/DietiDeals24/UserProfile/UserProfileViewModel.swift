@@ -40,9 +40,9 @@ class UserProfileViewModel: LoadableViewModel {
             vendorId: vendor.vendorID?.uuidString,
             shortBio: vendor.shortBio,
             url: vendor.websiteUrl,
-            auctionCreated: vendor.numberOfAuctions,
+            auctionCreated: vendor.successfulAuctions,
             joinedSince: vendor.joinedSince,
-            geoLocation: vendor.geolocation
+            geoLocation: vendor.geoLocation
         )
         self.auctionsFilters = SearchFilterModel(vendorIdFilter: vendor.vendorID)
     }

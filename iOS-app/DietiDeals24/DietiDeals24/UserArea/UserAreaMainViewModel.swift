@@ -25,7 +25,7 @@ class UserAreaMainViewModel: LoadableViewModel {
             let vendorDetail = try? await vendorService.getVendorProfile(id: uuid)
             user?.geoLocation = vendorDetail?.geoLocation
             user?.joinedSince = vendorDetail?.joinedSince
-            user?.url = vendorDetail?.websiteUrl
+            user?.url = vendorDetail?.webSiteUrl
             user?.auctionCreated = vendorDetail?.successfulAuctions
         }
         self.userDataModel = user

@@ -147,8 +147,7 @@ extension AuctionDetailModel {
         self.timer = timer
         self.secretPrice = dto.secretPrice
         self.endTime = endTime
-        self.vendorID = vendor.vendorID!
-        self.vendorName = vendor.vendorName ?? ""
+        self.vendor = vendor
         
     }
 }

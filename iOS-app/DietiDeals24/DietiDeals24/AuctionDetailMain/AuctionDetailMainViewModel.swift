@@ -31,7 +31,7 @@ class AuctionDetailMainViewModel: LoadableViewModel {
         guard let auction = self.auction else { return }
         Task {
             guard let userData = await auctionCoordinator.getUserData() else { return }
-            self.canPresentOffer = userData.vendorId != auction.vendorID.uuidString.lowercased()
+            self.canPresentOffer = userData.vendorId != auction.vendor.id?.uuidString.lowercased()
         }
     }
     
@@ -50,17 +50,7 @@ class AuctionDetailMainViewModel: LoadableViewModel {
 //            let model = try AuctionDetailModel(from: auctionDTO)
 //            
             self.isLoading = false
-            self.auctionCoordinator.goToVendor(VendorProfileResponseDTO(
-                vendorID: vendorID,
-                vendorName: "Vendor Name",
-                vendorUsername: "vendorUsername",
-                vendorEmail: "vendor.email@email.com",
-                successfulAuctions: 0,
-                joinedSince: Date.now,
-                geoLocation: "Napoli",
-                websiteUrl: "chill.com",
-                shortBio: "un ragazzo nel chill"
-            ) )
+            self.auctionCoordinator.goToVendor(self.auction?.vendor ?? VendorProfileResponseDTO() )
             
         }
     }

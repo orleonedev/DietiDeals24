@@ -8,34 +8,34 @@
 import Foundation
 
 struct VendorProfileResponseDTO: Decodable {
-    let vendorID: UUID?
-    let vendorName: String?
-    let vendorUsername: String?
-    let vendorEmail: String?
+    let id: UUID?
+    let name: String?
+    let username: String?
+    let email: String?
     let successfulAuctions: Int?
     let joinedSince: Date?
     let geoLocation: String?
-    let websiteUrl: String?
+    let webSiteUrl: String?
     let shortBio: String?
     
     enum CodingKeys: String, CodingKey {
-        case vendorID
-        case vendorName
-        case vendorUsername
-        case vendorEmail
+        case id
+        case name
+        case username
+        case email
         case successfulAuctions
         case joinedSince
         case geoLocation
-        case websiteUrl
+        case webSiteUrl
         case shortBio
     }
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.vendorID = try container.decodeIfPresent(UUID.self, forKey: .vendorID)
-        self.vendorName = try container.decodeIfPresent(String.self, forKey: .vendorName)
-        self.vendorUsername = try container.decodeIfPresent(String.self, forKey: .vendorUsername)
-        self.vendorEmail = try container.decodeIfPresent(String.self, forKey: .vendorEmail)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.username = try container.decodeIfPresent(String.self, forKey: .username)
+        self.email = try container.decodeIfPresent(String.self, forKey: .email)
         self.successfulAuctions = try container.decodeIfPresent(Int.self, forKey: .successfulAuctions)
         let joinedString = try container.decodeIfPresent(String.self, forKey: .joinedSince)
         if let joinedString = joinedString {
@@ -54,19 +54,19 @@ struct VendorProfileResponseDTO: Decodable {
         }
         
         self.geoLocation = try container.decodeIfPresent(String.self, forKey: .geoLocation)
-        self.websiteUrl = try container.decodeIfPresent(String.self, forKey: .websiteUrl)
+        self.webSiteUrl = try container.decodeIfPresent(String.self, forKey: .webSiteUrl)
         self.shortBio = try container.decodeIfPresent(String.self, forKey: .shortBio)
     }
     
     init(vendorID: UUID? = nil, vendorName: String? = nil, vendorUsername: String? = nil, vendorEmail: String? = nil, successfulAuctions: Int? = nil, joinedSince: Date? = nil, geoLocation: String? = nil, websiteUrl: String? = nil, shortBio: String? = nil) {
-        self.vendorID = vendorID
-        self.vendorName = vendorName
-        self.vendorUsername = vendorUsername
-        self.vendorEmail = vendorEmail
+        self.id = vendorID
+        self.name = vendorName
+        self.username = vendorUsername
+        self.email = vendorEmail
         self.successfulAuctions = successfulAuctions
         self.joinedSince = joinedSince
         self.geoLocation = geoLocation
-        self.websiteUrl = websiteUrl
+        self.webSiteUrl = websiteUrl
         self.shortBio = shortBio
     }
 }

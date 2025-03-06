@@ -18,7 +18,7 @@ public struct AuctionDetailMainView: View, LoadableView {
                 if let auction = viewModel.auction {
                     AuctionDetailView(auction: auction)
                 }
-                if viewModel.canPresentOffer, let vendorName = self.viewModel.auction?.vendorName, let vendorID = self.viewModel.auction?.vendorID {
+                if viewModel.canPresentOffer, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
                     vendorStack(vendorName)
                         .onTapGesture {
                             self.viewModel.showVendorProfile(id: vendorID)
@@ -112,8 +112,7 @@ extension AuctionDetailMainView {
             timer: 12,
             secretPrice: nil,
             endTime: .now.advanced(by: 60*60),
-            vendorID: UUID(),
-            vendorName: "Venditore Test"
+            vendor: VendorProfileResponseDTO()
         )
 
     )

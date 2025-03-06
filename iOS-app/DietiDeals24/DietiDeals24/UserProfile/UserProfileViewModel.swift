@@ -32,19 +32,19 @@ class UserProfileViewModel: LoadableViewModel {
     
     func setVendor(_ vendor: VendorProfileResponseDTO) {
         self.userDataModel = UserDataModel(
-            name: vendor.vendorName ?? "",
-            username: vendor.vendorUsername ?? "",
-            email: vendor.vendorEmail ?? "",
+            name: vendor.name ?? "",
+            username: vendor.username ?? "",
+            email: vendor.email ?? "",
             role: .seller,
             userID: nil,
-            vendorId: vendor.vendorID?.uuidString,
+            vendorId: vendor.id?.uuidString,
             shortBio: vendor.shortBio,
-            url: vendor.websiteUrl,
+            url: vendor.webSiteUrl,
             auctionCreated: vendor.successfulAuctions,
             joinedSince: vendor.joinedSince,
             geoLocation: vendor.geoLocation
         )
-        self.auctionsFilters = SearchFilterModel(vendorIdFilter: vendor.vendorID)
+        self.auctionsFilters = SearchFilterModel(vendorIdFilter: vendor.id)
     }
     
     func getAuctionDetail(_ auctionID: UUID) {

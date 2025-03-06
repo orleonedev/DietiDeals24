@@ -296,8 +296,7 @@ extension AuctionDetailView {
                 timer: 12,
                 secretPrice: nil,
                 endTime: .now.advanced(by: 60*60),
-                vendorID: UUID(),
-                vendorName: "Venditore Test"
+                vendor: VendorProfileResponseDTO()
             )
         )
     }

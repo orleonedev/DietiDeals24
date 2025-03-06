@@ -19,14 +19,17 @@ struct AuctionDetailModel {
     var timer: Int
     var secretPrice: Double?
     var endTime: Date
-    var vendorID: UUID
-    var vendorName: String
+    var vendor: VendorProfileResponseDTO
 }
 
-struct VendorDetail {
-    var vendorID: UUID
-    var vendorName: String
-    var numberOfAuctions: Int
-    var joinedSince: Date
-    var geolocation: String
+struct VendorAuctionDetail {
+    var id: UUID?
+    var name: String?
+    var username: String?
+    var email: String?
+    var successfulAuctions: Int?
+    var joinedSince: Date?
+    var geoLocation: String?
+    var webSiteUrl: String?
+    var shortBio: String?
 }

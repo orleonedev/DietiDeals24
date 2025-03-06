@@ -438,6 +438,7 @@ public class AuthenticationService: IAuthenticationService
 
     public async Task<bool> UpdateVendorStatusAsync(Guid vendorId, string username)
     {
+        var secrets = await _secretsService.GetSecretsAsync();
         try
         {
             var response = await _cognitoClient.AdminUpdateUserAttributesAsync(new AdminUpdateUserAttributesRequest
@@ -456,7 +457,7 @@ public class AuthenticationService: IAuthenticationService
                     }
                 },
                 Username = username,
-                UserPoolId = GetCognitoUserPoolAsync().ToString()
+                UserPoolId = secrets["USER_POOL_ID"]
             });
 
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)

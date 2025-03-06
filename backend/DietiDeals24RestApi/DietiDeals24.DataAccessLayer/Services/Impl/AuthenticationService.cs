@@ -150,7 +150,7 @@ public class AuthenticationService: IAuthenticationService
                 
             var user = new User
             {
-                Id = GetCognitoSub(registrationDto.Email).Result,
+                Id = await GetCognitoSubAsync(registrationDto.Username),//va in errore perché non ritorna il sub
                 Username = registrationDto.Username,
                 Fullname = registrationDto.FullName,
                 Email = registrationDto.Email,
@@ -410,7 +410,7 @@ public class AuthenticationService: IAuthenticationService
     /// <param name="email"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Guid> GetCognitoSub(string email)
+    public async Task<Guid> GetCognitoSubAsync(string username)
     {
         var secrets = await _secretsService.GetSecretsAsync();
 
@@ -419,7 +419,7 @@ public class AuthenticationService: IAuthenticationService
             // Fetch the user from Cognito
             var request = new AdminGetUserRequest
             {
-                Username = email,
+                Username = username,
                 UserPoolId = secrets["USER_POOL_ID"]
             };
 
@@ -433,6 +433,43 @@ public class AuthenticationService: IAuthenticationService
         { 
             _logger.LogError(ex, "Failed to get cognito sub.");
             throw new InvalidOperationException($"Cognito sub attribute not found: {ex.Message}");
+        }
+    }
+
+    public async Task<bool> UpdateVendorStatusAsync(Guid vendorId, string username)
+    {
+        try
+        {
+            var response = await _cognitoClient.AdminUpdateUserAttributesAsync(new AdminUpdateUserAttributesRequest
+            {
+                UserAttributes = new List<AttributeType>
+                {
+                    new AttributeType
+                    {
+                        Name = "custom:role",
+                        Value = "1"
+                    },
+                    new AttributeType
+                    {
+                        Name = "custom:vendor_id",
+                        Value = vendorId.ToString()
+                    }
+                },
+                Username = username,
+                UserPoolId = GetCognitoUserPoolAsync().ToString()
+            });
+
+            if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return true;
+            }
+
+            return false;
+        }
+        catch (Exception ex)
+        { 
+            _logger.LogError(ex, $"Failed to update vendor status for vendorId: {vendorId}. Exception occurred: {ex.Message}");
+            throw new InvalidOperationException($"Failed to update vendor status for vendorId: {vendorId}. Exception occurred: {ex.Message}", ex);
         }
     }
 }

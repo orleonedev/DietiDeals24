@@ -101,7 +101,7 @@ public class AuctionWorker: IAuctionWorker
 
         try
         {
-            var auction = await _auctionService.GetDetailedAuctionByIdAsync(id);
+            var auction = await _auctionService.GetAuctionByIdAsync(id);
             var vendor = await _vendorService.GetVendorByIdAsync(auction.VendorId);
             var bids = await _bidService.GetBidsCountForAuctionAsync(id);
             var images = await _imageService.GetImagesUrlsForAuctionAsync(id);

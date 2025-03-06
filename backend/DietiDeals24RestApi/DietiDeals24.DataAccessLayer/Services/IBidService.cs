@@ -11,5 +11,5 @@ public interface IBidService
 {
     public Task<Dictionary<Guid, int>> GetBidsCountForAuctionAsync(List<Guid> auctionIds);
     public Task<int> GetBidsCountForAuctionAsync(Guid auctionId);
-    public Task<Bid> CreateBidAsync(CreateBidDTO bidDto, Auction auction);
+    public Task<Bid> CreateBidAsync(CreateBidDTO bidDto);
 }

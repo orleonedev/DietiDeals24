@@ -130,7 +130,8 @@ public class AuctionWorker: IAuctionWorker
                     SuccessfulAuctions = vendor.SuccessfulAuctions,
                     JoinedSince = vendor.StartingDate,
                     GeoLocation = vendor.GeoLocation,
-                    WebSiteUrl = vendor.WebSiteUrl
+                    WebSiteUrl = vendor.WebSiteUrl,
+                    ShortBio = vendor.ShortBio
                 },
                 SecretPrice = auction.SecretPrice
             };
@@ -173,7 +174,8 @@ public class AuctionWorker: IAuctionWorker
                     SuccessfulAuctions = vendor.SuccessfulAuctions,
                     JoinedSince = vendor.StartingDate,
                     GeoLocation = vendor.GeoLocation,
-                    WebSiteUrl = vendor.WebSiteUrl
+                    WebSiteUrl = vendor.WebSiteUrl,
+                    ShortBio = vendor.ShortBio
                 },
                 SecretPrice = auction.SecretPrice,
                 //MainImageUrl = auction.AuctionImages.First().Url,

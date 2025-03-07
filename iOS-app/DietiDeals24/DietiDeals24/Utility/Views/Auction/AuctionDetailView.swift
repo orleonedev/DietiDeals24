@@ -20,7 +20,7 @@ struct AuctionDetailView: View {
             VStack(alignment: .leading, spacing: 32) {
                 tagHorizontalStack(auction: auction)
                 priceStack(auction.currentPrice)
-                timerAndThresholdStack(timer: auction.timer, threshold: auction.threshold)
+                timerAndThresholdStack(threshold: auction.threshold)
                 if isPersonalAuction, let secrePrice = auction.secretPrice, auction.auctionType == .descending {
                     secrePriceRow(secrePrice)
                 }
@@ -28,7 +28,10 @@ struct AuctionDetailView: View {
             }
             .padding(.horizontal)
         }
-        
+        .onChange(of: auction) { old, newValue in
+            self.scheduleTimer()
+            self.updateCountdown()
+        }
         .onAppear {
             self.scheduleTimer()
             self.updateCountdown()
@@ -66,49 +69,6 @@ extension AuctionDetailView {
     }
     
     @ViewBuilder
-    func auctionPreview(auction: AuctionDetailModel) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            if !auction.images.isEmpty {
-                self.horizontalImageStack(images: auction.images)
-            } else {
-                GeometryReader { proxy in
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFit()
-                        .padding(32)
-                        .frame(width: proxy.size.width, height: proxy.size.height)
-                        .clipped()
-                        .clipShape(.rect(cornerRadius: 12))
-                        .foregroundStyle(.secondary)
-                }
-                .frame(height: 192)
-                .aspectRatio(1.77, contentMode: .fit)
-                .background(.secondary.quaternary)
-                .clipShape(.rect(cornerRadius: 24))
-                .padding()
-            }
-            VStack(alignment: .leading, spacing: 32) {
-                VStack(alignment: .leading, spacing: 12){
-                    Text(auction.title)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .lineLimit(2)
-                    tagHorizontalStack(auction: auction)
-                }
-                priceStack(auction.currentPrice)
-                timerAndThresholdStack(timer: auction.timer, threshold: auction.threshold)
-                if let secrePrice = auction.secretPrice, auction.auctionType == .descending {
-                    secrePriceRow(secrePrice)
-                }
-                descriptionView()
-            }
-            .padding(.horizontal)
-            
-        }
-    }
-    
-    
-    @ViewBuilder
     func secrePriceRow(_ secretPrice: Double) -> some View {
         HStack {
             Text("Secret Price")
@@ -137,7 +97,7 @@ extension AuctionDetailView {
     }
     
     @ViewBuilder
-    func timerAndThresholdStack(timer: Int, threshold: Double) -> some View {
+    func timerAndThresholdStack(threshold: Double) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("Remaining Time")

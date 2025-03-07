@@ -108,6 +108,15 @@ class ExploreMainViewModel: LoadableViewModel {
     }
     
     @MainActor
+    func refreshExploreItems() async {
+        self.shouldFetchMoreExploreItem = true
+        self.isLoading = true
+        self.explorePage = 1
+        self.exploreItems.removeAll()
+        self.getMoreExploreItems()
+    }
+    
+    @MainActor
     func getMoreExploreItems() {
         Task {
             guard shouldFetchMoreExploreItem, !isFetchingExploreItems else { return }
@@ -116,11 +125,15 @@ class ExploreMainViewModel: LoadableViewModel {
                 self.isFetchingExploreItems = false
                 self.isLoading = false
             }
-            let exploreItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.explorePage, pageSize: self.explorePageSize)
-            let newExploreItems: [AuctionCardModel] = exploreItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
-            self.explorePage = exploreItemsDto.pageNumber
-            self.exploreItems.append(contentsOf: newExploreItems)
-            self.shouldFetchMoreExploreItem = maxExploreItems < exploreItemsDto.totalRecords ? maxExploreItems > exploreItems.count : exploreItems.count < exploreItemsDto.totalRecords
+            do {
+                let exploreItemsDto = try await auctionService.fetchAuctions(filters: filterModel, page: self.explorePage, pageSize: self.explorePageSize)
+                let newExploreItems: [AuctionCardModel] = exploreItemsDto.results.compactMap {try? AuctionCardModel(from: $0)}
+                self.explorePage = exploreItemsDto.pageNumber
+                self.exploreItems.append(contentsOf: newExploreItems)
+                self.shouldFetchMoreExploreItem = maxExploreItems < exploreItemsDto.totalRecords ? maxExploreItems > exploreItems.count : exploreItems.count < exploreItemsDto.totalRecords
+            } catch {
+                print(error)
+            }
         }
     }
     

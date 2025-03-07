@@ -57,7 +57,14 @@ struct CreateAuctionDTO: Encodable, BodyParameters {
         startingPrice = model.startingPrice
         threshold = model.threshold
         thresholdTimer = model.timer
-        imagesUrls = model.baseDetail.images
+        imagesUrls = model.baseDetail.imagesPreview.compactMap({ preview in
+            switch preview {
+                case .success(let auctionImage):
+                    return auctionImage.identifier.uuidString
+                default:
+                    return nil
+            }
+        })
         secretPrice = model.secretPrice
         self.vendorId = vendorId
     }

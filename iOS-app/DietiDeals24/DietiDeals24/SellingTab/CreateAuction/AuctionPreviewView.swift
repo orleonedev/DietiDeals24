@@ -92,8 +92,8 @@ extension AuctionPreviewView {
     @ViewBuilder
     func auctionPreview(auction: CreateAuctionModel) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            if !auction.baseDetail.images.isEmpty {
-                self.horizontalImageStack(images: auction.baseDetail.images)
+            if !auction.baseDetail.imagesPreview.isEmpty {
+                self.horizontalImageStack(images: auction.baseDetail.imagesPreview)
             } else {
                 GeometryReader { proxy in
                     Image(systemName: "photo")
@@ -222,13 +222,14 @@ extension AuctionPreviewView {
     }
     
     @ViewBuilder
-    func horizontalImageStack(images: [String] ) -> some View {
+    func horizontalImageStack(images: [AuctionImagePreviewState] ) -> some View {
         ScrollView(.horizontal) {
             HStack(spacing: 24) {
-                ForEach(images, id: \.self) { image in
+                ForEach(images, id: \.self) { preview in
                     GeometryReader { proxy in
-                        RemoteImage(urlString: image)
+                        AuctionPreviewImage(state: preview)
                             .frame(width: proxy.size.width, height: proxy.size.height)
+                            .background(.quaternary)
                             .clipped()
                             .clipShape(.rect(cornerRadius: 12))
                     }
@@ -255,9 +256,7 @@ extension AuctionPreviewView {
                 title: "Title" ,
                 description: "gdgsgsgsrgrsgrs",
                 category: AuctionCategory.Electronics,
-                images: [
-                    imgUrl,
-                    imgUrl
+                imagesPreview: [
                 ]
             ),
             auctionType: .descending,

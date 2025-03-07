@@ -10,5 +10,7 @@
 	<string>$(COGNITO_OAUTH_BASE)</string>
 	<key>COGNITO_URL</key>
 	<string>$(COGNITO_URL)</string>
+	<key>NSPhotoLibraryLimitedAccessAPISupport</key>
+	<true/>
 </dict>
 </plist>

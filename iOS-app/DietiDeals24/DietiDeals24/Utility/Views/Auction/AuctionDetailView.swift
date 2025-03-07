@@ -10,6 +10,7 @@ import SwiftUI
 struct AuctionDetailView: View {
     
     let auction: AuctionDetailModel
+    let isPersonalAuction: Bool
     @State private var countdown: String = "00:00:00"
     @State private var timer: Timer?
     
@@ -20,7 +21,7 @@ struct AuctionDetailView: View {
                 tagHorizontalStack(auction: auction)
                 priceStack(auction.currentPrice)
                 timerAndThresholdStack(timer: auction.timer, threshold: auction.threshold)
-                if let secrePrice = auction.secretPrice, auction.auctionType == .descending {
+                if isPersonalAuction, let secrePrice = auction.secretPrice, auction.auctionType == .descending {
                     secrePriceRow(secrePrice)
                 }
                 descriptionView()
@@ -297,7 +298,7 @@ extension AuctionDetailView {
                 secretPrice: nil,
                 endTime: .now.advanced(by: 60*60),
                 vendor: VendorProfileResponseDTO()
-            )
+            ), isPersonalAuction: false
         )
     }
 }

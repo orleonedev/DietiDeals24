@@ -10,6 +10,6 @@ import Foundation
 struct BecomeAVendorBodyRequest: Encodable, BodyParameters {
     var userId: UUID
     var shortBio: String = ""
-    var url: String = ""
+    var webSiteUrl: String = ""
     var geoLocation: String = ""
 }

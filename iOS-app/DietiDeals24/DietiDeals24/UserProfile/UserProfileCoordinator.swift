@@ -10,6 +10,10 @@ import RoutingKit
 internal protocol UserProfileCoordinatorProtocol: Coordinator {
     
     var router: Router { get }
+    
+    @MainActor
+    func getUserData() async -> UserDataModel?
+    
     @MainActor
     func goToAuction(_ auction: AuctionDetailModel)
     func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination
@@ -38,6 +42,7 @@ internal protocol AuctionCoordinatorProtocol: Coordinator {
     
     var router: Router { get }
     
+    @MainActor
     func getUserData() async -> UserDataModel?
     
     @MainActor

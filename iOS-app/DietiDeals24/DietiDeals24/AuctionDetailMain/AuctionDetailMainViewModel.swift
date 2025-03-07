@@ -20,7 +20,7 @@ class AuctionDetailMainViewModel: LoadableViewModel {
     }
     
     var auction: AuctionDetailModel?
-    var canPresentOffer: Bool = false
+    var isPersonalAcution: Bool = false
     
     func setAuction(_ auction: AuctionDetailModel) {
         self.auction = auction
@@ -31,7 +31,7 @@ class AuctionDetailMainViewModel: LoadableViewModel {
         guard let auction = self.auction else { return }
         Task {
             guard let userData = await auctionCoordinator.getUserData() else { return }
-            self.canPresentOffer = userData.vendorId != auction.vendor.id?.uuidString.lowercased()
+            self.isPersonalAcution = userData.vendorId == auction.vendor.id?.uuidString.lowercased()
         }
     }
     

@@ -15,7 +15,7 @@ struct UserDataModel: Equatable {
     var vendorId: String? = nil
     var shortBio: String? = nil
     var url: String? = nil
-    var auctionCreated: Int? = nil
+    var successfulAuctions: Int? = nil
     var joinedSince: Date? = nil
     var geoLocation: String? = nil
 }
@@ -28,16 +28,18 @@ enum UserRole: Int {
 struct UserDetailView: View {
     
     let userModel: UserDataModel?
+    let isPersonalAccount: Bool
     
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(alignment: .leading, spacing: 24){
                 let role: UserRole = userModel?.role == .seller ? .seller : .buyer
+                
                 header(role: role)
                 
                 if userModel?.role == .seller {
                     if let shortBio = userModel?.shortBio, !shortBio.isEmpty {
-                        Text(userModel?.shortBio ?? "")
+                        Text(shortBio)
                             .font(.body)
                             .transition(.opacity)
                         
@@ -56,18 +58,20 @@ struct UserDetailView: View {
                         }
                     }
                     
-                    HStack {
-                        Button {
-                            
-                        } label: {
-                            Text("Email")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .foregroundStyle(.white)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
-                                .background(.accent)
-                                .clipShape(.rect(cornerRadius: 12))
+                    if !isPersonalAccount {
+                        HStack {
+                            Button {
+                                
+                            } label: {
+                                Text("Email")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.white)
+                                    .padding(.vertical, 8)
+                                    .frame(maxWidth: .infinity)
+                                    .background(.accent)
+                                    .clipShape(.rect(cornerRadius: 12))
+                            }
                         }
                     }
                 }
@@ -128,7 +132,7 @@ extension UserDetailView {
                         .font(.callout)
                         .transition(.opacity)
                     
-                    Text("Auctions Created: \(userModel?.auctionCreated?.formatted() ?? "--")")
+                    Text("Successful Auctions: \(userModel?.successfulAuctions?.formatted() ?? "--")")
                         .font(.callout)
                         .transition(.opacity)
                     
@@ -147,11 +151,11 @@ extension UserDetailView {
 #Preview {
     ScrollView {
         VStack(spacing: 32){
-            UserDetailView(userModel: .init(name: "Empty", username: "empty_empty", email: "empty@empty.com", role: .seller, shortBio: "", url: "", joinedSince: .now, geoLocation: ""))
-            UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"))
-            UserDetailView(userModel: .init(name: "Buyer", username: "the_buyer", email: "buyer@buyer.com", role: .buyer))
+            UserDetailView(userModel: .init(name: "Empty", username: "empty_empty", email: "empty@empty.com", role: .seller, shortBio: "", url: "", joinedSince: .now, geoLocation: ""), isPersonalAccount: false)
+            UserDetailView(userModel: .init(name: "Oreste", username: "oreste_leone", email: "oreste@oreste.com", role: .seller, shortBio: "Lorem Ipsum", url: "https://orleonedev.github.io", joinedSince: .now, geoLocation: "Napoli"), isPersonalAccount: false)
+            UserDetailView(userModel: .init(name: "Buyer", username: "the_buyer", email: "buyer@buyer.com", role: .buyer), isPersonalAccount: true)
             
-            UserDetailView(userModel: nil)
+            UserDetailView(userModel: nil, isPersonalAccount: false)
         }
     }
     .padding()

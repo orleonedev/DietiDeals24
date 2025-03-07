@@ -37,7 +37,7 @@ class BecomeAVendorViewModel: LoadableViewModel {
             defer {
                 isLoading = false
             }
-            let response = try await vendorService.becomeAVendor(parameters: .init(userId: uuid, shortBio: shortBio, url: url, geoLocation: geoLocation))
+            let response = try await vendorService.becomeAVendor(parameters: .init(userId: uuid, shortBio: shortBio, webSiteUrl: url, geoLocation: geoLocation))
             
             dismiss(shouldReloadUserData: response )
         }
@@ -51,7 +51,7 @@ class BecomeAVendorViewModel: LoadableViewModel {
             defer {
                 isLoading = false
             }
-            let response = try await vendorService.becomeAVendor(parameters: .init(userId: uuid, shortBio: "shortBio", url: "https://google.com", geoLocation: "Napoli"))
+            let response = try await vendorService.becomeAVendor(parameters: .init(userId: uuid, shortBio: "shortBio", webSiteUrl: "https://google.com", geoLocation: "Napoli"))
             
             dismiss(shouldReloadUserData: response )
         }

@@ -11,14 +11,13 @@ public struct AuctionDetailMainView: View, LoadableView {
     
     @State var viewModel: AuctionDetailMainViewModel
     
-    
     public var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 48){
                 if let auction = viewModel.auction {
-                    AuctionDetailView(auction: auction)
+                    AuctionDetailView(auction: auction, isPersonalAuction: viewModel.isPersonalAcution)
                 }
-                if viewModel.canPresentOffer, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
+                if !viewModel.isPersonalAcution, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
                     vendorStack(vendorName)
                         .onTapGesture {
                             self.viewModel.showVendorProfile(id: vendorID)
@@ -33,7 +32,7 @@ public struct AuctionDetailMainView: View, LoadableView {
             viewModel.checkAuctionOwnership()
         }
         .overlay {
-            if viewModel.canPresentOffer {
+            if !viewModel.isPersonalAcution {
                 presetOfferOverlay()
             }
         }
@@ -77,7 +76,7 @@ extension AuctionDetailMainView {
             Color.clear
             
             Button(action: {
-                
+                viewModel.showPresentOfferSheet()
             }) {
                 Text("Present Offer")
                     .font(.headline)

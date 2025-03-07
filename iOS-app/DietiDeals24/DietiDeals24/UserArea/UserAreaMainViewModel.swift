@@ -26,7 +26,8 @@ class UserAreaMainViewModel: LoadableViewModel {
             user?.geoLocation = vendorDetail?.geoLocation
             user?.joinedSince = vendorDetail?.joinedSince
             user?.url = vendorDetail?.webSiteUrl
-            user?.auctionCreated = vendorDetail?.successfulAuctions
+            user?.successfulAuctions = vendorDetail?.successfulAuctions
+            user?.shortBio = vendorDetail?.shortBio
         }
         self.userDataModel = user
         isLoading = false

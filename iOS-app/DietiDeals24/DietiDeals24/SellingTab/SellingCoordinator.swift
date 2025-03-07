@@ -108,12 +108,20 @@ class SellingCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCo
         }
     }
     
-    internal func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination {
+    internal func vendorProfileDestination(_ vendor: VendorAuctionDetail) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Selling"))
             vm.setVendor(vendor)
             return UserProfileView(viewModel: vm)
             
+        }
+    }
+    
+    internal func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? = nil) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(PresentOfferViewModel.self, tag: .init("Selling"))
+            vm.setAuctionDetials(auction, onBidResult: onBidResult)
+            return PresentOfferView(viewModel: vm)
         }
     }
 }

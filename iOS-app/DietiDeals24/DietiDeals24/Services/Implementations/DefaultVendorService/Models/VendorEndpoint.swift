@@ -44,13 +44,13 @@ extension VendorEndpoint {
     static private func getVendorDetailEndpoint(id: UUID) -> CodableEndpoint<VendorProfileResponseDTO> {
         
         let baseURLString = URL(string: NetworkConfiguration.backendBaseUrl)!
-        let httpMethod = HTTPMethod.get
+        let httpMethod = HTTPMethod.post
         
         return CodableEndpoint<VendorProfileResponseDTO>(
             Endpoint(
                 baseURL: baseURLString,
                 path: "Vendor/get-vendor-by-id",
-                queryParameters: ["id" : id.uuidString],
+                queryParameters: ["vendorId" : id.uuidString],
                 method: httpMethod,
                 authorizationType: .bearer
             )

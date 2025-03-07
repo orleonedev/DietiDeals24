@@ -9,10 +9,22 @@ import SwiftUI
 
 struct LaunchScreenView: View {
     @State private var opacity: CGFloat = 0
+    @FocusState var focused: Bool
     var body: some View {
         ZStack {
             Color.uninaBlu
                 .edgesIgnoringSafeArea(.all)
+            TextField("", text: .constant(""))
+                .opacity(0)
+                .focused($focused)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        focused = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            focused = false
+                        }
+                    }
+                }
             
             VStack(spacing: 32){
                 Image("AppIconImage")
@@ -26,6 +38,7 @@ struct LaunchScreenView: View {
                     .foregroundColor(.dietiYellow)
                     .padding()
             }
+            .ignoresSafeArea()
             .opacity(opacity)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {

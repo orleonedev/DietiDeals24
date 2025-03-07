@@ -49,14 +49,14 @@ struct ValidableTextField: View {
     
     func strokeColor() -> Color {
         guard validationError else {
-            return isFocused ? Color.accentColor : .secondary
+            return /*isFocused ? Color.accentColor :*/ .secondary
         }
         return .red
     }
     
     func labelColor() -> Color {
         guard validationError else {
-            return isFocused ? Color.accentColor : .primary
+            return /*isFocused ? Color.accentColor :*/ .primary
         }
         return .red
     }

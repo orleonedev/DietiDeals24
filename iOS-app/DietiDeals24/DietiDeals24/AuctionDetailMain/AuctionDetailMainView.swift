@@ -11,14 +11,13 @@ public struct AuctionDetailMainView: View, LoadableView {
     
     @State var viewModel: AuctionDetailMainViewModel
     
-    
     public var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 48){
                 if let auction = viewModel.auction {
-                    AuctionDetailView(auction: auction)
+                    AuctionDetailView(auction: auction, isPersonalAuction: viewModel.isPersonalAcution)
                 }
-                if viewModel.canPresentOffer, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
+                if !viewModel.isPersonalAcution, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
                     vendorStack(vendorName)
                         .onTapGesture {
                             self.viewModel.showVendorProfile(id: vendorID)
@@ -29,16 +28,20 @@ public struct AuctionDetailMainView: View, LoadableView {
                 
             }
         }
+        .animation(.easeInOut, value: viewModel.auction)
         .task {
             viewModel.checkAuctionOwnership()
         }
         .overlay {
-            if viewModel.canPresentOffer {
+            if !viewModel.isPersonalAcution {
                 presetOfferOverlay()
             }
         }
         .navigationTitle(viewModel.auction?.title ?? "")
         .navigationBarTitleDisplayMode(.large)
+        .overlay {
+            loaderView()
+        }
     }
     
 }
@@ -77,7 +80,7 @@ extension AuctionDetailMainView {
             Color.clear
             
             Button(action: {
-                
+                viewModel.showPresentOfferSheet()
             }) {
                 Text("Present Offer")
                     .font(.headline)
@@ -97,7 +100,7 @@ extension AuctionDetailMainView {
 
 #Preview {
     
-    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(auctionCoordinator: ExploreCoordinator(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()))
+    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(auctionCoordinator: ExploreCoordinator(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
     let imgUrl = "https://s.yimg.com/ny/api/res/1.2/Onq1adoghZAHhpsXXmF8Pw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05MzE-/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f"
     vm.setAuction(
         AuctionDetailModel(
@@ -112,7 +115,7 @@ extension AuctionDetailMainView {
             timer: 12,
             secretPrice: nil,
             endTime: .now.advanced(by: 60*60),
-            vendor: VendorProfileResponseDTO()
+            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now)
         )
 
     )

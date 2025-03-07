@@ -14,7 +14,7 @@ struct UserProfileView: View, LoadableView {
     var body: some View {
         ScrollView {
             VStack {
-                UserDetailView(userModel: viewModel.userDataModel)
+                UserDetailView(userModel: viewModel.userDataModel, isPersonalAccount: viewModel.isPersonalProfile)
                     .padding(.horizontal)
                 Divider()
                 Spacer()

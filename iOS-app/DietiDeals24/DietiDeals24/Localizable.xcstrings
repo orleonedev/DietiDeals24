@@ -51,9 +51,6 @@
     "Auction Type" : {
 
     },
-    "Auctions Created: %@" : {
-
-    },
     "Become a Vendor" : {
 
     },
@@ -70,6 +67,12 @@
 
     },
     "Create your account" : {
+
+    },
+    "Current Price" : {
+
+    },
+    "Current Price: %@ €" : {
 
     },
     "Description" : {
@@ -90,10 +93,16 @@
     "Explore" : {
 
     },
+    "Giuseppe Falso\nN86002941" : {
+
+    },
     "Hello, %@!" : {
 
     },
     "Images (optional)" : {
+
+    },
+    "INGSW2324_63" : {
 
     },
     "Join our vendor community and start listing your items for auction. Tap the button below to begin." : {
@@ -123,10 +132,19 @@
     "Or sign in with" : {
 
     },
+    "Oreste Leone\nN86001980" : {
+
+    },
     "Password" : {
 
     },
     "Personal Area" : {
+
+    },
+    "Place a Bid" : {
+
+    },
+    "Place Bid" : {
 
     },
     "Present Offer" : {
@@ -186,6 +204,9 @@
     "Submit Vendor Details" : {
 
     },
+    "Successful Auctions: %@" : {
+
+    },
     "Terms and Conditions" : {
 
     },
@@ -193,6 +214,9 @@
 
     },
     "Threshold" : {
+
+    },
+    "Threshold: %@ €" : {
 
     },
     "Timer" : {
@@ -211,6 +235,9 @@
 
     },
     "Welcome, Vendor!" : {
+
+    },
+    "Your about to bid" : {
 
     }
   },

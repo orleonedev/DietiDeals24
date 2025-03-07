@@ -13,6 +13,7 @@ class UserProfileViewModel: LoadableViewModel {
     var isLoading: Bool = false
     
     var userDataModel: UserDataModel? = nil
+    var isPersonalProfile: Bool = false
     var auctionsFilters: SearchFilterModel = SearchFilterModel()
     
     var vendorItems: [AuctionCardModel] = []
@@ -30,17 +31,17 @@ class UserProfileViewModel: LoadableViewModel {
         self.auctionService = auctionService
     }
     
-    func setVendor(_ vendor: VendorProfileResponseDTO) {
+    func setVendor(_ vendor: VendorAuctionDetail) {
         self.userDataModel = UserDataModel(
-            name: vendor.name ?? "",
-            username: vendor.username ?? "",
-            email: vendor.email ?? "",
+            name: vendor.name,
+            username: vendor.username,
+            email: vendor.email,
             role: .seller,
             userID: nil,
-            vendorId: vendor.id?.uuidString,
+            vendorId: vendor.id.uuidString.lowercased(),
             shortBio: vendor.shortBio,
             url: vendor.webSiteUrl,
-            auctionCreated: vendor.successfulAuctions,
+            successfulAuctions: vendor.successfulAuctions,
             joinedSince: vendor.joinedSince,
             geoLocation: vendor.geoLocation
         )
@@ -76,6 +77,15 @@ class UserProfileViewModel: LoadableViewModel {
             self.vendorItemsCount = vendorItemsDto.totalRecords
             self.vendorItems.append(contentsOf: newVendorItems)
             self.shouldFetchMoreVendorItem = vendorItemsCount > vendorItems.count
+        }
+    }
+    
+    @MainActor
+    func checkIsPersonalProfile() {
+        guard let profile = self.userDataModel else { return }
+        Task {
+            guard let userData = await coordinator.getUserData() else { return }
+            self.isPersonalProfile = userData.vendorId == profile.vendorId
         }
     }
     

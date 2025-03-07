@@ -62,8 +62,6 @@ struct UserAreaMainView: View, LoadableView {
                         .frame(height: 100)
                     
                 }
-                .shadow(color: Color.black.opacity(0.5), radius: 4, x: 2, y: 2) // Outer shadow for depth
-                .shadow(color: Color.white.opacity(0.5), radius: 4, x: -2, y: -2)
                 
             }
         }

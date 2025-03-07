@@ -154,12 +154,17 @@ extension AppContainer {
         }
         
         register(for: SellingCoordinator.SellingAuctionVM.self, tag: .init("Selling")) {
-            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SellingCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SellingCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
         
         register(for: UserProfileViewModel.self, tag: .init("Selling")) {
             UserProfileViewModel(coordinator: self.unsafeResolve(SellingCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
+        
+        register(for: PresentOfferViewModel.self, tag: .init("Selling")) {
+            PresentOfferViewModel(auctionCoordinator: self.unsafeResolve(SellingCoordinator.self), bidService: self.unsafeResolve(BidService.self))
+        }
+
         
     }
     
@@ -179,12 +184,17 @@ extension AppContainer {
         }
         
         register(for: ExploreCoordinator.ExploreAuctionVM.self, tag: .init("Explore")) {
-            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(ExploreCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(ExploreCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
         
         register(for: UserProfileViewModel.self, tag: .init("Explore")) {
             UserProfileViewModel(coordinator: self.unsafeResolve(ExploreCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
+        
+        register(for: PresentOfferViewModel.self, tag: .init("Explore")) {
+            PresentOfferViewModel(auctionCoordinator: self.unsafeResolve(ExploreCoordinator.self), bidService: self.unsafeResolve(BidService.self))
+        }
+
     }
     
     //MARK: - SEARCH TAB
@@ -202,11 +212,15 @@ extension AppContainer {
             SearchMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         register(for: SearchCoordinator.SearchAuctionVM.self, tag: .init("Search")) {
-            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SearchCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(SearchCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
         
         register(for: UserProfileViewModel.self, tag: .init("Search")) {
             UserProfileViewModel(coordinator: self.unsafeResolve(SearchCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
+        }
+        
+        register(for: PresentOfferViewModel.self, tag: .init("Search")) {
+            PresentOfferViewModel(auctionCoordinator: self.unsafeResolve(SearchCoordinator.self), bidService: self.unsafeResolve(BidService.self))
         }
     }
     
@@ -225,7 +239,7 @@ extension AppContainer {
 //        }
         
 //        register(for: NotificationCoordinator.NotificationAuctionVM.self, tag: .init("Notification")) {
-//            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self))
+//            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
 //        }
 //        
 //        register(for: UserProfileViewModel.self, tag: .init("Notification")) {

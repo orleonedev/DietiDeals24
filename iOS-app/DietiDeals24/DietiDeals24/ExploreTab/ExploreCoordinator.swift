@@ -9,6 +9,7 @@ import SwiftUI
 
 class ExploreCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCoordinatorProtocol {
     
+    
     typealias ExploreRouter = RoutingKit.Router
     typealias ExploreAuctionVM = AuctionDetailMainViewModel
     
@@ -64,7 +65,7 @@ class ExploreCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCo
         }
     }
     
-    internal func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination {
+    internal func vendorProfileDestination(_ vendor: VendorAuctionDetail) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Explore"))
             vm.setVendor(vendor)
@@ -73,4 +74,11 @@ class ExploreCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCo
         }
     }
     
+    internal func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? = nil) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(PresentOfferViewModel.self, tag: .init("Explore"))
+            vm.setAuctionDetials(auction, onBidResult: onBidResult)
+            return PresentOfferView(viewModel: vm)
+        }
+    }
 }

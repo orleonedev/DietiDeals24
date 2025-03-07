@@ -127,7 +127,7 @@ extension AuctionDetailView {
     @ViewBuilder
     func priceStack(_ price: Double) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Starting Price")
+            Text("Current Price")
                 .font(.body)
             Text("\(price.formatted()) €")
                 .font(.title)
@@ -297,7 +297,7 @@ extension AuctionDetailView {
                 timer: 12,
                 secretPrice: nil,
                 endTime: .now.advanced(by: 60*60),
-                vendor: VendorProfileResponseDTO()
+                vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now)
             ), isPersonalAuction: false
         )
     }

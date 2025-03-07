@@ -28,14 +28,6 @@ extension UserProfileCoordinatorProtocol {
         self.router.navigate(to: auctionDetailDestination(auction), type: .push)
     }
     
-//    func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
-//        .init {
-//            let vm = self.appContainer.unsafeResolve(AuctionDetailMainViewModel.self, tag: .init("Explore"))
-//            vm.setAuction(auction)
-//            return AuctionDetailMainView(viewModel: vm)
-//            
-//        }
-//    }
 }
 
 internal protocol AuctionCoordinatorProtocol: Coordinator {
@@ -46,17 +38,25 @@ internal protocol AuctionCoordinatorProtocol: Coordinator {
     func getUserData() async -> UserDataModel?
     
     @MainActor
-    func goToVendor(_ vendor: VendorProfileResponseDTO)
-    func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination
+    func goToVendor(_ vendor: VendorAuctionDetail)
+    func vendorProfileDestination(_ vendor: VendorAuctionDetail) -> RoutingKit.Destination
+    
+    @MainActor
+    func showPresentOfferSheet(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? )
+    func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? ) -> RoutingKit.Destination
     
 }
 
 extension AuctionCoordinatorProtocol {
     
     @MainActor
-    func goToVendor(_ vendor: VendorProfileResponseDTO) {
+    func goToVendor(_ vendor: VendorAuctionDetail) {
         self.router.navigate(to: vendorProfileDestination(vendor), type: .push)
     }
     
+    @MainActor
+    func showPresentOfferSheet(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? = nil) {
+        self.router.navigate(to: presentOfferSheetDestination(for: auction, onBidResult: onBidResult), type: .sheet)
+    }
     
 }

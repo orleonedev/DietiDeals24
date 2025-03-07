@@ -31,14 +31,14 @@ class UserProfileViewModel: LoadableViewModel {
         self.auctionService = auctionService
     }
     
-    func setVendor(_ vendor: VendorProfileResponseDTO) {
+    func setVendor(_ vendor: VendorAuctionDetail) {
         self.userDataModel = UserDataModel(
-            name: vendor.name ?? "",
-            username: vendor.username ?? "",
-            email: vendor.email ?? "",
+            name: vendor.name,
+            username: vendor.username,
+            email: vendor.email,
             role: .seller,
             userID: nil,
-            vendorId: vendor.id?.uuidString.lowercased(),
+            vendorId: vendor.id.uuidString.lowercased(),
             shortBio: vendor.shortBio,
             url: vendor.webSiteUrl,
             successfulAuctions: vendor.successfulAuctions,

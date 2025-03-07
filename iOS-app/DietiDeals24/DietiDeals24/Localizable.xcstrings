@@ -69,6 +69,12 @@
     "Create your account" : {
 
     },
+    "Current Price" : {
+
+    },
+    "Current Price: %@ €" : {
+
+    },
     "Description" : {
 
     },
@@ -133,6 +139,12 @@
 
     },
     "Personal Area" : {
+
+    },
+    "Place a Bid" : {
+
+    },
+    "Place Bid" : {
 
     },
     "Present Offer" : {
@@ -204,6 +216,9 @@
     "Threshold" : {
 
     },
+    "Threshold: %@ €" : {
+
+    },
     "Timer" : {
 
     },
@@ -220,6 +235,9 @@
 
     },
     "Welcome, Vendor!" : {
+
+    },
+    "Your about to bid" : {
 
     }
   },

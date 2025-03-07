@@ -28,6 +28,7 @@ public struct AuctionDetailMainView: View, LoadableView {
                 
             }
         }
+        .animation(.easeInOut, value: viewModel.auction)
         .task {
             viewModel.checkAuctionOwnership()
         }
@@ -38,6 +39,9 @@ public struct AuctionDetailMainView: View, LoadableView {
         }
         .navigationTitle(viewModel.auction?.title ?? "")
         .navigationBarTitleDisplayMode(.large)
+        .overlay {
+            loaderView()
+        }
     }
     
 }
@@ -96,7 +100,7 @@ extension AuctionDetailMainView {
 
 #Preview {
     
-    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(auctionCoordinator: ExploreCoordinator(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()))
+    @Previewable @State var vm: AuctionDetailMainViewModel =  .init(auctionCoordinator: ExploreCoordinator(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
     let imgUrl = "https://s.yimg.com/ny/api/res/1.2/Onq1adoghZAHhpsXXmF8Pw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyNDI7aD05MzE-/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f"
     vm.setAuction(
         AuctionDetailModel(
@@ -111,7 +115,7 @@ extension AuctionDetailMainView {
             timer: 12,
             secretPrice: nil,
             endTime: .now.advanced(by: 60*60),
-            vendor: VendorProfileResponseDTO()
+            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now)
         )
 
     )

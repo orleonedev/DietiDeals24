@@ -64,11 +64,19 @@ class SearchCoordinator: Coordinator, AuctionCoordinatorProtocol, UserProfileCoo
         }
     }
     
-    func vendorProfileDestination(_ vendor: VendorProfileResponseDTO) -> RoutingKit.Destination {
+    func vendorProfileDestination(_ vendor: VendorAuctionDetail) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Search"))
             vm.setVendor(vendor)
             return UserProfileView(viewModel: vm)
+        }
+    }
+    
+    internal func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)? = nil) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(PresentOfferViewModel.self, tag: .init("Search"))
+            vm.setAuctionDetials(auction, onBidResult: onBidResult)
+            return PresentOfferView(viewModel: vm)
         }
     }
     

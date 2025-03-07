@@ -147,7 +147,7 @@ extension AuctionDetailModel {
         self.timer = timer
         self.secretPrice = dto.secretPrice
         self.endTime = endTime
-        self.vendor = vendor
+        self.vendor = try VendorAuctionDetail(from: vendor)
         
     }
 }

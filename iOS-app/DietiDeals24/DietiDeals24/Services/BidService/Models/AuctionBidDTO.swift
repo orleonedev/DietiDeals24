@@ -8,6 +8,7 @@
 import Foundation
 
 struct AuctionBidDTO: Codable, BodyParameters {
+    
     public let auctionId: UUID?
     public let buyerId: UUID?
     public let price: Double?
@@ -24,5 +25,12 @@ struct AuctionBidDTO: Codable, BodyParameters {
         self.buyerId = try container.decodeIfPresent(UUID.self, forKey: .buyerId)
         self.price = try container.decodeIfPresent(Double.self, forKey: .price)
     }
+    
+    internal init(auctionId: UUID? = nil, buyerId: UUID? = nil, price: Double? = nil) {
+        self.auctionId = auctionId
+        self.buyerId = buyerId
+        self.price = price
+    }
+    
 }
 

@@ -1,4 +1,6 @@
+using Amazon;
 using Amazon.CognitoIdentityProvider;
+using Amazon.S3;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24.DataAccessLayer.Services.Impl;
@@ -22,8 +24,9 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped<IAuctionService, AuctionService>();
         serviceCollection.AddScoped<IVendorService, VendorService>();
         serviceCollection.AddScoped<IBidService, BidService>();
-        serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddAWSService<IAmazonCognitoIdentityProvider>();
+        serviceCollection.AddAWSService<IAmazonS3>();
+        serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddSingleton<ISecretsService, SecretsService>();
         serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();
         return serviceCollection;

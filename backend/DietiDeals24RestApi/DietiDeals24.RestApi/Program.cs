@@ -16,7 +16,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        
+        builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+        
         // Add services to the container.
         builder.Services.AddDietiDeals24DataAccessLayer(builder.Configuration);
         builder.Services.AddDietiDeals24Workers();

@@ -53,13 +53,12 @@ public class CreateAuctionDTO
     public decimal StartingPrice { get; set; }
     public decimal Threshold { get; set; }
     public int ThresholdTimer { get; set; }
-    public List<string>? ImagesUrls { get; set; } = null;
+    public List<Guid>? ImagesIdentifiers { get; set; } = null;
     public decimal? SecretPrice { get; set; } = null;
     public Guid VendorId { get; set; }
 }
 
-public class UpdateAuctionDTO
-{
-    public Guid Id { get; set; }
-    
+public class CreateAuctionResponseDTO {
+    public DetailedAuctionDTO DetailedAuction { get; set; }
+    public Dictionary<Guid, string>? ImagesPreSignedUrls { get; set; }
 }

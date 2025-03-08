@@ -143,7 +143,7 @@ public class AuctionWorker: IAuctionWorker
         }
     }
 
-    public async Task<DetailedAuctionDTO> CreateAuction(CreateAuctionDTO auctionDto)
+    public async Task<CreateAuctionResponseDTO> CreateAuction(CreateAuctionDTO auctionDto)
     {
         _logger.LogInformation("[WORKER] Creating new auction");
 
@@ -151,9 +151,10 @@ public class AuctionWorker: IAuctionWorker
         {
             var vendor = await _vendorService.GetVendorByIdAsync(auctionDto.VendorId);
             var auction = await _auctionService.CreateAuctionAsync(auctionDto, vendor);
-            //image service che aggiunge le immagini
-
-            return new DetailedAuctionDTO
+            var imagesDict = await _imageService.AddImagesUrlsForAuctionAsync(auction.Id, auctionDto.ImagesIdentifiers);
+            var imagesUrls = await _imageService.GetImagesUrlsForAuctionAsync(auction.Id);
+            
+            var detailedAuction = new DetailedAuctionDTO
             {
                 Id = auction.Id,
                 Title = auction.Title,
@@ -178,9 +179,15 @@ public class AuctionWorker: IAuctionWorker
                     ShortBio = vendor.ShortBio
                 },
                 SecretPrice = auction.SecretPrice,
-                //MainImageUrl = auction.AuctionImages.First().Url,
-                //ImagesUrls = 
+                MainImageUrl = imagesUrls.FirstOrDefault(),
+                ImagesUrls = imagesUrls,
                 Bids = 0
+            };
+
+            return new CreateAuctionResponseDTO
+            {
+                DetailedAuction = detailedAuction,
+                ImagesPreSignedUrls = imagesDict
             };
         }
         catch (Exception ex)

@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Amazon.S3;
+using Amazon.S3.Model;
 
 namespace DietiDeals24.DataAccessLayer.Services.Impl;
 
@@ -12,11 +15,14 @@ public class ImageService: IImageService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ImageService> _logger;
+    private readonly IAmazonS3 _s3Client;
+    private readonly string _bucketName = "sigma63-dietideals24-auction-images";
     
-    public ImageService(IUnitOfWork unitOfWork, ILogger<ImageService> logger)
+    public ImageService(IUnitOfWork unitOfWork, ILogger<ImageService> logger, IAmazonS3 s3Client)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _s3Client = s3Client;
     }
     
     public async Task<Dictionary<Guid, List<string>>> GetImagesUrlsForAuctionAsync(List<Guid> auctionIds)
@@ -56,5 +62,57 @@ public class ImageService: IImageService
             _logger.LogError(ex, "[SERVICE] Getting image URLs failed for Auction {AuctionId}: {Message}", auctionId, ex.Message);
             throw new Exception("[SERVICE] Getting image URLs failed.", ex);
         }
+    }
+
+    public async Task<Dictionary<Guid, string>> AddImagesUrlsForAuctionAsync(Guid auctionId, List<Guid> imagesId)
+    {
+        try
+        {
+            var auctionImages = new List<AuctionImage>();
+            var imagesDict = new Dictionary<Guid, string>();
+
+            foreach (var imageId in imagesId)
+            {
+                var auctionImage = new AuctionImage
+                {
+                    Id = imageId,
+                    AuctionId = auctionId,
+                    Url = $"https://{_bucketName}.s3.amazonaws.com/auction-{auctionId}/{imageId}.jpeg"
+                };
+                
+                auctionImages.Add(auctionImage);
+
+                var presignedUrl = await GetPresignedUrlAsync(auctionId, imageId);
+                imagesDict.Add(imageId, presignedUrl);
+            }
+            
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.AuctionImageRepository.AddRange(auctionImages);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+
+            return imagesDict;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Adding images failed for Auction {auctionId}: {ex.Message}", ex.Message);
+            throw new Exception($"[SERVICE] Adding images failed for Auction {auctionId}: {ex.Message}", ex);
+        }
+    } 
+    
+    private async Task<string> GetPresignedUrlAsync(Guid auctionId, Guid imageId)
+    {
+        string objectKey = $"auction-{auctionId}/{imageId}.jpeg";
+
+        var request = new GetPreSignedUrlRequest
+        {
+            BucketName = _bucketName,
+            Key = objectKey,
+            Verb = HttpVerb.PUT,
+            Expires = DateTime.UtcNow.AddMinutes(10), // URL valid for 10 minutes
+            ContentType = "image/jpeg"
+        };
+
+        return _s3Client.GetPreSignedURL(request);
     }
 }

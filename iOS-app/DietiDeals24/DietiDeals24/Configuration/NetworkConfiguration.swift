@@ -16,7 +16,7 @@ struct NetworkConfiguration {
 #if DEV
         return "http://"+backendBaseUrl
 #else
-        return "https://"+backendBaseUrl
+        return "http://"+backendBaseUrl
 #endif
     }
     

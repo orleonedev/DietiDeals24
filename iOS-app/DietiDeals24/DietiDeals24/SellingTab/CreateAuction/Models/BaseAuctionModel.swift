@@ -9,7 +9,7 @@ struct CreateBaseAuctionModel {
     var title: String
     var description: String
     var category: AuctionCategory?
-    var images: [String] = []
+    var imagesPreview: [AuctionImagePreviewState]
 }
 
 struct CreateAuctionModel {

@@ -5,6 +5,7 @@
 //  Created by Oreste Leone on 3/1/25.
 //
 import SwiftUI
+import PhotosUI
 
 struct BaseAuctionDetailView: View, LoadableView {
     
@@ -59,7 +60,7 @@ extension BaseAuctionDetailView {
         .padding(.vertical)
     }
     
-    @ViewBuilder
+    @ViewBuilder @MainActor
     func imagesContainerView() -> some View {
         VStack(alignment: .leading, spacing: 4){
             HStack{
@@ -67,18 +68,16 @@ extension BaseAuctionDetailView {
                     .font(.caption)
                     .padding(.horizontal, 4)
                 Spacer()
-                Text("\(viewModel.baseAuction.images.count)/6")
+                Text("\(viewModel.imagesPreviewState.count)/6")
                     .font(.caption)
                     .padding(.horizontal, 4)
             }
             
             ScrollView(.horizontal) {
-                if viewModel.baseAuction.images.isEmpty {
-                    Button(action: {
-                        
-                    }) {
+                if viewModel.imagesPreviewState.isEmpty {
+                    PhotosPicker(selection: $viewModel.imagesPickerSelection, maxSelectionCount: 6, selectionBehavior: .default, matching: .images, preferredItemEncoding: .automatic, photoLibrary: .shared()) {
                         VStack(alignment: .center, spacing: 0){
-                            Image(systemName: "photo.badge.plus.fill")
+                            Image(systemName: "photo.stack")
                                 .resizable()
                                 .scaledToFit()
                                 .padding()
@@ -90,38 +89,39 @@ extension BaseAuctionDetailView {
                         }
                         .padding()
                     }
+                    .photosPickerStyle(.presentation)
+                    .ignoresSafeArea()
                 } else {
                     HStack(spacing: 24) {
-                        ForEach(viewModel.baseAuction.images, id: \.self) { image in
+                        ForEach(viewModel.imagesPreviewState, id: \.self) { preview in
                             GeometryReader { proxy in
-                                RemoteImage(urlString: image)
+                                AuctionPreviewImage(state: preview)
                                     .frame(width: proxy.size.width, height: proxy.size.height)
+                                    .background(.quaternary)
                                     .clipped()
                                     .clipShape(.rect(cornerRadius: 12))
                             }
-                            .aspectRatio(1.77, contentMode: .fit)
+                            .aspectRatio(1.77, contentMode: .fill)
                         }
                         
-                        if viewModel.baseAuction.images.count < 6 {
-                            Button(action: {
+                        PhotosPicker(selection: $viewModel.imagesPickerSelection, maxSelectionCount: 6, selectionBehavior: .default, matching: .images, preferredItemEncoding: .automatic, photoLibrary: .shared()) {
+                                    Image(systemName: "photo.stack")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding()
+                                        .padding()
+                                        .foregroundStyle(.accent)
                                 
-                            }) {
-                                Image(systemName: "plus.circle")
-                                    .resizable()
-                                    .padding()
-                                    .scaledToFit()
-                                    .foregroundStyle(.accent)
                             }
-                            .padding()
-                        }
+                        .photosPickerStyle(.presentation)
+                        .ignoresSafeArea()
+                        
                         
                     }
                     .padding()
                 }
-                
-                
             }
-            .defaultScrollAnchor(viewModel.baseAuction.images.isEmpty ? .center : .leading)
+            .defaultScrollAnchor(viewModel.imagesPreviewState.isEmpty ? .center : .leading)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(.secondary, lineWidth:1)

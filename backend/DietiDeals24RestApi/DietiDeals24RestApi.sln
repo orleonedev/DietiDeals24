@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.RestApi.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.DataAccessLayer", "DietiDeals24.DataAccessLayer\DietiDeals24.DataAccessLayer.csproj", "{3AD995E4-793A-44F9-94AE-C5762CA812BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DietiDeals24.Lambda.OnAuctionEndTimeReached", "DietiDeals24.Lambda.OnAuctionEndTimeReached\src\DietiDeals24.Lambda.OnAuctionEndTimeReached\DietiDeals24.Lambda.OnAuctionEndTimeReached.csproj", "{CD112DC2-5D87-4A66-B653-3107929EFB8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,5 +33,9 @@ Global
 		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AD995E4-793A-44F9-94AE-C5762CA812BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD112DC2-5D87-4A66-B653-3107929EFB8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD112DC2-5D87-4A66-B653-3107929EFB8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD112DC2-5D87-4A66-B653-3107929EFB8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD112DC2-5D87-4A66-B653-3107929EFB8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

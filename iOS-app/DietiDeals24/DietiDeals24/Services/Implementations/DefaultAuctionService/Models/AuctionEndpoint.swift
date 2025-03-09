@@ -11,6 +11,7 @@ enum AuctionEndpoint {
     case auctionList(filters: SearchFilterModel, page: Int, pageSize: Int)
     case auctionDetail(id: UUID)
     case createAuction(auction: CreateAuctionModel, vendorId: UUID)
+    case loadImage(url: String, data: Data)
 }
 
 extension AuctionEndpoint {
@@ -23,6 +24,8 @@ extension AuctionEndpoint {
                 return Self.AuctionDetailEndpoint(id: id)
             case .createAuction(let auction, let vendorId):
                 return Self.CreateAuctionEndpoint(auction: auction, vendorId: vendorId)
+            case .loadImage(url: let url, data: let data):
+                return Self.loadImage(url: url, data: data)
         }
     }
     
@@ -72,13 +75,13 @@ extension AuctionEndpoint {
     }
     
     
-    static private func CreateAuctionEndpoint(auction: CreateAuctionModel, vendorId: UUID) -> CodableEndpoint<AuctionDetailDTO>  {
+    static private func CreateAuctionEndpoint(auction: CreateAuctionModel, vendorId: UUID) -> CodableEndpoint<CreateAuctionResponseDTO>  {
         let baseURLString = URL(string: NetworkConfiguration.backendBaseUrl)!
         let httpMethod = HTTPMethod.post
         let encoding = Endpoint.Encoding.json
         let body = CreateAuctionDTO(from: auction, vendorId: vendorId).jsonObject
         
-        return CodableEndpoint<AuctionDetailDTO>(
+        return CodableEndpoint<CreateAuctionResponseDTO>(
             Endpoint(
                 baseURL: baseURLString,
                 path: "/Auction/create-auction",
@@ -87,6 +90,20 @@ extension AuctionEndpoint {
                 method: httpMethod,
                 authorizationType: .bearer
             )
+        )
+    }
+    
+    static private func loadImage(url: String, data: Data) -> Endpoint  {
+        let httpMethod: HTTPMethod = .put
+        let encoding = Endpoint.Encoding.custom("image/jpeg")
+        
+        return Endpoint(
+                baseURL: URL(string: url)!,
+                path: "",
+                dataBody: data,
+                encoding: encoding,
+                method: httpMethod
+            
         )
     }
 }

@@ -19,19 +19,19 @@ struct RemoteImage: View {
             } else if phase.error != nil {
                 ZStack {
                     Color.secondary.opacity(0.3)
-                    ProgressView()
-                        .scaleEffect(2.0)
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .tint(.secondary)
-                }
-            } else {
-                ZStack {
-                    Color.secondary.opacity(0.3)
                     Image(systemName: "photo")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundStyle(.secondary)
                         .padding(32)
+                }
+            } else {
+                ZStack {
+                    Color.secondary.opacity(0.3)
+                    ProgressView()
+                        .scaleEffect(2.0)
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .tint(.secondary)
                 }
             }
         }

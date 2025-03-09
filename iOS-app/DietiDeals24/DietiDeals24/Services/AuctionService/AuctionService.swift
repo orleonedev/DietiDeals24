@@ -37,5 +37,19 @@ protocol AuctionService {
     /// - Throws: An error if the request fails.
     func createAuction(auction: CreateAuctionModel, vendor: UUID) async throws -> AuctionDetailDTO
     
+    
 }
 
+enum AuctionServiceError: LocalizedError {
+    case notFound
+    case unknown(String)
+    
+    var errorDescription: String? {
+        switch self {
+            case .notFound:
+                return "Auction not found."
+            case .unknown(let message):
+                return "Unknown error: \(message)"
+        }
+    }
+}

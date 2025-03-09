@@ -12,13 +12,14 @@ public struct Endpoint {
         case json
         case form
         case custom(String)
-        case customWithBody(String)
+        case customWithJson(String)
     }
 
     public let baseURL: URL
     public let path: String
     public let parameters: BodyParameters
     public let queryParameters: [String: CustomStringConvertible]?
+    public let dataBody: Data
     public let httpMethod: HTTPMethod
     public let headers: [String: String]?
 //    public let cacheTime: TimeInterval
@@ -43,6 +44,7 @@ public struct Endpoint {
                 path: String,
                 parameters: BodyParameters = [String: Any](),
                 queryParameters: [String: CustomStringConvertible]? = nil,
+                dataBody: Data = Data(),
                 encoding: Encoding = .json,
                 method: HTTPMethod = .get,
                 headers: [String: String]? = nil,
@@ -62,6 +64,7 @@ public struct Endpoint {
         sampleData = mockedData
         authorization = authorizationType
         self.encoding = encoding
+        self.dataBody = dataBody
     }
 }
 
@@ -109,6 +112,7 @@ public struct CodableEndpoint<Entity: Decodable>: EndpointConvertible {
                 path: String,
                 parameters: BodyParameters = [String: Any](),
                 queryParameters: [String: CustomStringConvertible]? = nil,
+                dataBody: Data = Data(),
                 encoding: Endpoint.Encoding = .json,
                 method: HTTPMethod = .get,
                 headers: [String: String]? = nil,
@@ -119,16 +123,17 @@ public struct CodableEndpoint<Entity: Decodable>: EndpointConvertible {
                 decoder: JSONDecoder = .init()) {
 
         self.init(Endpoint(baseURL: baseURL,
-                    path: path,
-                    parameters: parameters,
-                    queryParameters: queryParameters,
-                    encoding: encoding,
-                    method: method,
-                    headers: headers,
-                    fileNameInBundle: fileNameInBundle,
-                    authorizationType: authorizationType,
-                    mockedData: mockedData,
-                    isRefreshEndpoint: isRefreshEndpoint),
+                           path: path,
+                           parameters: parameters,
+                           queryParameters: queryParameters,
+                           dataBody: dataBody,
+                           encoding: encoding,
+                           method: method,
+                           headers: headers,
+                           fileNameInBundle: fileNameInBundle,
+                           authorizationType: authorizationType,
+                           mockedData: mockedData,
+                           isRefreshEndpoint: isRefreshEndpoint),
                   decoder: decoder)
     }
     

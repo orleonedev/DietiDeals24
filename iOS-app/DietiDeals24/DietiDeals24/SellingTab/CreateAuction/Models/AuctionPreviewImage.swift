@@ -31,7 +31,7 @@ struct AuctionPreviewImage: View {
             case .success(let auctionImage):
                 auctionImage.image
                     .resizable()
-                    .scaledToFit()
+                    .aspectRatio(contentMode: .fill )
         }
         
     }

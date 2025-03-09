@@ -145,8 +145,9 @@ extension DefaultRESTDataSource {
                         headers["Content-Type"] = "application/json"
                     }
                 case let .custom(encoding):
-                    headers["Content-Type"] = encoding
-                case .customWithBody(let encoding):
+                        headers["Content-Type"] = encoding
+                    urlRequest.httpBody = endpoint.dataBody
+                case .customWithJson(let encoding):
                     if let body: Any = (endpoint.parameters.jsonObject ?? endpoint.parameters.jsonArray) {
                         urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body)
                         headers["Content-Type"] = encoding

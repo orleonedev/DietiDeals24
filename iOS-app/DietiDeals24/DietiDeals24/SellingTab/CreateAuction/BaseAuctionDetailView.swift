@@ -101,7 +101,7 @@ extension BaseAuctionDetailView {
                                     .clipped()
                                     .clipShape(.rect(cornerRadius: 12))
                             }
-                            .aspectRatio(1.77, contentMode: .fill)
+                            .aspectRatio(1.77, contentMode: .fit)
                         }
                         
                         PhotosPicker(selection: $viewModel.imagesPickerSelection, maxSelectionCount: 6, selectionBehavior: .default, matching: .images, preferredItemEncoding: .automatic, photoLibrary: .shared()) {

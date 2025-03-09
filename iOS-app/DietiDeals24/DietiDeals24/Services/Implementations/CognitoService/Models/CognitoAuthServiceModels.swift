@@ -182,7 +182,7 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let encoding = Endpoint.Encoding.customWithJson("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
@@ -248,7 +248,7 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let encoding = Endpoint.Encoding.customWithJson("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
@@ -276,7 +276,7 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let encoding = Endpoint.Encoding.customWithJson("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.InitiateAuth"
         ]
@@ -306,7 +306,7 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let encoding = Endpoint.Encoding.customWithJson("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.SignUp"
         ]
@@ -340,7 +340,7 @@ extension CognitoEndpoint {
         let clientId = CognitoConfiguration.clientId
         let baseURLString = URL(string: CognitoConfiguration.url)!
         let httpMethod = HTTPMethod.post
-        let encoding = Endpoint.Encoding.customWithBody("application/x-amz-json-1.1")
+        let encoding = Endpoint.Encoding.customWithJson("application/x-amz-json-1.1")
         let headers: [String: String] = [
             "X-Amz-Target": "AWSCognitoIdentityProviderService.ConfirmSignUp"
         ]

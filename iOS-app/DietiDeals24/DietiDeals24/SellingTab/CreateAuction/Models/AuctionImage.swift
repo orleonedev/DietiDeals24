@@ -16,6 +16,7 @@ struct AuctionImage:Hashable, Transferable {
     
     let image: Image
     let identifier: UUID = UUID()
+    let data: Data
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(identifier)
@@ -27,14 +28,18 @@ struct AuctionImage:Hashable, Transferable {
             guard let nsImage = NSImage(data: data) else {
                 throw TransferError.importFailed
             }
+            // check trasformazione in jpeg per appkit
             let image = Image(nsImage: nsImage)
-            return AuctionImage(image: image)
+            return AuctionImage(image: image, data: data)
         #elseif canImport(UIKit)
-            guard let uiImage = UIImage(data: data) else {
+            guard let uiImage = UIImage.downsampleImage(from: data, maxSize: 1800), let jpegData = uiImage.jpegData(compressionQuality: 1) else {
                 throw TransferError.importFailed
             }
+//            guard let uiImage = UIImage(data: data), let jpegData = uiImage.jpegData(compressionQuality: 1) else {
+//                throw TransferError.importFailed
+//            }
             let image = Image(uiImage: uiImage)
-            return AuctionImage(image: image)
+            return AuctionImage(image: image, data: jpegData)
         #else
             throw TransferError.importFailed
         #endif

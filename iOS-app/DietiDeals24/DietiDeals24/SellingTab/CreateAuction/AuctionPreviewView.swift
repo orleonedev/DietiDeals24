@@ -257,6 +257,7 @@ extension AuctionPreviewView {
                 description: "gdgsgsgsrgrsgrs",
                 category: AuctionCategory.Electronics,
                 imagesPreview: [
+                    .success(AuctionImage(image: Image(systemName: "photo").resizable(), data: Data()))
                 ]
             ),
             auctionType: .descending,

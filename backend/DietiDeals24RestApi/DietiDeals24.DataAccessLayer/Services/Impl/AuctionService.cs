@@ -151,7 +151,7 @@ public class AuctionService : IAuctionService
         }
     }
 
-    public async Task<Auction> UpdateAuctionStateAsync(Auction auction)
+    public async Task<Auction> UpdateAuctionAsync(Auction auction)
     {
         try
         {

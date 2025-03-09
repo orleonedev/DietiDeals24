@@ -43,6 +43,7 @@ public class BidWorker: IBidWorker
             {
                 auction.AuctionState = AuctionState.Closed;
                 auction.EndingDate = now;
+                //notificare chi ha vinto l'asta e il venditore
             }
             else
             {
@@ -50,7 +51,7 @@ public class BidWorker: IBidWorker
                 auction.EndingDate = actualDate.AddHours(auction.Timer);
             }
             
-            await _auctionService.UpdateAuctionStateAsync(auction);
+            await _auctionService.UpdateAuctionAsync(auction);
             
             return newBid;
         }

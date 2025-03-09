@@ -11,6 +11,7 @@ public class AuctionWorker: IAuctionWorker
     private readonly IVendorService _vendorService;
     private readonly IBidService _bidService;
     private readonly IImageService _imageService;
+    private IAuctionWorker _auctionWorkerImplementation;
 
     public AuctionWorker(
         ILogger<AuctionWorker> logger, 
@@ -196,4 +197,58 @@ public class AuctionWorker: IAuctionWorker
             throw new Exception("[WORKER] Creating new auction failed.", ex);
         }
     }
+
+    public async Task OnAuctionEndTimeReached(Guid auctionId)
+    {
+        try
+        {
+            var auction = await _auctionService.GetAuctionByIdAsync(auctionId);
+
+            if (auction.AuctionType == AuctionType.Incremental)
+            {
+                await OnIncrementalAuctionEndTimeReached(auction);
+            }
+            else
+            {
+                await OnDescendingAuctionEndTimeReached(auction);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] On Auction {auctionId} end time reached failed: {ex.Message}");
+            throw new Exception($"[WORKER] On Auction {auctionId} end time reached failed.", ex);
+        }
+    }
+
+    private async Task OnIncrementalAuctionEndTimeReached(Auction auction)
+    {
+        var bidsCount = await _bidService.GetBidsCountForAuctionAsync(auction.Id);
+        var isSuccessfullyClosed = bidsCount > 0 ? true : false;
+        auction.AuctionState = isSuccessfullyClosed ? AuctionState.Closed : AuctionState.Expired;
+        await _auctionService.UpdateAuctionAsync(auction);
+        
+        //invia notifiche alle persone in base a isSuccessfullyClosed
+        //caso 1 - chi ha vinto l'asta, quelli che hanno perso l'asta e il venditore
+        //caso 2 - solo venditore
+    }
+
+    private async Task OnDescendingAuctionEndTimeReached(Auction auction)
+    {
+        auction.CurrentPrice -= auction.Threshold;
+
+        if (auction.SecretPrice < auction.CurrentPrice)
+        {
+            DateTime now = DateTime.Now;
+            DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            auction.EndingDate = actualDate.AddHours(auction.Timer);
+            //far ripartire l'asta
+            return;
+        }
+                
+        auction.AuctionState = AuctionState.Expired;
+        //notificare solo venditore
+        
+        await _auctionService.UpdateAuctionAsync(auction);
+    }
+
 }

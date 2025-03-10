@@ -3,6 +3,7 @@ using Amazon.Lambda.Core;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,24 +30,33 @@ public class Function
         string fullName = eventData?.request?.userAttributes?.name;
         string email = eventData?.request?.userAttributes?.email;
         string birthdate = eventData?.request?.userAttributes?.birthdate;
-        string role = eventData?.request?.userAttributes?["custom:role"]; // Attributo custom
+        //string role = eventData?.request?.userAttributes?["custom:role"]; // Attributo custom
 
-        // Crea l'oggetto JSON per il backend
-        var userPayload = new
+        // // Crea l'oggetto JSON per il backend
+        // var userPayload = new
+        // {
+        //     Id = userId,
+        //     Username = username,
+        //     FullName = fullName,
+        //     Email = email,
+        //     Birthdate = birthdate,
+        //     Role = role,
+        //     HasVerifiedEmail = true // Questo valore è sempre true in Cognito
+        // };
+
+        var registrationDTO = new RegistrationDTO
         {
-            Id = userId,
-            Username = username,
+            CognitoSub = Guid.Parse(userId),
             FullName = fullName,
+            Username = username,
             Email = email,
-            Birthdate = birthdate,
-            Role = role,
-            HasVerifiedEmail = true // Questo valore è sempre true in Cognito
+            BirthDate = DateOnly.Parse(birthdate).ToDateTime(TimeOnly.MinValue, DateTimeKind.Unspecified)
         };
 
         // URL del backend (da aggiornare con l'indirizzo reale quando disponibile)
-        string backendUrl = "http://your-backend-url/api/users";
+        var backendUrl = Environment.GetEnvironmentVariable("BACKEND_URL");
 
-        var requestContent = new StringContent(JsonConvert.SerializeObject(userPayload), Encoding.UTF8, "application/json");
+        var requestContent = new StringContent(JsonConvert.SerializeObject(registrationDTO), Encoding.UTF8, "application/json");
 
         try
         {
@@ -68,4 +78,13 @@ public class Function
 
         return eventData;
     }
+}
+
+public class RegistrationDTO
+{
+    public Guid CognitoSub { get; set; }
+    public string FullName { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public DateTime BirthDate { get; set; }
 }

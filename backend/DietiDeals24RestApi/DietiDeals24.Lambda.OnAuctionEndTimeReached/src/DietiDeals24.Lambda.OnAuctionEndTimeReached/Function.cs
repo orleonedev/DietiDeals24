@@ -11,35 +11,41 @@ public class Function
 {
     private static readonly HttpClient client = new HttpClient();
 
-    public async Task<string> FunctionHandler(EventBridgeEvent input, ILambdaContext context)
+    public async Task<string> FunctionHandler(string input, ILambdaContext context)
     {
-        var auctionId = input.Detail.AuctionId;
-        var backendUrl = Environment.GetEnvironmentVariable("BACKEND_URL");
-
         try
         {
-            var payload = JsonSerializer.Serialize(new { auctionId = auctionId, @event = "auctionExpired" });
+            // 🔹 Deserializziamo il JSON ricevuto
+            var eventData = JsonSerializer.Deserialize<AuctionEvent>(input);
+
+            if (eventData != null && !string.IsNullOrEmpty(eventData.AuctionId))
+            {
+                string auctionId = eventData.AuctionId;
+                context.Logger.LogLine($"Auction {auctionId} has ended. Notifying backend...");
+                var backendUrl = Environment.GetEnvironmentVariable("BACKEND_URL");
+                 var payload = JsonSerializer.Serialize(new { auctionId = auctionId });
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(backendUrl, content);
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
 
             return $"Notification sent successfully. Response: {responseString}";
+            }
+            else
+            {
+                context.Logger.LogLine("Invalid event data received.");
+            }
         }
         catch (Exception ex)
         {
-            context.Logger.LogLine($"Error sending notification: {ex.Message}");
-            return $"Error sending notification: {ex.Message}";
+            context.Logger.LogLine($"Error processing event: {ex.Message}");
         }
+        
+        return $"Error sending notification";
     }
 }
 
-public class EventBridgeEvent
+public class AuctionEvent
 {
-    public Detail Detail { get; set; }
-}
-
-public class Detail
-{
-    public string AuctionId { get; set; }
+    public string? AuctionId { get; set; }
 }

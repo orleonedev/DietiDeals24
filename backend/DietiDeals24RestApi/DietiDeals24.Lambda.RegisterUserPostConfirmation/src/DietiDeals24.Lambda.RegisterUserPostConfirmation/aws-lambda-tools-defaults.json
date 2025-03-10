@@ -11,5 +11,5 @@
   "package-type": "image",
   "function-memory-size": 512,
   "function-timeout": 30,
-  "image-repository": "dietideals24/lambda/on-auction-end-time-reached"
+  "image-repository": "dietideals24/lambda/register-user-post-confirmation"
 }

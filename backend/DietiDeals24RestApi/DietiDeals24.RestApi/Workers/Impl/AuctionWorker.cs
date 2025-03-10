@@ -11,20 +11,22 @@ public class AuctionWorker: IAuctionWorker
     private readonly IVendorService _vendorService;
     private readonly IBidService _bidService;
     private readonly IImageService _imageService;
-    private IAuctionWorker _auctionWorkerImplementation;
+    private readonly EventBridgeSchedulerService _eventBridgeSchedulerService;
 
     public AuctionWorker(
         ILogger<AuctionWorker> logger, 
         IAuctionService auctionService,
         IVendorService vendorService,
         IBidService bidService,
-        IImageService imageService)
+        IImageService imageService, 
+        EventBridgeSchedulerService eventBridgeSchedulerService)
     {
         _logger = logger;
         _auctionService = auctionService;
         _vendorService = vendorService;
         _bidService = bidService;
         _imageService = imageService;
+        _eventBridgeSchedulerService = eventBridgeSchedulerService;
     }
 
     public async Task<Auction> GetAuctionById(Guid id)
@@ -154,6 +156,8 @@ public class AuctionWorker: IAuctionWorker
             var auction = await _auctionService.CreateAuctionAsync(auctionDto, vendor);
             var imagesDict = await _imageService.AddImagesUrlsForAuctionAsync(auction.Id, auctionDto.ImagesIdentifiers);
             var imagesUrls = await _imageService.GetImagesUrlsForAuctionAsync(auction.Id);
+
+            var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             
             var detailedAuction = new DetailedAuctionDTO
             {
@@ -241,7 +245,10 @@ public class AuctionWorker: IAuctionWorker
             DateTime now = DateTime.Now;
             DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             auction.EndingDate = actualDate.AddHours(auction.Timer);
-            //far ripartire l'asta
+            
+            var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
+            _logger.LogInformation("[WORKER] Decreased auction end time reached, event bridge triggered.");
+            
             return;
         }
                 

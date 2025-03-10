@@ -124,38 +124,19 @@ public class AuthenticationService: IAuthenticationService
             ValidateRegistrationInput(
                 (registrationDto.FullName, nameof(registrationDto.FullName)),
                 (registrationDto.Username, nameof(registrationDto.Username)),
-                (registrationDto.Password, nameof(registrationDto.Password)),
                 (registrationDto.Email, nameof(registrationDto.Email)),
                 (registrationDto.BirthDate.ToString("yyyy-MM-dd"), nameof(registrationDto.BirthDate))
             );
-
-            var dbUser = _unitOfWork.UserRepository.Get(u => u.Email == registrationDto.Email).FirstOrDefault();
-            if (dbUser != null)
-            {
-                throw new UsernameExistsException("User already exists.");
-            }
             
-            var userPool = await GetCognitoUserPoolAsync();
-            var attributes = new Dictionary<string, string>
-            {
-                { "name", registrationDto.FullName },
-                { "preferred_username", registrationDto.Username },
-                { "email", registrationDto.Email },
-                { "birthdate", registrationDto.BirthDate.ToString("yyyy-MM-dd") } //MM months, mm minutes
-            };
-            
-            await ExecuteWithRetryAsync(() =>
-                userPool.SignUpAsync(registrationDto.Username, registrationDto.Password, attributes, null));
-                
             var user = new User
             {
-                Id = await GetCognitoSubAsync(registrationDto.Username),//va in errore perché non ritorna il sub
+                Id = registrationDto.CognitoSub,
                 Username = registrationDto.Username,
                 Fullname = registrationDto.FullName,
                 Email = registrationDto.Email,
                 Role = UserRole.Buyer,
                 BirthDate = registrationDto.BirthDate,
-                HasVerifiedEmail = false
+                HasVerifiedEmail = true
             };
 
             _unitOfWork.BeginTransaction();
@@ -400,38 +381,6 @@ public class AuthenticationService: IAuthenticationService
         {
             _logger.LogError(ex, "User not found.");
             throw new InvalidOperationException($"User {email} not found.");
-        }
-    }
-    
-    /// <summary>
-    /// Get Cognito Sub
-    /// </summary>
-    /// <param name="email"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<Guid> GetCognitoSubAsync(string username)
-    {
-        var secrets = await _secretsService.GetSecretsAsync();
-
-        try
-        {
-            // Fetch the user from Cognito
-            var request = new AdminGetUserRequest
-            {
-                Username = username,
-                UserPoolId = secrets["USER_POOL_ID"]
-            };
-
-            var response = await _cognitoClient.AdminGetUserAsync(request);
-
-            // Extract the CognitoSub (sub) attribute
-            var subAttribute = response.UserAttributes.FirstOrDefault(attr => attr.Name == "sub");
-            return Guid.Parse(subAttribute?.Value);
-        }
-        catch (Exception ex)
-        { 
-            _logger.LogError(ex, "Failed to get cognito sub.");
-            throw new InvalidOperationException($"Cognito sub attribute not found: {ex.Message}");
         }
     }
 

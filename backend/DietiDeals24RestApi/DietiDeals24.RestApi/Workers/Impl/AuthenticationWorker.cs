@@ -34,12 +34,6 @@ public class AuthenticationWorker: IAuthenticationWorker
             // Step 1: Registra l'utente in Cognito
             var user = await _authenticationService.RegisterUserAsync(registrationDto);
 
-            var cognitoSub = await _authenticationService.GetCognitoSubAsync(registrationDto.Email);
-            if (string.IsNullOrEmpty(cognitoSub.ToString()))
-            {
-                throw new AmazonCognitoIdentityException("Cognito sub is missing.");
-            }
-
             return user;
         }
         catch (ArgumentException ex)
@@ -76,9 +70,6 @@ public class AuthenticationWorker: IAuthenticationWorker
         {
             // Step 1: Esegui il login
             var token = await _authenticationService.LoginUserAsync(loginDto.Email, loginDto.Password);
-
-            // Step 2: Recupera il CognitoSub dall'account
-            var cognitoSub = await _authenticationService.GetCognitoSubAsync(loginDto.Email);
 
             return new TokenResponseDTO
             {

@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		51052F1B2D5E3876004CB0BC /* RoutingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 51052F1A2D5E3876004CB0BC /* RoutingKit */; };
+		51052F1D2D5E387B004CB0BC /* RoutingKit in Frameworks */ = {isa = PBXBuildFile; productRef = 51052F1C2D5E387B004CB0BC /* RoutingKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		51244D0B2CF62CD4003AA070 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -42,11 +47,36 @@
 		51244D0A2CF62CD4003AA070 /* DietiDeals24Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietiDeals24Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		51244D142CF62CD4003AA070 /* DietiDeals24UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DietiDeals24UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		512DF9E02CFE29930039DC6C /* DietiDeals24-DEV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DietiDeals24-DEV.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5166D0592D5020B70049F386 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Secrets-DEV.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5166D0902D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"DietiDeals24-DEV-Info.plist",
+				Info.plist,
+			);
+			target = 51244CF92CF62CD3003AA070 /* DietiDeals24 */;
+		};
+		5166D0912D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24-DEV" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"DietiDeals24-DEV-Info.plist",
+				Info.plist,
+			);
+			target = 512DF9D92CFE29930039DC6C /* DietiDeals24-DEV */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		51244CFC2CF62CD3003AA070 /* DietiDeals24 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5166D0902D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24" target */,
+				5166D0912D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24-DEV" target */,
+			);
 			path = DietiDeals24;
 			sourceTree = "<group>";
 		};
@@ -67,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51052F1B2D5E3876004CB0BC /* RoutingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,12 +119,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51052F1D2D5E387B004CB0BC /* RoutingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		51052F192D5E3876004CB0BC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		51244CF12CF62CD3003AA070 = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +140,9 @@
 				51244D0D2CF62CD4003AA070 /* DietiDeals24Tests */,
 				51244D172CF62CD4003AA070 /* DietiDeals24UITests */,
 				51244CFB2CF62CD3003AA070 /* Products */,
+				5166D0592D5020B70049F386 /* Secrets.xcconfig */,
+				5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */,
+				51052F192D5E3876004CB0BC /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -135,6 +177,7 @@
 			);
 			name = DietiDeals24;
 			packageProductDependencies = (
+				51052F1A2D5E3876004CB0BC /* RoutingKit */,
 			);
 			productName = DietiDeals24;
 			productReference = 51244CFA2CF62CD3003AA070 /* DietiDeals24.app */;
@@ -205,6 +248,7 @@
 			);
 			name = "DietiDeals24-DEV";
 			packageProductDependencies = (
+				51052F1C2D5E387B004CB0BC /* RoutingKit */,
 			);
 			productName = DietiDeals24;
 			productReference = 512DF9E02CFE29930039DC6C /* DietiDeals24-DEV.app */;
@@ -239,9 +283,13 @@
 			knownRegions = (
 				en,
 				Base,
+				it,
 			);
 			mainGroup = 51244CF12CF62CD3003AA070;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 51244CFB2CF62CD3003AA070 /* Products */;
 			projectDirPath = "";
@@ -400,6 +448,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -456,24 +505,31 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		51244D1F2CF62CD4003AA070 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5166D0592D5020B70049F386 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DietiDeals24/DietiDeals24.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DietiDeals24/Preview Content\"";
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DietiDeals24/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Needed to load Auction images";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Needed to load Auction images";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -481,7 +537,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D PROD";
 				PRODUCT_BUNDLE_IDENTIFIER = ingsw2324g63.sigmaTeam.DietiDeals24;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -493,18 +549,24 @@
 		};
 		51244D202CF62CD4003AA070 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5166D0592D5020B70049F386 /* Secrets.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DietiDeals24/DietiDeals24.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DietiDeals24/Preview Content\"";
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DietiDeals24/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Needed to load Auction images";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Needed to load Auction images";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -512,7 +574,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D PROD";
 				PRODUCT_BUNDLE_IDENTIFIER = ingsw2324g63.sigmaTeam.DietiDeals24;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -598,18 +660,24 @@
 		};
 		512DF9DE2CFE29930039DC6C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-DEV";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DietiDeals24/DietiDeals24-DEV.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DietiDeals24/Preview Content\"";
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DietiDeals24/DietiDeals24-DEV-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Needed to load Auction images";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Needed to load Auction images";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -617,7 +685,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEV";
 				PRODUCT_BUNDLE_IDENTIFIER = "ingsw2324g63.sigmaTeam.DietiDeals24-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -629,18 +697,24 @@
 		};
 		512DF9DF2CFE29930039DC6C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-DEV";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DietiDeals24/DietiDeals24-DEV.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"DietiDeals24/Preview Content\"";
 				DEVELOPMENT_TEAM = SA4H49C4LT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "DietiDeals24/DietiDeals24-DEV-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Needed to load Auction images";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Needed to load Auction images";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -648,7 +722,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEV";
 				PRODUCT_BUNDLE_IDENTIFIER = "ingsw2324g63.sigmaTeam.DietiDeals24-DEV";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -707,6 +781,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orleonedev/RoutingKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		51052F1A2D5E3876004CB0BC /* RoutingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */;
+			productName = RoutingKit;
+		};
+		51052F1C2D5E387B004CB0BC /* RoutingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51052F182D5E3866004CB0BC /* XCRemoteSwiftPackageReference "RoutingKit" */;
+			productName = RoutingKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 51244CF22CF62CD3003AA070 /* Project object */;
 }

@@ -1,0 +1,245 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "------" : {
+
+    },
+    "@------------" : {
+
+    },
+    "@%@" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ €" : {
+
+    },
+    "%lld bid%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bid%2$@"
+          }
+        }
+      }
+    },
+    "%lld/6" : {
+
+    },
+    "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
+
+    },
+    "Add up to 6 images" : {
+
+    },
+    "Apply" : {
+
+    },
+    "Auction Type" : {
+
+    },
+    "Become a Vendor" : {
+
+    },
+    "Become a Vendor on \nDietiDeals24" : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Close" : {
+
+    },
+    "Create Auction" : {
+
+    },
+    "Create your account" : {
+
+    },
+    "Current Price" : {
+
+    },
+    "Current Price: %@ €" : {
+
+    },
+    "Description" : {
+
+    },
+    "Dieti Deals 24" : {
+
+    },
+    "DietiDeals24" : {
+
+    },
+    "Don't have an account?" : {
+
+    },
+    "Email" : {
+
+    },
+    "Explore" : {
+
+    },
+    "Giuseppe Falso\nN86002941" : {
+
+    },
+    "Hello, %@!" : {
+
+    },
+    "Images (optional)" : {
+
+    },
+    "INGSW2324_63" : {
+
+    },
+    "Join our vendor community and start listing your items for auction. Tap the button below to begin." : {
+
+    },
+    "Joined since %@" : {
+
+    },
+    "load" : {
+
+    },
+    "Logout" : {
+
+    },
+    "More" : {
+
+    },
+    "Next" : {
+
+    },
+    "NotificationMainView" : {
+
+    },
+    "Notifications" : {
+
+    },
+    "Or sign in with" : {
+
+    },
+    "Oreste Leone\nN86001980" : {
+
+    },
+    "Password" : {
+
+    },
+    "Personal Area" : {
+
+    },
+    "Place a Bid" : {
+
+    },
+    "Place Bid" : {
+
+    },
+    "Present Offer" : {
+
+    },
+    "Publish Auction" : {
+
+    },
+    "Ready to create your next auction? Tap the button below to get started with listing your items." : {
+
+    },
+    "Remaining Time" : {
+
+    },
+    "Revoke Cred" : {
+
+    },
+    "Search" : {
+
+    },
+    "Search for products or services" : {
+
+    },
+    "Secret Price" : {
+
+    },
+    "Sell" : {
+
+    },
+    "Sign In" : {
+
+    },
+    "Sign Up" : {
+
+    },
+    "Signing up means you agree to our" : {
+
+    },
+    "Skip Sign In" : {
+
+    },
+    "Skip Sign Up" : {
+
+    },
+    "Skip Submit" : {
+
+    },
+    "Something went wrong" : {
+
+    },
+    "Start Selling" : {
+
+    },
+    "Starting Price" : {
+
+    },
+    "Submit Vendor Details" : {
+
+    },
+    "Successful Auctions: %@" : {
+
+    },
+    "Terms and Conditions" : {
+
+    },
+    "This is the start of cognito setup" : {
+
+    },
+    "Threshold" : {
+
+    },
+    "Threshold: %@ €" : {
+
+    },
+    "Timer" : {
+
+    },
+    "Verify" : {
+
+    },
+    "Verify your email address" : {
+
+    },
+    "We couldn't find any auctions at this time. Try again later." : {
+
+    },
+    "We Would love to hear more about you, to enrich the experience for all our users!" : {
+
+    },
+    "Welcome, Vendor!" : {
+
+    },
+    "Your about to bid" : {
+
+    }
+  },
+  "version" : "1.0"
+}

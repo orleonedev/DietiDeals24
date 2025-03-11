@@ -39,21 +39,21 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                     b.Property<int>("AuctionType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("CurrentPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("EndingDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp(0) without time zone");
 
                     b.Property<decimal?>("SecretPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("StartingDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp(0) without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<decimal>("StartingPrice")
@@ -78,8 +78,6 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("VendorId");
 
@@ -127,13 +125,13 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                     b.Property<Guid>("AuctionId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("BidDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp(0) without time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<Guid>("BuyerId")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("OfferDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
@@ -148,27 +146,6 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                         {
                             t.HasCheckConstraint("CK_Price", "\"Price\" >= 0");
                         });
-                });
-
-            modelBuilder.Entity("DietiDeals24.DataAccessLayer.Entities.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("DietiDeals24.DataAccessLayer.Entities.Notification", b =>
@@ -204,16 +181,10 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("CognitoSub")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -256,7 +227,7 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp(0) without time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -275,9 +246,15 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<string>("GeoLocation")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortBio")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("StartingDate")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp(0) without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("SuccessfulAuctions")
@@ -287,6 +264,9 @@ namespace DietiDeals24.DataAccessLayer.Migrations
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("WebSiteUrl")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -301,19 +281,11 @@ namespace DietiDeals24.DataAccessLayer.Migrations
 
             modelBuilder.Entity("DietiDeals24.DataAccessLayer.Entities.Auction", b =>
                 {
-                    b.HasOne("DietiDeals24.DataAccessLayer.Entities.Category", "Category")
-                        .WithMany("Auctions")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DietiDeals24.DataAccessLayer.Entities.Vendor", "Vendor")
                         .WithMany("Auctions")
                         .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("Vendor");
                 });
@@ -394,11 +366,6 @@ namespace DietiDeals24.DataAccessLayer.Migrations
                     b.Navigation("AuctionImages");
 
                     b.Navigation("Bids");
-                });
-
-            modelBuilder.Entity("DietiDeals24.DataAccessLayer.Entities.Category", b =>
-                {
-                    b.Navigation("Auctions");
                 });
 
             modelBuilder.Entity("DietiDeals24.DataAccessLayer.Entities.User", b =>

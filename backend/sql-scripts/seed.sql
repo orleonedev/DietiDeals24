@@ -59,6 +59,7 @@ CREATE TABLE "Auction" (
     "StartingDate" timestamp without time zone NOT NULL DEFAULT (CURRENT_TIMESTAMP),
     "EndingDate" timestamp without time zone NOT NULL,
     CONSTRAINT "PK_Auction" PRIMARY KEY ("Id"),
+    CONSTRAINT "CK_CurrentPrice" CHECK ("CurrentPrice" >= "StartingPrice"),
     CONSTRAINT "CK_SecretPrice" CHECK ("SecretPrice" < "StartingPrice"),
     CONSTRAINT "CK_StartingPrice" CHECK ("StartingPrice" >= 0),
     CONSTRAINT "CK_Threshold" CHECK ("Threshold" >= 1),
@@ -138,51 +139,98 @@ ALTER TABLE "Auction" ALTER COLUMN "Id" SET DEFAULT (gen_random_uuid());
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20250114201125_defaultUUIDGeneration', '9.0.0');
 
+ALTER TABLE "Auction" DROP CONSTRAINT "CK_CurrentPrice";
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250117230812_removedCurrentPriceCheck', '9.0.0');
+
+ALTER TABLE "Auction" DROP CONSTRAINT "FK_Auction_Category_CategoryId";
+
+DROP TABLE "Category";
+
+DROP INDEX "IX_Auction_CategoryId";
+
+ALTER TABLE "Auction" DROP COLUMN "CategoryId";
+
+ALTER TABLE "Bid" RENAME COLUMN "OfferDate" TO "BidDate";
+
+ALTER TABLE "Vendor" ADD "GeoLocation" text;
+
+ALTER TABLE "Vendor" ADD "ShortBio" text;
+
+ALTER TABLE "Vendor" ADD "WebSiteUrl" text;
+
+ALTER TABLE "Auction" ADD "Category" integer NOT NULL;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250305154420_categoryAndVendorMigration', '9.0.0');
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250305160510_categoryAndVendorMigrationFix', '9.0.0');
+
+ALTER TABLE "User" DROP COLUMN "CognitoSub";
+
+ALTER TABLE "Vendor" ALTER COLUMN "StartingDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "UserPushToken" ALTER COLUMN "RegistrationDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "User" ALTER COLUMN "Id" DROP DEFAULT;
+
+ALTER TABLE "Bid" ALTER COLUMN "BidDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "Auction" ALTER COLUMN "StartingDate" TYPE timestamp(0) without time zone;
+
+ALTER TABLE "Auction" ALTER COLUMN "EndingDate" TYPE timestamp(0) without time zone;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250306183524_userAndAuctionFix', '9.0.0');
+
 COMMIT;
 
 
 START TRANSACTION;
--- Insert sample data for Category
-INSERT INTO "Category" ("Id", "Name", "Description") 
-VALUES 
-(gen_random_uuid(), 'Services', 'Everything that is not a physical object you offer'),
-(gen_random_uuid(), 'Electronics', 'Devices, gadgets, and technology products'),
-(gen_random_uuid(), 'Furniture', 'Various types of furniture including chairs, tables, and more'),
-(gen_random_uuid(), 'Clothing', 'Fashionable clothing and accessories for all genders');
 
 -- Insert sample data for User
-INSERT INTO "User" ("Id", "CognitoSub", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
+INSERT INTO "User" ("Id", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
 VALUES 
-(gen_random_uuid(), 'sub-12344', 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
-(gen_random_uuid(), 'sub-12345', 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
-(gen_random_uuid(), 'sub-12346', 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
-(gen_random_uuid(), 'sub-12347', 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
-(gen_random_uuid(), 'sub-12348', 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
+(gen_random_uuid(), 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
+(gen_random_uuid(), 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
+(gen_random_uuid(), 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
+(gen_random_uuid(), 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
+(gen_random_uuid(), 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
 
 -- Insert sample data for Vendor
-INSERT INTO "Vendor" ("Id", "UserId", "StartingDate", "SuccessfulAuctions") 
+INSERT INTO "Vendor" ("Id", "UserId", "StartingDate", "SuccessfulAuctions", "GeoLocation", "WebSiteUrl", "ShortBio") 
 VALUES 
-(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller1'), '2025-01-01', 5),
-(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller2'), '2025-01-10', 3);
+(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller1'), '2025-01-01', 5, 'Napoli', 'www.google.com', 'Test bio1.'),
+(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller2'), '2025-01-10', 3, 'Latina', 'www.google.com', 'Test bio2.');
 
 -- Insert sample data for Auction
-INSERT INTO "Auction" ("Id", "Title", "AuctionDescription", "StartingPrice", "CurrentPrice", "AuctionType", "Threshold", "Timer", "SecretPrice", "VendorId", "CategoryId", "AuctionState", "StartingDate", "EndingDate") 
+INSERT INTO "Auction" ("Id", "Title", "AuctionDescription", "StartingPrice", "CurrentPrice", "AuctionType", "Threshold", "Timer", "SecretPrice", "VendorId", "Category", "AuctionState", "StartingDate", "EndingDate") 
 VALUES 
-(gen_random_uuid(), 'Laptop Auction', 'Brand new laptop, starting price $350', 350.00, 430.00, 0, 25, 48, NULL, 
+(gen_random_uuid(), 'Laptop Auction', 'Brand new laptop, starting price $350', 350.00, 430.00, 1, 25, 48, NULL, 
  (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- (SELECT "Id" FROM "Category" WHERE "Name" = 'Electronics'), 
+ 2, 
  0, '2025-01-17 10:00:00', '2025-01-19 23:00:00'),
-(gen_random_uuid(), 'Vintage Chair', 'Antique chair from the 1800s', 300.00, 250.00, 1, 25, 12, 80.00, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
- (SELECT "Id" FROM "Category" WHERE "Name" = 'Furniture'), 
- 1, '2025-01-18 00:00:00', '2025-01-19 12:00:00'),
- (gen_random_uuid(), 'Modern Table', 'An elegant modern table', 600.00, 600.00, 0, 50, 72, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
- (SELECT "Id" FROM "Category" WHERE "Name" = 'Furniture'), 
- 2, '2025-01-10 12:00:00', '2025-01-13 12:00:00'),
-(gen_random_uuid(), 'T-Shirt Auction', 'Limited edition t-shirts', 10.00, 25.00, 0, 5, 24, NULL, 
+ (gen_random_uuid(), 'iPad Air', 'Brand new iPad.', 325.00, 450.00, 1, 25, 48, NULL, 
  (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- (SELECT "Id" FROM "Category" WHERE "Name" = 'Clothing'), 
+ 2, 
+ 0, '2025-01-17 10:00:00', '2025-01-19 23:00:00'),
+(gen_random_uuid(), 'Vintage Chair', 'Antique chair from the 1800s', 300.00, 250.00, 2, 25, 12, 80.00, 
+ (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
+ 3, 
+ 1, '2025-01-18 00:00:00', '2025-01-19 12:00:00'),
+ (gen_random_uuid(), 'Modern Table', 'An elegant modern table', 600.00, 600.00, 1, 50, 72, NULL, 
+ (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
+ 3, 
+ 2, '2025-01-10 12:00:00', '2025-01-13 12:00:00'),
+(gen_random_uuid(), 'T-Shirt Auction', 'Limited edition t-shirts', 10.00, 25.00, 1, 5, 24, NULL, 
+ (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
+ 4, 
+ 0, '2025-01-17 09:00:00', '2025-01-19 06:00:00'),
+ (gen_random_uuid(), 'Levis Blue Jeans', 'Used levi blue jeans.', 15.00, 30.00, 1, 5, 24, NULL, 
+ (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
+ 4, 
  0, '2025-01-17 09:00:00', '2025-01-19 06:00:00');
 
 -- Insert sample data for AuctionImage
@@ -196,7 +244,7 @@ VALUES
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI');
 
 -- Insert sample data for Bid
-INSERT INTO "Bid" ("Id", "AuctionId", "BuyerId", "Price", "OfferDate") 
+INSERT INTO "Bid" ("Id", "AuctionId", "BuyerId", "Price", "BidDate") 
 VALUES 
 (gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 
  (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 375.00, '2025-01-17 14:00:00'),

@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import RoutingKit
 
 @main
 struct DietiDeals24App: App {
+    
+    @State var appContainer: AppContainer = AppContainer()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppRootView(appContainer: appContainer)
         }
     }
 }
+

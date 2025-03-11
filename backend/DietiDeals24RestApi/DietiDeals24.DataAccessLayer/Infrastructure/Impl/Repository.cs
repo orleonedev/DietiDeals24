@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DietiDeals24.DataAccessLayer.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DietiDeals24.DataAccessLayer.Infrastructure;
@@ -30,25 +31,6 @@ public class Repository<TEntity,TKey> : IRepository<TEntity,TKey> where TEntity 
     {
         await _dbSet.AddAsync(entity).ConfigureAwait(false);
     }
-    // public async Task BulkInsert(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkDelete(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkDeleteAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkInsertOrUpdate(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertOrUpdateAsync<TEntity>(entities, bulkConfig);
-    // }
-    //
-    // public async Task BulkInsertOrUpdateOrDelete(IList<TEntity> entities, BulkConfig bulkConfig = null)
-    // {
-    //     await _context.BulkInsertOrUpdateOrDeleteAsync<TEntity>(entities, bulkConfig);
-    // }
 
     public Task AddRange(IEnumerable<TEntity> entities)
     {
@@ -121,5 +103,15 @@ public class Repository<TEntity,TKey> : IRepository<TEntity,TKey> where TEntity 
         _context.Entry<TEntity>(entity).State = EntityState.Modified;
 
         return Task.CompletedTask;
+    }
+    
+    public async Task<int> CountAsync()
+    {
+        return await _context.Set<TEntity>().CountAsync();
+    }
+
+    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await _context.Set<TEntity>().CountAsync(predicate);
     }
 }

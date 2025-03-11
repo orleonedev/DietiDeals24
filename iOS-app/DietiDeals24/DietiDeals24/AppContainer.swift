@@ -55,6 +55,10 @@ extension AppContainer {
             DefaultBidService(rest: self.unsafeResolve())
         }
         
+        register(for: NotificationService.self) {
+            DefaultNotificationService(rest: self.unsafeResolve())
+        }
+        
         register(for: AppState.self, scope: .singleton) {
             AppState(credentialService: self.unsafeResolve(), authService: self.unsafeResolve())
         }
@@ -234,9 +238,9 @@ extension AppContainer {
             NotificationCoordinator.NotificationRouter()
         }
         
-//        register(for: NotificationMainViewModel.self) {
-//            NotificationMainViewModel(coordinator: self.unsafeResolve(), auctionService: self.unsafeResolve())
-//        }
+        register(for: NotificationMainViewModel.self) {
+            NotificationMainViewModel(coordinator: self.unsafeResolve(), notificationService: self.unsafeResolve(), auctionService: self.unsafeResolve())
+        }
         
 //        register(for: NotificationCoordinator.NotificationAuctionVM.self, tag: .init("Notification")) {
 //            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))

@@ -21,7 +21,7 @@ class NotificationCoordinator: Coordinator {
     @MainActor @ViewBuilder
     func rootView() -> some View {
         RoutingKit.RoutableRootView(router: router) {
-            Text("Notification Tab")
+            NotificationMainView(viewModel: self.appContainer.unsafeResolve(NotificationMainViewModel.self))
         }
     }
     

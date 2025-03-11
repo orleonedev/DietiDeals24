@@ -21,7 +21,7 @@ RUN dotnet publish "DietiDeals24.Lambda.OnAuctionEndTimeReached.csproj" \
 
 # Stage 3: Runtime Stage
 FROM public.ecr.aws/lambda/dotnet:8 AS final
-ENV BACKEND_URL=http://indirizzo-ec2/api/Auction/on-auction-end-time-reached
+ENV BACKEND_URL=http://52.50.106.87:80/api/Auction/on-auction-end-time-reached
 WORKDIR /var/task
 COPY --from=publish /app/publish .
 CMD [ "DietiDeals24.Lambda.OnAuctionEndTimeReached::DietiDeals24.Lambda.OnAuctionEndTimeReached.Function::FunctionHandler" ]

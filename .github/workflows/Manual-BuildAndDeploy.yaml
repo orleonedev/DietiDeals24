@@ -44,7 +44,7 @@ jobs:
             docker stop ${{ vars.BE_CONTAINER_NAME }} || true
             docker rm ${{ vars.BE_CONTAINER_NAME }} || true
             docker run -d -p 80:5029 --name ${{ vars.BE_CONTAINER_NAME }} \
-              -e DB_CONNECTION_STRING="Host=${{ secrets.DB_HOST }};Port=${{ secrets.DB_PORT }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }}" \
+              -e DB_CONNECTION_STRING="Host=${{ secrets.DB_HOST }};Port=${{ secrets.DB_PORT }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }}" \
               -e AWS_REGION=${{ secrets.AWS_DEFAULT_REGION }}  \
               -e AWS_ACCESS_KEY_ID=${{ secrets.DOTNET_AWS_ACCESS_KEY_ID }}  \
               -e AWS_SECRET_ACCESS_KEY=${{ secrets.DOTNET_AWS_SECRET_ACCESS_KEY }}  \

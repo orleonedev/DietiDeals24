@@ -49,4 +49,6 @@ jobs:
               -e AWS_SECRET_ACCESS_KEY=${{ secrets.DOTNET_AWS_SECRET_ACCESS_KEY }}  \
               -e USER_POOL_ID="${{ secrets.USER_POOL_ID }}" \
               -e COGNITO_CLIENT_ID="${{ secrets.COGNITO_CLIENT_ID }}" \
+              -e ARN_AUCTION_END_TIME_ROLE="${{ secrets.ARN_AUCTION_END_TIME_ROLE }}" \
+              -e ARN_LAMBDA_AUCTION_END_TIME="${{ secrets.ARN_LAMBDA_AUCTION_END_TIME }}" \
               ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:latest

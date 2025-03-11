@@ -1,14 +1,7 @@
-name: Deploy Backend to EC2
+name: Deploy Backend to EC2 (MANUAL)
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/DietiDeals24RestApi/**'
-      - '!backend/DietiDeals24RestApi/DietiDeals24.Lambda.OnAuctionEndTimeReached/**'
-      - '!backend/DietiDeals24RestApi/DietiDeals24.Lambda.RegisterUserPostConfirmation/**'
-      - '!backend/DietiDeals24RestApi/DietiDeals24.RestApi.Test/**'
+  workflow_dispatch:
 
 jobs:
   deploy:

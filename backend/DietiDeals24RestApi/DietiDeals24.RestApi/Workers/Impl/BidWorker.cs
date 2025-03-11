@@ -10,12 +10,15 @@ public class BidWorker: IBidWorker
     private readonly ILogger<BidWorker> _logger;
     private readonly IBidService _bidService;
     private readonly IAuctionService _auctionService;
+    private readonly EventBridgeSchedulerService _eventBridgeSchedulerService;
 
-    public BidWorker(ILogger<BidWorker> logger, IBidService bidService, IAuctionService auctionService)
+    public BidWorker(ILogger<BidWorker> logger, IBidService bidService,
+        IAuctionService auctionService, EventBridgeSchedulerService eventBridgeSchedulerService)
     {
         _logger = logger;
         _bidService = bidService;
         _auctionService = auctionService;
+        _eventBridgeSchedulerService = eventBridgeSchedulerService;
     }
 
     public async Task<CreateBidDTO> CreateBidAsync(CreateBidDTO bidDto)
@@ -43,14 +46,17 @@ public class BidWorker: IBidWorker
             {
                 auction.AuctionState = AuctionState.Closed;
                 auction.EndingDate = now;
+                await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
+                //notificare chi ha vinto l'asta e il venditore
             }
             else
             {
                 auction.CurrentPrice = bid.Price;
                 auction.EndingDate = actualDate.AddHours(auction.Timer);
+                var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             }
             
-            await _auctionService.UpdateAuctionStateAsync(auction);
+            await _auctionService.UpdateAuctionAsync(auction);
             
             return newBid;
         }

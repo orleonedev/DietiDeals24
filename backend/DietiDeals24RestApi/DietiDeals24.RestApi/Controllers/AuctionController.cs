@@ -104,4 +104,24 @@ public class AuctionController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("on-auction-end-time-reached", Name = "OnAuctionEndTimeReached")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> OnAuctionEndTimeReached([FromBody] Guid auctionId)
+    {
+        _logger.LogInformation($"[CONTROLLER] OnAuctionEndTimeReached for auction: {auctionId}");
+
+        try
+        {
+            await _auctionWorker.OnAuctionEndTimeReached(auctionId);
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] On Auction {auctionId} end time reached failed: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
 }

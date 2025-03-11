@@ -11,4 +11,5 @@ public interface IAuctionWorker
     public Task<DetailedAuctionDTO> GetDetailedAuctionById(Guid id);
     public Task<PaginatedResult<HomePageAuctionDTO>> GetPaginatedAuctions(AuctionFiltersDTO filters);
     public Task<CreateAuctionResponseDTO> CreateAuction(CreateAuctionDTO auction);
+    public Task OnAuctionEndTimeReached(Guid auctionId);
 }

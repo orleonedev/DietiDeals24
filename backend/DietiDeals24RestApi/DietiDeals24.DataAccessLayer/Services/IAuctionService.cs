@@ -13,5 +13,5 @@ public interface IAuctionService
     public Task<List<Auction>> GetPaginatedAuctionsAsync(AuctionFiltersDTO filters, string? predicate = null, params object[] parameters);
     public Task<Auction> GetAuctionByIdAsync(Guid id);
     public Task<Auction> CreateAuctionAsync(CreateAuctionDTO auction, Vendor vendor);
-    public Task<Auction> UpdateAuctionStateAsync(Auction auction);
+    public Task<Auction> UpdateAuctionAsync(Auction auction);
 }

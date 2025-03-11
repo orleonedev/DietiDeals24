@@ -11,19 +11,22 @@ public class AuctionWorker: IAuctionWorker
     private readonly IVendorService _vendorService;
     private readonly IBidService _bidService;
     private readonly IImageService _imageService;
+    private readonly EventBridgeSchedulerService _eventBridgeSchedulerService;
 
     public AuctionWorker(
         ILogger<AuctionWorker> logger, 
         IAuctionService auctionService,
         IVendorService vendorService,
         IBidService bidService,
-        IImageService imageService)
+        IImageService imageService, 
+        EventBridgeSchedulerService eventBridgeSchedulerService)
     {
         _logger = logger;
         _auctionService = auctionService;
         _vendorService = vendorService;
         _bidService = bidService;
         _imageService = imageService;
+        _eventBridgeSchedulerService = eventBridgeSchedulerService;
     }
 
     public async Task<Auction> GetAuctionById(Guid id)
@@ -153,6 +156,8 @@ public class AuctionWorker: IAuctionWorker
             var auction = await _auctionService.CreateAuctionAsync(auctionDto, vendor);
             var imagesDict = await _imageService.AddImagesUrlsForAuctionAsync(auction.Id, auctionDto.ImagesIdentifiers);
             var imagesUrls = await _imageService.GetImagesUrlsForAuctionAsync(auction.Id);
+
+            var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             
             var detailedAuction = new DetailedAuctionDTO
             {
@@ -196,4 +201,61 @@ public class AuctionWorker: IAuctionWorker
             throw new Exception("[WORKER] Creating new auction failed.", ex);
         }
     }
+
+    public async Task OnAuctionEndTimeReached(Guid auctionId)
+    {
+        try
+        {
+            var auction = await _auctionService.GetAuctionByIdAsync(auctionId);
+
+            if (auction.AuctionType == AuctionType.Incremental)
+            {
+                await OnIncrementalAuctionEndTimeReached(auction);
+            }
+            else
+            {
+                await OnDescendingAuctionEndTimeReached(auction);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] On Auction {auctionId} end time reached failed: {ex.Message}");
+            throw new Exception($"[WORKER] On Auction {auctionId} end time reached failed.", ex);
+        }
+    }
+
+    private async Task OnIncrementalAuctionEndTimeReached(Auction auction)
+    {
+        var bidsCount = await _bidService.GetBidsCountForAuctionAsync(auction.Id);
+        var isSuccessfullyClosed = bidsCount > 0 ? true : false;
+        auction.AuctionState = isSuccessfullyClosed ? AuctionState.Closed : AuctionState.Expired;
+        await _auctionService.UpdateAuctionAsync(auction);
+        
+        //invia notifiche alle persone in base a isSuccessfullyClosed
+        //caso 1 - chi ha vinto l'asta, quelli che hanno perso l'asta e il venditore
+        //caso 2 - solo venditore
+    }
+
+    private async Task OnDescendingAuctionEndTimeReached(Auction auction)
+    {
+        auction.CurrentPrice -= auction.Threshold;
+
+        if (auction.SecretPrice < auction.CurrentPrice)
+        {
+            DateTime now = DateTime.Now;
+            DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+            auction.EndingDate = actualDate.AddHours(auction.Timer);
+            
+            var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
+            _logger.LogInformation("[WORKER] Decreased auction end time reached, event bridge triggered.");
+            
+            return;
+        }
+                
+        auction.AuctionState = AuctionState.Expired;
+        //notificare solo venditore
+        
+        await _auctionService.UpdateAuctionAsync(auction);
+    }
+
 }

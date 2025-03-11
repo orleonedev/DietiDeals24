@@ -7,10 +7,9 @@ on:
       - main
     paths:
       - 'backend/DietiDeals24RestApi/**'
-    paths-ignore:
-    - 'backend/DietiDeals24RestApi/DietiDeals24.Lambda.OnAuctionEndTimeReached/**'
-    - 'backend/DietiDeals24RestApi/DietiDeals24.Lambda.RegisterUserPostConfirmation/**'
-    - 'backend/DietiDeals24RestApi/DietiDeals24.RestApi.Test/**'
+      - '!backend/DietiDeals24RestApi/DietiDeals24.Lambda.OnAuctionEndTimeReached/**'
+      - '!backend/DietiDeals24RestApi/DietiDeals24.Lambda.RegisterUserPostConfirmation/**'
+      - '!backend/DietiDeals24RestApi/DietiDeals24.RestApi.Test/**'
 
 jobs:
   deploy:

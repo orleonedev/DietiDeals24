@@ -1,0 +1,52 @@
+name: Manual Build and Deploy on EC2
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_GITHUB_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_GITHUB_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }} 
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push Docker Image to ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./backend/DietiDeals24RestApi/Dockerfile ./backend/DietiDeals24RestApi/
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:latest
+            docker stop ${{ vars.BE_CONTAINER_NAME }} || true
+            docker rm ${{ vars.BE_CONTAINER_NAME }} || true
+            docker run -d -p 80:5029 --name ${{ vars.BE_CONTAINER_NAME }} \
+              -e DB_CONNECTION_STRING="Host=${{ secrets.DB_HOST }};Port=${{ secrets.DB_PORT }};Database=${{ secrets.DB_NAME }};Username=${{ secrets.DB_USER }};Password=${{ secrets.DB_PASSWORD }}" \
+              -e AWS_REGION=${{ secrets.AWS_DEFAULT_REGION }}  \
+              -e AWS_ACCESS_KEY_ID=${{ secrets.DOTNET_AWS_ACCESS_KEY_ID }}  \
+              -e AWS_SECRET_ACCESS_KEY=${{ secrets.DOTNET_AWS_SECRET_ACCESS_KEY }}  \
+              -e USER_POOL_ID="${{ secrets.USER_POOL_ID }}" \
+              -e COGNITO_CLIENT_ID="${{ secrets.COGNITO_CLIENT_ID }}" \
+              ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:latest

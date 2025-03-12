@@ -99,6 +99,9 @@
     "Hello, %@!" : {
 
     },
+    "If you haven't received any notifications yet, please try again later." : {
+
+    },
     "Images (optional)" : {
 
     },
@@ -123,7 +126,7 @@
     "Next" : {
 
     },
-    "NotificationMainView" : {
+    "No notifications" : {
 
     },
     "Notifications" : {

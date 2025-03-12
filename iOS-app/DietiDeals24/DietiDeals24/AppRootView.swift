@@ -76,6 +76,7 @@ class AppState: LoadableViewModel {
             let sessionToken = try await self.authService.refreshAccessToken(refreshToken: rfToken)
             self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
             self.isAuthenticated = true
+            await self.registerForRemoteNotifications()
             isLoading = false
         } catch {
             isLoading = false
@@ -88,12 +89,14 @@ class AppState: LoadableViewModel {
         let sessionToken = try await self.authService.signIn(username: email, password: password)
         self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
         self.isAuthenticated = true
+        await self.registerForRemoteNotifications()
     }
     
     public func SignInWithProvider(_ provider: AuthFederatedProvider, token: String) async throws {
         let sessionToken = try await self.authService.signIn(withProvider: provider, thirdPartyToken: token)
         self.credentialService.storeToken(credentials: TokenCredentials(accessToken: sessionToken.accessToken, idToken: sessionToken.idToken, refreshToken: sessionToken.refreshToken))
         self.isAuthenticated = true
+        await self.registerForRemoteNotifications()
         
     }
     
@@ -151,7 +154,21 @@ class AppState: LoadableViewModel {
     
     public func logOut() async {
         self.revokeCredentials()
+        await UIApplication.shared.unregisterForRemoteNotifications()
         try? await self.authService.signOut()
+    }
+    
+    @MainActor
+    public func registerForRemoteNotifications() async {
+        let center = UNUserNotificationCenter.current()
+        do {
+            let authorized = try await center.requestAuthorization(options: [.alert, .badge, .sound])
+            guard authorized else { return }
+            UIApplication.shared.registerForRemoteNotifications()
+            
+        } catch {
+            print("error registering for remote notifications: \(error)")
+        }
     }
 }
 

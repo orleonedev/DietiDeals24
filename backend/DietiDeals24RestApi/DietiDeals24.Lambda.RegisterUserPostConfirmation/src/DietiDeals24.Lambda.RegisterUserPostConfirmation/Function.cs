@@ -1,9 +1,5 @@
 using Amazon.Lambda.Core;
-using Amazon.Lambda.Core;
 using Newtonsoft.Json;
-using System;
-using System.Net.Http;
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,44 +12,26 @@ public class Function
 {
     private static readonly HttpClient HttpClient = new HttpClient();
     
-    public async Task<object> FunctionHandler(object input, ILambdaContext context)
+    public async Task<object> FunctionHandler(CognitoPostConfirmationEvent input, ILambdaContext context)
     {
         context.Logger.LogLine("Received Cognito PostConfirmation event.");
-
-        // Convertiamo l'input in un oggetto JSON
-        var jsonString = JsonConvert.SerializeObject(input);
-        dynamic eventData = JsonConvert.DeserializeObject(jsonString);
         
-        // Estrarre i dati dell'utente dal payload Cognito
-        string userId = eventData?.request?.userAttributes?.sub;
-        string username = eventData?.request?.userAttributes?.preferred_username ?? eventData?.userName;
-        string fullName = eventData?.request?.userAttributes?.name;
-        string email = eventData?.request?.userAttributes?.email;
-        string birthdate = eventData?.request?.userAttributes?.birthdate;
-        //string role = eventData?.request?.userAttributes?["custom:role"]; // Attributo custom
-
-        // // Crea l'oggetto JSON per il backend
-        // var userPayload = new
-        // {
-        //     Id = userId,
-        //     Username = username,
-        //     FullName = fullName,
-        //     Email = email,
-        //     Birthdate = birthdate,
-        //     Role = role,
-        //     HasVerifiedEmail = true // Questo valore è sempre true in Cognito
-        // };
+        // Access properties using the strongly typed object
+        Guid userId = input.request.userAttributes.sub; 
+        string username = input.request.userAttributes.preferred_username;
+        string fullName = input.request.userAttributes.name;
+        string email = input.request.userAttributes.email;
+        string birthdate = input.request.userAttributes.birthdate;
 
         var registrationDTO = new RegistrationDTO
         {
-            CognitoSub = Guid.Parse(userId),
+            CognitoSub = userId,
             FullName = fullName,
             Username = username,
             Email = email,
             BirthDate = DateOnly.Parse(birthdate).ToDateTime(TimeOnly.MinValue, DateTimeKind.Unspecified)
         };
 
-        // URL del backend (da aggiornare con l'indirizzo reale quando disponibile)
         var backendUrl = Environment.GetEnvironmentVariable("BACKEND_URL");
 
         var requestContent = new StringContent(JsonConvert.SerializeObject(registrationDTO), Encoding.UTF8, "application/json");
@@ -65,6 +43,7 @@ public class Function
             if (response.IsSuccessStatusCode)
             {
                 context.Logger.LogLine("User successfully created in backend.");
+                
             }
             else
             {
@@ -76,8 +55,38 @@ public class Function
             context.Logger.LogLine($"Exception: {ex.Message}");
         }
 
-        return eventData;
+        input.version = "1";
+        return input;
     }
+}
+
+public class CognitoPostConfirmationEvent
+{
+    public string version { get; set; }
+    public string region { get; set; }
+    public string userPoolId { get; set; }
+    public string triggerSource { get; set; }
+    public string userName { get; set; }
+    public Request request { get; set; }
+    public Response response { get; set; }
+}
+
+public class UserAttributes
+{
+    public Guid sub { get; set; }
+    public string preferred_username { get; set; }
+    public string name { get; set; }
+    public string email { get; set; }
+    public string birthdate { get; set; }
+}
+
+public class Request
+{
+    public UserAttributes userAttributes { get; set; }
+}
+
+public class Response
+{
 }
 
 public class RegistrationDTO

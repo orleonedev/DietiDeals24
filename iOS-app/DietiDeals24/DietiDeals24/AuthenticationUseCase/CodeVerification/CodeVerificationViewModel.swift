@@ -29,6 +29,7 @@ class CodeVerificationViewModel: LoadableViewModel {
         validationCodeError = false
     }
     
+    @MainActor
     func submitConfirmationCode()  {
         
         self.validateCode()
@@ -37,12 +38,14 @@ class CodeVerificationViewModel: LoadableViewModel {
         Task {
             do {
                 try await self.coordinator.sendConfirmationCode(code: confimationCode)
-                await self.coordinator.showSignupStatus(status: true)
+                isLoading = false
+                self.coordinator.showSignupStatus(status: true)
             } catch {
                 print(error)
-                await self.coordinator.showSignupStatus(status: false)
+                isLoading = false
+                self.coordinator.showSignupStatus(status: false)
             }
-            isLoading = false
+            
         }
     }
     

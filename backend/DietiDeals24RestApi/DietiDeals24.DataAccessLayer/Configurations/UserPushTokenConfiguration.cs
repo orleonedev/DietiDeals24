@@ -20,10 +20,16 @@ public class UserPushTokenConfiguration : IEntityTypeConfiguration<UserPushToken
         builder.Property(t => t.DeviceToken)
             .IsRequired()
             .HasMaxLength(255);
+        
+        builder.Property(t => t.EndPointArn)
+            .IsRequired()
+            .HasMaxLength(500);
 
         builder.Property(t => t.RegistrationDate)
             .IsRequired()
-            .HasColumnType("timestamp(0) without time zone");
+            .ValueGeneratedOnAdd()
+            .HasColumnType("timestamp(0) without time zone")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Relationships
         builder.HasOne(t => t.User)

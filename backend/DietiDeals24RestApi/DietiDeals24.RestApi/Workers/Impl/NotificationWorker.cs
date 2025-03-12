@@ -28,6 +28,13 @@ public class NotificationWorker: INotificationWorker
     public async Task AddNotificationTokenAsync(Guid userId, string deviceToken)
     {
         _logger.LogInformation($"[WORKER] Adding notification token for user {userId}.");
+        string? alreadyRegisteredToken = await _notificationService.GetEndPointArnFromDeviceTokenAsync(deviceToken);
+
+        if (alreadyRegisteredToken.Any())
+        {
+            _logger.LogInformation($"[WORKER] Adding notification token failed for user {userId}: Device token {deviceToken} was already registered.");
+            return;
+        }
 
         try
         {

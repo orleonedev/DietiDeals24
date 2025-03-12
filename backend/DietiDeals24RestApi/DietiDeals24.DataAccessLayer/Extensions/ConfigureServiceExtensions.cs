@@ -21,6 +21,7 @@ public static class ConfigureServiceExtensions
         serviceCollection.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<ICheckService, CheckService>();
+        serviceCollection.AddScoped<INotificationService, NotificationService>();
         serviceCollection.AddScoped<IAuctionService, AuctionService>();
         serviceCollection.AddScoped<IVendorService, VendorService>();
         serviceCollection.AddScoped<IBidService, BidService>();

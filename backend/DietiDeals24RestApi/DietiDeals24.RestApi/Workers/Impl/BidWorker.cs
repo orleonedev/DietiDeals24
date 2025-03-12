@@ -9,16 +9,27 @@ public class BidWorker: IBidWorker
 {
     private readonly ILogger<BidWorker> _logger;
     private readonly IBidService _bidService;
+    private readonly IVendorService _vendorService;
+    private readonly IImageService _imageService;
     private readonly IAuctionService _auctionService;
+    private readonly INotificationWorker _notificationWorker;
     private readonly EventBridgeSchedulerService _eventBridgeSchedulerService;
 
-    public BidWorker(ILogger<BidWorker> logger, IBidService bidService,
-        IAuctionService auctionService, EventBridgeSchedulerService eventBridgeSchedulerService)
+    public BidWorker(ILogger<BidWorker> logger, 
+        IBidService bidService,
+        IAuctionService auctionService, 
+        EventBridgeSchedulerService eventBridgeSchedulerService, 
+        INotificationWorker notificationWorker, 
+        IImageService imageService, 
+        IVendorService vendorService)
     {
         _logger = logger;
         _bidService = bidService;
         _auctionService = auctionService;
         _eventBridgeSchedulerService = eventBridgeSchedulerService;
+        _notificationWorker = notificationWorker;
+        _imageService = imageService;
+        _vendorService = vendorService;
     }
 
     public async Task<CreateBidDTO> CreateBidAsync(CreateBidDTO bidDto)
@@ -42,18 +53,37 @@ public class BidWorker: IBidWorker
             DateTime now = DateTime.Now;
             DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
+            var vendor = await _vendorService.GetVendorByIdAsync(auction.VendorId);
+            var imageList = await _imageService.GetImagesUrlsForAuctionAsync(auction.Id);
+            var mainImageUrl = imageList.FirstOrDefault();
+            
+            var notification = new NotificationDTO
+            {
+                MainImageUrl = mainImageUrl,
+                AuctionId = auction.Id,
+                AuctionTitle = auction.Title
+            };
+            
             if (auction.AuctionType == AuctionType.Descending)
             {
                 auction.AuctionState = AuctionState.Closed;
                 auction.EndingDate = now;
                 await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
-                //notificare chi ha vinto l'asta e il venditore
+                
+                notification.Type = NotificationType.AuctionClosed;
+                notification.Message = "Hai vinto quest'asta.";
+                await _notificationWorker.SendNotificationAsync(bidDto.BuyerId, notification);
+                notification.Message = "L'asta si è conclusa con successo.";
+                await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
             }
             else
             {
                 auction.CurrentPrice = bid.Price;
                 auction.EndingDate = actualDate.AddHours(auction.Timer);
                 var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
+                notification.Type = NotificationType.AuctionBid;
+                notification.Message = "Hai ricevuto una nuova offerta.";
+                await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
             }
             
             await _auctionService.UpdateAuctionAsync(auction);

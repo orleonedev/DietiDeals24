@@ -132,8 +132,8 @@ public class NotificationService: INotificationService
             var endpoint = await _unitOfWork.UserPushTokenRepository
                 .Get(token => token.DeviceToken == deviceToken)
                 .FirstOrDefaultAsync();
-
-            return endpoint.EndPointArn;
+            
+            return endpoint?.EndPointArn ?? "" ;
         }
         catch (Exception ex)
         {

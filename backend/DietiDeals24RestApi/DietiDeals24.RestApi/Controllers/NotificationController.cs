@@ -29,13 +29,7 @@ public class NotificationController : ControllerBase
         try
         {
             var result = await _notificationWorker.GetPaginatedNotificationsForUserIdAsync(filters);
-
-            if (result.Results.Any())
-            {
-                return Ok(result.Results);
-            }
-            
-            return NotFound();
+            return Ok(result.Results);
         }
         catch (Exception ex)
         {

@@ -52,8 +52,7 @@ public class AuctionController : ControllerBase
         {
             var result = await _auctionWorker.GetPaginatedAuctions(filters);
 
-            if (result.Results.Any()) return Ok(result);
-            return NotFound();
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -93,9 +92,7 @@ public class AuctionController : ControllerBase
 
         try
         {
-            
             var result = await _auctionWorker.CreateAuction(auction);
-
             return Ok(result);
         }
         catch (Exception ex)
@@ -111,11 +108,9 @@ public class AuctionController : ControllerBase
     public async Task<IActionResult> OnAuctionEndTimeReached([FromBody] Guid auctionId)
     {
         _logger.LogInformation($"[CONTROLLER] OnAuctionEndTimeReached for auction: {auctionId}");
-
         try
         {
             await _auctionWorker.OnAuctionEndTimeReached(auctionId);
-
             return Ok();
         }
         catch (Exception ex)

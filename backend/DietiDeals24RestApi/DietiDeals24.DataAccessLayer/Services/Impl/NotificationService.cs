@@ -51,7 +51,7 @@ public class NotificationService: INotificationService
             {
                 UserId = userId,
                 DeviceToken = deviceToken,
-                //SnsEndpointArn = endPointArn,
+                EndPointArn = endPointArn,
                 RegistrationDate = actualDate
             };
                 
@@ -154,7 +154,8 @@ public class NotificationService: INotificationService
 
             if (token == null)
             {
-                throw new ArgumentNullException($"[SERVICE] Device token {deviceToken} is not active.");
+                _logger.LogWarning($"[SERVICE] Device token {deviceToken} is not active.");
+                return;
             }
             
             _unitOfWork.BeginTransaction();

@@ -25,6 +25,44 @@ public class NotificationWorker: INotificationWorker
         _platformApplicationArn = Environment.GetEnvironmentVariable("SNS_PLATFORM_ARN");
     }
 
+    public async Task<PaginatedResult<NotificationDTO>> GetPaginatedNotificationsForUserIdAsync(NotificationFiltersDTO filters)
+    {
+        _logger.LogInformation($"[WORKER] Getting paginated notifications for user {filters.UserId}");
+
+        try
+        {
+            var notifications = await _notificationService.GetAllNotificationsForUserIdAsync(filters.UserId);
+            var paginatedNotifications = new PaginatedResult<NotificationDTO>
+            {
+                Results = new List<NotificationDTO>(),
+                TotalRecords = notifications.Count,
+                PageNumber = filters.Page,
+                PageSize = filters.PageSize
+            };
+
+            foreach (var notification in notifications)
+            {
+                paginatedNotifications.Results.Add(new NotificationDTO
+                {
+                    Id = notification.Id,
+                    Type = notification.NotificationType,
+                    CreationDate = notification.CreationDate,
+                    Message = notification.Message,
+                    MainImageUrl = notification.MainImageUrl,
+                    AuctionId = notification.AuctionId,
+                    AuctionTitle = notification.AuctionTitle
+                });
+            }
+            
+            return paginatedNotifications;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Getting paginated notifications failed for user {filters.UserId}: {ex.Message}");
+            return null;
+        }
+    }
+
     public async Task AddNotificationTokenAsync(Guid userId, string deviceToken)
     {
         _logger.LogInformation($"[WORKER] Adding notification token for user {userId}.");

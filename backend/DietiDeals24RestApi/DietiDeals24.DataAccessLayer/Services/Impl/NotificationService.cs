@@ -21,6 +21,23 @@ public class NotificationService: INotificationService
         _logger = logger;
     }
 
+    public async Task<List<Notification>> GetAllNotificationsForUserIdAsync(Guid userId)
+    {
+        _logger.LogInformation($"[SERVICE] Getting all notifications for user {userId}");
+
+        try
+        {
+            return await _unitOfWork.NotificationRepository
+                .Get(notification => notification.UserId == userId)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Failed getting all notifications for user {userId}. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Getting all notifications for user {userId}. Exception occurred: {ex.Message}");
+        }
+    }
+
     public async Task<UserPushToken> AddNotificationTokenAsync(Guid userId, string deviceToken, string endPointArn)
     {
         _logger.LogInformation($"[SERVICE] Adding notification token for user {userId}, deviceToken {deviceToken} and endPointArn {endPointArn}.");

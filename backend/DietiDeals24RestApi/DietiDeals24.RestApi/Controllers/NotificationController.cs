@@ -18,6 +18,32 @@ public class NotificationController : ControllerBase
         _notificationWorker = notificationWorker;
     }
 
+    [HttpPost("get-notifications", Name = "GetNotifications")]
+    [ProducesResponseType(typeof(IEnumerable<Notification>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetNotifications([FromBody] NotificationFiltersDTO filters)
+    {
+        _logger.LogInformation($"[CONTROLLER] Getting notifications for {filters.UserId}");
+
+        try
+        {
+            var result = await _notificationWorker.GetPaginatedNotificationsForUserIdAsync(filters);
+
+            if (result.Results.Any())
+            {
+                return Ok(result.Results);
+            }
+            
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] Getting notifications for {filters.UserId}. Exception occurred: {ex.Message}");
+            return Problem();
+        }
+    }
+
     [HttpPost("add-notification-token", Name = "AddNotificationToken")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

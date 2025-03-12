@@ -19,3 +19,10 @@ public class NotificationDTO
     public Guid AuctionId { get; set; }
     public string AuctionTitle { get; set; }
 }
+
+public class NotificationFiltersDTO
+{
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public Guid UserId { get; set; }
+}

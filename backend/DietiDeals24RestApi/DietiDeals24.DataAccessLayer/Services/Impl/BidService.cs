@@ -20,6 +20,24 @@ public class BidService: IBidService
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
+
+    public async Task<List<Bid>> GetAllBidsForAuctionAsync(Guid auctionId)
+    {
+        _logger.LogDebug("[SERVICE] Getting all bids.");
+
+        try
+        {
+            return await _unitOfWork.BidRepository
+                .Get(bid => bid.AuctionId == auctionId)
+                .OrderByDescending(bid => bid.Price)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[SERVICE] Failed getting all bids.");
+            throw new Exception("[SERVICE] Failed getting all bids.", ex);
+        }
+    }
     
     public async Task<Dictionary<Guid, int>> GetBidsCountForAuctionAsync(List<Guid> auctionIds)
     {

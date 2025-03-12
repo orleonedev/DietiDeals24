@@ -242,13 +242,13 @@ extension AppContainer {
             NotificationMainViewModel(coordinator: self.unsafeResolve(), notificationService: self.unsafeResolve(), auctionService: self.unsafeResolve())
         }
         
-//        register(for: NotificationCoordinator.NotificationAuctionVM.self, tag: .init("Notification")) {
-//            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
-//        }
-//        
-//        register(for: UserProfileViewModel.self, tag: .init("Notification")) {
-//            UserProfileViewModel(coordinator: self.unsafeResolve(NotificationCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
-//        }
+        register(for: AuctionDetailMainViewModel.self, tag: .init("Notification")) {
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(NotificationCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
+        }
+        
+        register(for: UserProfileViewModel.self, tag: .init("Notification")) {
+            UserProfileViewModel(coordinator: self.unsafeResolve(NotificationCoordinator.self), auctionService: self.unsafeResolve(AuctionService.self))
+        }
         
     }
 }

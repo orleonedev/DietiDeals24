@@ -59,4 +59,5 @@ jobs:
               -e COGNITO_CLIENT_ID="${{ secrets.COGNITO_CLIENT_ID }}" \
               -e ARN_AUCTION_END_TIME_ROLE="${{ secrets.ARN_AUCTION_END_TIME_ROLE }}" \
               -e ARN_LAMBDA_AUCTION_END_TIME="${{ secrets.ARN_LAMBDA_AUCTION_END_TIME }}" \
+              -e SNS_PLATFORM_ARN="${{ secrets.SNS_PLATFORM_ARN }}" \
               ${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:latest

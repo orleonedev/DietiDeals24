@@ -40,6 +40,7 @@ services:
       COGNITO_CLIENT_ID: ${COGNITO_CLIENT_ID}
       ARN_LAMBDA_AUCTION_END_TIME: ${ARN_LAMBDA_AUCTION_END_TIME}
       ARN_AUCTION_END_TIME_ROLE: ${ARN_AUCTION_END_TIME_ROLE}
+      SNS_PLATFORM_ARN: ${SNS_PLATFORM_ARN}
     networks:
       - dietideals24-network
     depends_on:

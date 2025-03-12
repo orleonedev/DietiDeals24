@@ -29,7 +29,21 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         builder.Property(n => n.Message)
             .IsRequired()
             .HasColumnType("text");
+        
+        builder.Property(n => n.CreationDate)
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .HasColumnType("timestamp(0) without time zone")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+        builder.Property(n => n.AuctionTitle)
+            .HasMaxLength(255)
+            .IsRequired();
+        
+        builder.Property(n => n.MainImageUrl)
+            .IsRequired()
+            .HasMaxLength(500);
+        
         // Relationships
         builder.HasOne(n => n.User)
             .WithMany(u => u.Notifications)

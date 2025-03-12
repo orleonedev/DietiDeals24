@@ -11,6 +11,7 @@ public class AuctionWorker: IAuctionWorker
     private readonly IVendorService _vendorService;
     private readonly IBidService _bidService;
     private readonly IImageService _imageService;
+    private readonly INotificationWorker _notificationWorker;
     private readonly EventBridgeSchedulerService _eventBridgeSchedulerService;
 
     public AuctionWorker(
@@ -19,7 +20,8 @@ public class AuctionWorker: IAuctionWorker
         IVendorService vendorService,
         IBidService bidService,
         IImageService imageService, 
-        EventBridgeSchedulerService eventBridgeSchedulerService)
+        EventBridgeSchedulerService eventBridgeSchedulerService, 
+        INotificationWorker notificationWorker)
     {
         _logger = logger;
         _auctionService = auctionService;
@@ -27,6 +29,7 @@ public class AuctionWorker: IAuctionWorker
         _bidService = bidService;
         _imageService = imageService;
         _eventBridgeSchedulerService = eventBridgeSchedulerService;
+        _notificationWorker = notificationWorker;
     }
 
     public async Task<Auction> GetAuctionById(Guid id)
@@ -207,14 +210,17 @@ public class AuctionWorker: IAuctionWorker
         try
         {
             var auction = await _auctionService.GetAuctionByIdAsync(auctionId);
+            var vendor = await _vendorService.GetVendorByIdAsync(auction.VendorId);
+            var imageList = await _imageService.GetImagesUrlsForAuctionAsync(auction.Id);
+            var mainImageUrl = imageList.FirstOrDefault();
 
             if (auction.AuctionType == AuctionType.Incremental)
             {
-                await OnIncrementalAuctionEndTimeReached(auction);
+                await OnIncrementalAuctionEndTimeReached(auction, vendor, mainImageUrl);
             }
             else
             {
-                await OnDescendingAuctionEndTimeReached(auction);
+                await OnDescendingAuctionEndTimeReached(auction, vendor, mainImageUrl);
             }
         }
         catch (Exception ex)
@@ -224,19 +230,53 @@ public class AuctionWorker: IAuctionWorker
         }
     }
 
-    private async Task OnIncrementalAuctionEndTimeReached(Auction auction)
+    private async Task OnIncrementalAuctionEndTimeReached(Auction auction, Vendor vendor, string mainImageUrl)
     {
         var bidsCount = await _bidService.GetBidsCountForAuctionAsync(auction.Id);
         var isSuccessfullyClosed = bidsCount > 0 ? true : false;
         auction.AuctionState = isSuccessfullyClosed ? AuctionState.Closed : AuctionState.Expired;
         await _auctionService.UpdateAuctionAsync(auction);
         
-        //invia notifiche alle persone in base a isSuccessfullyClosed
-        //caso 1 - chi ha vinto l'asta, quelli che hanno perso l'asta e il venditore
-        //caso 2 - solo venditore
+        var vendorNotification = new NotificationDTO
+        {
+            Type = NotificationType.AuctionExpired,
+            MainImageUrl = mainImageUrl,
+            AuctionId = auction.Id,
+            AuctionTitle = auction.Title
+        };
+        
+        if (isSuccessfullyClosed)
+        {
+            vendorNotification.Type = NotificationType.AuctionClosed;
+
+            var buyersNotification = new NotificationDTO
+            {
+                Type = NotificationType.AuctionClosed,
+                Message = "Hai vinto quest'asta.",
+                MainImageUrl = mainImageUrl,
+                AuctionId = auction.Id,
+                AuctionTitle = auction.Title
+            };
+
+            var bids = await _bidService.GetAllBidsForAuctionAsync(auction.Id);
+            var winnerBid = bids.FirstOrDefault();
+            
+            //Winner notification
+            await _notificationWorker.SendNotificationAsync(winnerBid.BuyerId, buyersNotification);
+
+            bids.Remove(winnerBid);
+            buyersNotification.Message = "Non hai vinto quest'asta.";
+            
+            foreach (var bid in bids)
+            {
+                await _notificationWorker.SendNotificationAsync(bid.BuyerId, buyersNotification);
+            }
+        }
+        
+        await _notificationWorker.SendNotificationAsync(vendor.UserId, vendorNotification);
     }
 
-    private async Task OnDescendingAuctionEndTimeReached(Auction auction)
+    private async Task OnDescendingAuctionEndTimeReached(Auction auction,Vendor vendor, string mainImageUrl)
     {
         auction.CurrentPrice -= auction.Threshold;
 
@@ -253,7 +293,17 @@ public class AuctionWorker: IAuctionWorker
         }
                 
         auction.AuctionState = AuctionState.Expired;
-        //notificare solo venditore
+
+        var notification = new NotificationDTO
+        {
+            Type = NotificationType.AuctionExpired,
+            Message = "Quest'asta è scaduta.",
+            MainImageUrl = mainImageUrl,
+            AuctionId = auction.Id,
+            AuctionTitle = auction.Title
+        };
+
+        await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
         
         await _auctionService.UpdateAuctionAsync(auction);
     }

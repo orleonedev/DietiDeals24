@@ -7,6 +7,7 @@ public class UserPushToken
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public string DeviceToken { get; set; }
+    public string EndPointArn { get; set; }
     public DateTime RegistrationDate { get; set; }
 
     // Navigation Properties

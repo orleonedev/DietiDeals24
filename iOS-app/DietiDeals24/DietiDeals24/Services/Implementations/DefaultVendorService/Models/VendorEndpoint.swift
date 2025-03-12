@@ -22,14 +22,14 @@ extension VendorEndpoint {
         }
     }
     
-    static private func getBecomeAVendorEndpoint(param: BecomeAVendorBodyRequest) -> CodableEndpoint<Bool> {
+    static private func getBecomeAVendorEndpoint(param: BecomeAVendorBodyRequest) -> CodableEndpoint<VendorProfileResponseDTO> {
         
         let baseURLString = URL(string: NetworkConfiguration.backendBaseUrl)!
         let httpMethod = HTTPMethod.post
         let encoding = Endpoint.Encoding.json
         let body = param.jsonObject
         
-        return CodableEndpoint<Bool>(
+        return CodableEndpoint<VendorProfileResponseDTO>(
             Endpoint(
                 baseURL: baseURLString,
                 path: "/Vendor/become-a-vendor",

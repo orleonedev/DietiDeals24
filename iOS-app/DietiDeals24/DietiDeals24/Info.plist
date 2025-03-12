@@ -10,6 +10,19 @@
 	<string>$(COGNITO_OAUTH_BASE)</string>
 	<key>COGNITO_URL</key>
 	<string>$(COGNITO_URL)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>52.50.106.87</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSPhotoLibraryLimitedAccessAPISupport</key>
 	<true/>
 </dict>

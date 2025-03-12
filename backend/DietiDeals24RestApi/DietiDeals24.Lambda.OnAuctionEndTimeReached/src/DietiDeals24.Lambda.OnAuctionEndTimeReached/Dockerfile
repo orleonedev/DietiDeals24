@@ -14,13 +14,13 @@ RUN dotnet build "DietiDeals24.Lambda.OnAuctionEndTimeReached.csproj" --configur
 FROM build AS publish
 RUN dotnet publish "DietiDeals24.Lambda.OnAuctionEndTimeReached.csproj" \
     --configuration Release \
-    --runtime linux-x64 \
+    --runtime linux-arm64 \
     --self-contained false \
     --output /app/publish \
     -p:PublishReadyToRun=true
 
 # Stage 3: Runtime Stage
-FROM public.ecr.aws/lambda/dotnet:8 AS final
+FROM public.ecr.aws/lambda/dotnet:8-arm64 AS final
 ENV BACKEND_URL=http://52.50.106.87:80/api/Auction/on-auction-end-time-reached
 WORKDIR /var/task
 COPY --from=publish /app/publish .

@@ -7,15 +7,19 @@
 import RoutingKit
 import SwiftUI
 
-class NotificationCoordinator: Coordinator {
+class NotificationCoordinator: Coordinator, UserProfileCoordinatorProtocol, AuctionCoordinatorProtocol {
+    
+    
     typealias NotificationRouter = RoutingKit.Router
     
     internal var appContainer: AppContainer
-    private var router: NotificationRouter
+    internal var router: NotificationRouter
+    private let appState: AppState
     
     init(appContainer: AppContainer) {
         self.appContainer = appContainer
         self.router = appContainer.unsafeResolve(NotificationRouter.self)
+        self.appState = appContainer.unsafeResolve(AppState.self)
     }
     
     @MainActor @ViewBuilder
@@ -25,5 +29,34 @@ class NotificationCoordinator: Coordinator {
         }
     }
     
+    func getUserData() async -> UserDataModel? {
+        return await appState.getUserDataModel()
+    }
+    
+    func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(AuctionDetailMainViewModel.self, tag: .init("Notification"))
+            vm.setAuction(auction)
+            return AuctionDetailMainView(viewModel: vm)
+            
+        }
+    }
+    
+    func vendorProfileDestination(_ vendor: VendorAuctionDetail) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(UserProfileViewModel.self, tag: .init("Notification"))
+            vm.setVendor(vendor)
+            return UserProfileView(viewModel: vm)
+            
+        }
+    }
+    
+    func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)?) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(PresentOfferViewModel.self, tag: .init("Notification"))
+            vm.setAuctionDetials(auction, onBidResult: onBidResult)
+            return PresentOfferView(viewModel: vm)
+        }
+    }
     
 }

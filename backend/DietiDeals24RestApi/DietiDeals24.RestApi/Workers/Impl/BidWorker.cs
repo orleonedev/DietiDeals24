@@ -68,12 +68,13 @@ public class BidWorker: IBidWorker
             {
                 auction.AuctionState = AuctionState.Closed;
                 auction.EndingDate = now;
+                await _vendorService.AddSuccessfulAuctionToVendorAsync(vendor.Id);
                 await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
                 
                 notification.Type = NotificationType.AuctionClosed;
-                notification.Message = "Hai vinto quest'asta.";
+                notification.Message = "auction.won.message";
                 await _notificationWorker.SendNotificationAsync(bidDto.BuyerId, notification);
-                notification.Message = "L'asta si è conclusa con successo.";
+                notification.Message = "auction.successfully.closed.message";
                 await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
             }
             else
@@ -82,7 +83,7 @@ public class BidWorker: IBidWorker
                 auction.EndingDate = actualDate.AddHours(auction.Timer);
                 var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
                 notification.Type = NotificationType.AuctionBid;
-                notification.Message = "Hai ricevuto una nuova offerta.";
+                notification.Message = "new.bid.message";
                 await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
             }
             

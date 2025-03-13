@@ -111,7 +111,8 @@ extension PresentOfferView {
             timer: 23,
             secretPrice: 50.0,
             endTime: .now.advanced(by: .hours(23)),
-            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now)
+            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now),
+            state: .open
         ),
         onBidResult: { _ in }
     )

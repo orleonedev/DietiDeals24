@@ -11,41 +11,36 @@ public class Function
 {
     private static readonly HttpClient client = new HttpClient();
 
-    public async Task<string> FunctionHandler(string input, ILambdaContext context)
+    public async Task FunctionHandler(AuctionEvent input, ILambdaContext context)
     {
         try
         {
-            // 🔹 Deserializziamo il JSON ricevuto
-            var eventData = JsonSerializer.Deserialize<AuctionEvent>(input);
 
-            if (eventData != null && !string.IsNullOrEmpty(eventData.AuctionId))
+            if (!string.IsNullOrEmpty(input.auctionId))
             {
-                string auctionId = eventData.AuctionId;
+                string auctionId = input.auctionId;
                 context.Logger.LogLine($"Auction {auctionId} has ended. Notifying backend...");
                 var backendUrl = Environment.GetEnvironmentVariable("BACKEND_URL");
-                 var payload = JsonSerializer.Serialize(new { auctionId = auctionId });
-            var content = new StringContent(payload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync(backendUrl, content);
-            response.EnsureSuccessStatusCode();
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            return $"Notification sent successfully. Response: {responseString}";
+                var content = new StringContent($"\"{auctionId}\"", Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(backendUrl, content);
+                response.EnsureSuccessStatusCode();
+                var responseString = await response.Content.ReadAsStringAsync();
+                context.Logger.LogLine($"Notification sent successfully. Response: {responseString}");
             }
             else
             {
-                context.Logger.LogLine("Invalid event data received.");
+                context.Logger.LogLine($"[ ERROR ] Invalid event data received auction ID: {input.auctionId}.");
             }
         }
         catch (Exception ex)
         {
-            context.Logger.LogLine($"Error processing event: {ex.Message}");
+            context.Logger.LogLine($"[ ERROR ] Error processing event: {ex.Message}");
         }
         
-        return $"Error sending notification";
     }
 }
 
 public class AuctionEvent
 {
-    public string? AuctionId { get; set; }
+    public string? auctionId { get; set; }
 }

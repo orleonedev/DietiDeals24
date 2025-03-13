@@ -41,6 +41,7 @@ public class DetailedAuctionDTO: HomePageAuctionDTO
     public decimal Threshold { get; set; }
     public int ThresholdTimer { get; set; }
     public decimal? SecretPrice { get; set; }
+    public AuctionState State { get; set; }
     public DetailedVendorDTO Vendor { get; set; }
 }
 

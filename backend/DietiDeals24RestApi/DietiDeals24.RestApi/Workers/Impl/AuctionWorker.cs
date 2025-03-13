@@ -127,6 +127,7 @@ public class AuctionWorker: IAuctionWorker
                 ThresholdTimer = auction.Timer,
                 Bids = bids,
                 Description = auction.AuctionDescription,
+                State = auction.AuctionState,
                 Vendor = new DetailedVendorDTO
                 {
                     Id = vendor.Id,
@@ -189,7 +190,8 @@ public class AuctionWorker: IAuctionWorker
                 SecretPrice = auction.SecretPrice,
                 MainImageUrl = imagesUrls.FirstOrDefault(),
                 ImagesUrls = imagesUrls,
-                Bids = 0
+                Bids = 0,
+                State = auction.AuctionState
             };
 
             return new CreateAuctionResponseDTO
@@ -252,7 +254,7 @@ public class AuctionWorker: IAuctionWorker
             var buyersNotification = new NotificationDTO
             {
                 Type = NotificationType.AuctionClosed,
-                Message = "Hai vinto quest'asta.",
+                Message = "auction.won.message",
                 MainImageUrl = mainImageUrl,
                 AuctionId = auction.Id,
                 AuctionTitle = auction.Title
@@ -265,7 +267,7 @@ public class AuctionWorker: IAuctionWorker
             await _notificationWorker.SendNotificationAsync(winnerBid.BuyerId, buyersNotification);
 
             bids.Remove(winnerBid);
-            buyersNotification.Message = "Non hai vinto quest'asta.";
+            buyersNotification.Message = "auction.lost.message";
             
             foreach (var bid in bids)
             {
@@ -285,27 +287,25 @@ public class AuctionWorker: IAuctionWorker
             DateTime now = DateTime.Now;
             DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             auction.EndingDate = actualDate.AddHours(auction.Timer);
-            
             var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             _logger.LogInformation("[WORKER] Decreased auction end time reached, event bridge triggered.");
-            
             return;
         }
                 
         auction.AuctionState = AuctionState.Expired;
-
+        await _auctionService.UpdateAuctionAsync(auction);
+        
         var notification = new NotificationDTO
         {
             Type = NotificationType.AuctionExpired,
-            Message = "Quest'asta è scaduta.",
+            Message = "auction.expired.message",
             MainImageUrl = mainImageUrl,
             AuctionId = auction.Id,
             AuctionTitle = auction.Title
         };
-
+        
         await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
         
-        await _auctionService.UpdateAuctionAsync(auction);
     }
 
 }

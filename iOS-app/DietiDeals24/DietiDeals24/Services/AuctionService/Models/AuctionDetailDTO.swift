@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum AuctionState: Int, Decodable {
+    case open = 0,
+        closed = 1,
+        expired = 2
+}
+
 struct AuctionDetailDTO: Decodable {
     public var id: UUID?
     public var title: String?
@@ -21,6 +27,7 @@ struct AuctionDetailDTO: Decodable {
     public var bids: Int?
     public var description: String?
     public var secretPrice: Double?
+    public var state: AuctionState?
     public var vendor: VendorProfileResponseDTO?
     
     enum CodingKeys: String, CodingKey {
@@ -38,6 +45,7 @@ struct AuctionDetailDTO: Decodable {
         case endingDate 
         case secretPrice
         case vendor
+        case state
     }
     
     public init(from decoder: Decoder) throws {
@@ -96,6 +104,9 @@ struct AuctionDetailDTO: Decodable {
         if let typeRawValue = try container.decodeIfPresent(Int.self, forKey: .type) {
             type = AuctionType(rawValue: typeRawValue)
         }
+        if let stateRawValue = try container.decodeIfPresent(Int.self, forKey: .state) {
+            state = AuctionState(rawValue: stateRawValue)
+        }
     }
 }
 
@@ -133,6 +144,9 @@ extension AuctionDetailModel {
         guard let endTime = dto.endingDate else {
             throw AuctionDetailModelError.missingValue("endingDate")
         }
+        guard let state = dto.state else {
+            throw AuctionDetailModelError.missingValue("state")
+        }
         
         guard let vendor = dto.vendor else {
             throw AuctionDetailModelError.missingValue("vendor")
@@ -150,6 +164,7 @@ extension AuctionDetailModel {
         self.secretPrice = dto.secretPrice
         self.endTime = endTime
         self.vendor = try VendorAuctionDetail(from: vendor)
+        self.state = state
         
     }
 }

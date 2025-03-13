@@ -129,4 +129,34 @@ public class VendorService: IVendorService
             throw new Exception($"[SERVICE] Failed to create new vendor for UserId: {vendorDto.UserId}. Exception occurred: {ex.Message}", ex);
         }
     }
+
+    public async Task AddSuccessfulAuctionToVendorAsync(Guid vendorId)
+    {
+        _logger.LogInformation($"[SERVICE] updating vendor successful auctions for vendorId: {vendorId}.");
+        try
+        {
+            var vendor = await _unitOfWork.VendorRepository
+                .Get(vendor => vendor.Id == vendorId)
+                .FirstOrDefaultAsync();
+
+            if (vendor == null)
+            {
+                _logger.LogError($"[SERVICE] Updating vendor successful auctions with id: {vendorId} failed. Vendor does not exist.");
+                return;
+            }
+
+            vendor.SuccessfulAuctions++;
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.VendorRepository.Update(vendor);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Updating vendor successful auctions with id: {vendorId} failed. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Updating vendor successful auctions with id: {vendorId} failed. Exception occurred: {ex.Message}", ex);
+        }
+        
+    }
 }

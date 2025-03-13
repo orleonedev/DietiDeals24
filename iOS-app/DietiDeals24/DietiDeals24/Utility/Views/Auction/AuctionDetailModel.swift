@@ -20,7 +20,8 @@ struct AuctionDetailModel: Equatable {
                    lhs.timer == rhs.timer &&
                    lhs.secretPrice == rhs.secretPrice &&
                    lhs.endTime == rhs.endTime &&
-                   lhs.vendor == rhs.vendor
+                   lhs.vendor == rhs.vendor &&
+                    lhs.state == rhs.state
         }
     
     var id: UUID
@@ -35,6 +36,7 @@ struct AuctionDetailModel: Equatable {
     var secretPrice: Double?
     var endTime: Date
     var vendor: VendorAuctionDetail
+    var state: AuctionState
 }
 
 struct VendorAuctionDetail: Equatable {

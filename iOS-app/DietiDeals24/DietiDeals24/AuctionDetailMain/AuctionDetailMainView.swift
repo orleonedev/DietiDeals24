@@ -115,7 +115,8 @@ extension AuctionDetailMainView {
             timer: 12,
             secretPrice: nil,
             endTime: .now.advanced(by: 60*60),
-            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now)
+            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now),
+            state: .open
         )
 
     )

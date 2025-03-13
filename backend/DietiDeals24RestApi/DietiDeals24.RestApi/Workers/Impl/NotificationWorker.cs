@@ -4,6 +4,7 @@ using Amazon.SimpleNotificationService.Model;
 using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Models;
 using DietiDeals24.DataAccessLayer.Services;
+using DietiDeals24.RestApi.Models;
 using Exception = System.Exception;
 
 namespace DietiDeals24.RestApi.Workers.Impl;
@@ -134,60 +135,84 @@ public class NotificationWorker: INotificationWorker
 
     public async Task SendNotificationAsync(Guid userId, NotificationDTO notificationDto)
     {
-        _logger.LogInformation($"[WORKER] Sending notification to user {userId}.");
-
         try
         {
-            // Retrieve the user's endpoint ARNs from the database
-            var endpointArns = await _notificationService.GetEndPointArnFromUserIdAsync(userId);
-            if (endpointArns == null || !endpointArns.Any())
+            _logger.LogInformation($"[WORKER] Storing notification for user {userId}.");
+            await _notificationService.AddNotificationAsync(notificationDto, userId);
+            _logger.LogInformation($"[WORKER] notification for user {userId} was stored.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Storing notification failed for user {userId}: {ex.Message}");
+            return;
+        }
+
+        _logger.LogInformation($"[WORKER] Sending notification to user {userId}.");
+
+        List<string> endpointArns;
+        // Retrieve the user's endpoint ARNs from the database
+        try
+        {
+            endpointArns = await _notificationService.GetEndPointArnFromUserIdAsync(userId);
+            if (!endpointArns.Any())
             {
                 _logger.LogWarning($"[WORKER] No endpoints found for user {userId}.");
                 return;
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Error in retrieving endpoints for user {userId}: {ex.Message}");
+            return;
+        }
 
-            string notificationTitle;
-            
-            switch (notificationDto.Type)
+        string notificationTitle;
+
+        switch (notificationDto.Type)
+        {
+            case NotificationType.AuctionExpired:
+                notificationTitle = "Auction expired";
+                break;
+            case NotificationType.AuctionBid:
+                notificationTitle = "New Bid";
+                break;
+            case NotificationType.AuctionClosed:
+                notificationTitle = "Auction Closed";
+                break;
+            default:
+                notificationTitle = "Unknown Notification Type";
+                break;
+        }
+
+        // Construct the payload for APNs (Apple Push Notification service)
+        // var payload = new
+        // {
+        //     aps = new
+        //     {
+        //         alert = new
+        //         {
+        //             title = notificationTitle,
+        //             body = notificationDto.Message
+        //         },
+        //         sound = "default", // Optional: Customize sound
+        //         // Add any custom data
+        //     },
+        //     data = new
+        //     {
+        //         auctionId = notificationDto.AuctionId,
+        //         auctionTitle = notificationDto.AuctionTitle
+        //     }
+        // };
+        //
+        // var jsonPayload = JsonSerializer.Serialize(payload);
+
+        var jsonPayload = PushNotificationTemplate.GetPushString(notificationTitle, notificationDto.Message,
+            notificationDto.AuctionTitle, notificationDto.AuctionId);
+
+        foreach (var endpointArn in endpointArns)
+            try
             {
-                case NotificationType.AuctionExpired:
-                    notificationTitle = "Auction expired";
-                    break;
-                case NotificationType.AuctionBid:
-                    notificationTitle = "New Bid";
-                    break;
-                case NotificationType.AuctionClosed:
-                    notificationTitle = "Auction Closed";
-                    break;
-                default:
-                    notificationTitle = "Unknown Notification Type";
-                    break;
-            }
-
-            // Construct the payload for APNs (Apple Push Notification service)
-            var payload = new
-            {
-                aps = new
-                {
-                    alert = new
-                    {
-                        title = notificationTitle,
-                        body = notificationDto.Message
-                    },
-                    sound = "default", // Optional: Customize sound
-                    // Add any custom data
-                },
-                data = new
-                {
-                    auctionId = notificationDto.AuctionId,
-                    auctionTitle = notificationDto.AuctionTitle
-                }
-            };
-
-            var jsonPayload = JsonSerializer.Serialize(payload);
-
-            foreach (var endpointArn in endpointArns)
-            {
+                _logger.LogInformation($"[WORKER] Creating Push Configuration for endpoint {endpointArn}.");
                 // Send the notification
                 var publishRequest = new PublishRequest
                 {
@@ -198,18 +223,14 @@ public class NotificationWorker: INotificationWorker
                         APNS = jsonPayload // Wrap the APNs payload in APNS
                     })
                 };
-
                 await _snsClient.PublishAsync(publishRequest);
-
-                await _notificationService.AddNotificationAsync(notificationDto, userId);
-                
                 _logger.LogInformation($"[WORKER] Notification sent to endpoint {endpointArn}.");
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"[WORKER] Sending notification failed for user {userId}: {ex.Message}");
-            throw new Exception($"[WORKER] Sending notification failed for user {userId}: {ex.Message}.", ex);
-        }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[WORKER] Sending notification failed for user {userId}: {ex.Message}");
+            }
+
+        _logger.LogInformation($"[WORKER] Notifications sent to every endpoint for user {userId}.");
     }
 }

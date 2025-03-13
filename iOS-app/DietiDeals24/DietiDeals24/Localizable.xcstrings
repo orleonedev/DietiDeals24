@@ -51,6 +51,74 @@
     "Auction Type" : {
 
     },
+    "auction.expired.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This auction is expired."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questa asta è scaduta."
+          }
+        }
+      }
+    },
+    "auction.lost.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your bid has been topped."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua offerta è stata superata."
+          }
+        }
+      }
+    },
+    "auction.successfully.closed.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The auction is successfully closed."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’asta si è conclusa con successo!"
+          }
+        }
+      }
+    },
+    "auction.won.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You won the auction!"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai vinto l’asta!"
+          }
+        }
+      }
+    },
     "Become a Vendor" : {
 
     },
@@ -122,6 +190,17 @@
     },
     "More" : {
 
+    },
+    "new.bid.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have received a new bid!"
+          }
+        }
+      }
     },
     "Next" : {
 

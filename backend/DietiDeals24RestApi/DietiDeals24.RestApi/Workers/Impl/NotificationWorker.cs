@@ -32,7 +32,7 @@ public class NotificationWorker: INotificationWorker
 
         try
         {
-            var notifications = await _notificationService.GetAllNotificationsForUserIdAsync(filters.UserId);
+            var notifications = await _notificationService.GetPaginatedNotificationsForUserIdAsync(filters.UserId, filters.Page, filters.PageSize);
             var paginatedNotifications = new PaginatedResult<NotificationDTO>
             {
                 Results = new List<NotificationDTO>(),

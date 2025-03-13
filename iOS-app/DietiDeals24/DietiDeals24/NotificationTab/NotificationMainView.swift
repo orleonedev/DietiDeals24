@@ -13,16 +13,18 @@ public struct NotificationMainView: View, LoadableView {
     
     public var body: some View {
         ScrollView{
-            LazyVStack(alignment: .leading, spacing: 12) {
+            LazyVStack(alignment: .leading, spacing: 16) {
                 ForEach(viewModel.notifications, id: \.id) { notification in
                     NotificationCard(notification: notification, onTap: viewModel.getAuctionDetail)
                 }
             }
+            .padding(.horizontal)
             
         }
         .refreshable {
             await viewModel.getNotifications()
         }
+        .padding(.top)
         .task {
             if viewModel.notifications.isEmpty {
                 await viewModel.getNotifications()
@@ -39,4 +41,12 @@ public struct NotificationMainView: View, LoadableView {
         .navigationTitle("Notifications")
     }
     
+}
+
+#Preview {
+    @Previewable @State var vm =  NotificationMainViewModel(coordinator: NotificationCoordinator(appContainer: .init()), notificationService: DefaultNotificationService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
+    let not = (0...10).map { index in NotificationModel(id: UUID(), title: "Title \(index)", message: "Message \(index)", date: Date.now, auctionId: UUID(), auctionName: "Auction name \(index)", imageUrl: "")}
+    vm.notifications = not
+    
+    return NavigationStack{NotificationMainView(viewModel: vm)}
 }

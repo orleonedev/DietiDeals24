@@ -152,7 +152,7 @@ class ExploreMainViewModel: LoadableViewModel {
     }
     
     private func resetFilters() {
-        self.filterModel = .init(serchTerm: self.searchText.isEmpty ? nil : self.searchText)
+        self.filterModel = .init(serchTerm: self.searchText.isEmpty ? nil : self.searchText, activeSortOrderFilter: .newer)
     }
     
     @MainActor

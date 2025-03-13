@@ -40,6 +40,7 @@ struct VendorProfileResponseDTO: Decodable {
         let joinedString = try container.decodeIfPresent(String.self, forKey: .joinedSince)
         if let joinedString = joinedString {
             let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
             dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
             guard let date = dateFormatter.date(from: joinedString) else {
                 throw DecodingError.dataCorruptedError(

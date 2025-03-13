@@ -55,8 +55,10 @@ class AppState: LoadableViewModel {
     
     private var credentialService: CredentialService
     private var authService: AuthService
+    private var notificationService: NotificationService
     
-    init(credentialService: CredentialService, authService: AuthService) {
+    init(credentialService: CredentialService, authService: AuthService, notificationService: NotificationService) {
+        self.notificationService = notificationService
         self.credentialService = credentialService
         self.authService = authService
         NotificationCenter.default.addObserver(forName: .init(AuthServiceError.RefreshTokenExpired.notificationName), object: self, queue: .main) { _ in
@@ -154,6 +156,7 @@ class AppState: LoadableViewModel {
     
     public func logOut() async {
         self.revokeCredentials()
+        try? await notificationService.unregisterForRemoteNotifications()
         await UIApplication.shared.unregisterForRemoteNotifications()
         try? await self.authService.signOut()
     }

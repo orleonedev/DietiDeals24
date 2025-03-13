@@ -6,21 +6,23 @@ namespace DietiDeals24.RestApi.Workers;
 public class EventBridgeSchedulerService
 {
     private readonly AmazonSchedulerClient _schedulerClient;
+    private readonly ILogger<EventBridgeSchedulerService> _logger;
 
-    public EventBridgeSchedulerService()
+    public EventBridgeSchedulerService(ILogger<EventBridgeSchedulerService> logger)
     {
+        _logger = logger;
         _schedulerClient = new AmazonSchedulerClient();
     }
 
     public async Task<bool> ScheduleAuctionEndEvent(string auctionId, DateTime endTime)
     {
         string scheduleName = $"AuctionEnd-{auctionId}";
-
+        _logger.LogInformation($"[ EventBridgeSchedulerService] Scheduling AuctionEnd {scheduleName}");
         var request = new CreateScheduleRequest
         {
             Name = scheduleName,
             FlexibleTimeWindow = new FlexibleTimeWindow { Mode = FlexibleTimeWindowMode.OFF },
-            ScheduleExpression = $"at({endTime:yyyy-MM-dd'T'HH:mm:ss'Z'})",
+            ScheduleExpression = $"at({endTime:yyyy-MM-ddTHH:mm:ss})",
             Target = new Target
             {
                 Arn = Environment.GetEnvironmentVariable("ARN_LAMBDA_AUCTION_END_TIME"),
@@ -30,7 +32,7 @@ public class EventBridgeSchedulerService
                 Input = $"{{ \"auctionId\": \"{auctionId}\" }}"
             }
         };
-
+        _logger.LogInformation($"[ EventBridgeSchedulerService] Scheduling AuctionEnd {scheduleName} -> request {request}");
         try
         {
             await _schedulerClient.CreateScheduleAsync(request);
@@ -38,6 +40,7 @@ public class EventBridgeSchedulerService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"[ EventBridgeSchedulerService] Scheduling AuctionEnd {scheduleName} failed with message: {ex.Message}");
             return false;
         }
     }

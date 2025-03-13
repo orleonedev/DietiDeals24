@@ -60,7 +60,7 @@ extension AppContainer {
         }
         
         register(for: AppState.self, scope: .singleton) {
-            AppState(credentialService: self.unsafeResolve(), authService: self.unsafeResolve())
+            AppState(credentialService: self.unsafeResolve(), authService: self.unsafeResolve(), notificationService: self.unsafeResolve())
         }
         
     }

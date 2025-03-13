@@ -30,6 +30,9 @@ struct BecomeAVendorView: View, LoadableView {
                 }
             }
         }
+        .overlay {
+            loaderView()
+        }
     }
 }
 

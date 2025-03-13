@@ -91,17 +91,14 @@ extension AuctionCardView {
         /// Determines the appropriate timer interval.
         /// - Returns: 60 seconds if more than one hour remains, otherwise 1 second.
         private func desiredInterval() -> TimeInterval {
-            let endTimeInterval = auction.endTime.timeIntervalSinceNow
-            let corrector: TimeInterval = endTimeInterval > 86400 ? 60*60 : 60
-            let remaining = auction.endTime.timeIntervalSinceNow-corrector
+            let remaining = auction.endTime.calculateTimeDifferenceFromNowUTC()
             
             return remaining > 86400 ? 3600 : remaining > 3600 ? 60 : 1
         }
         
         /// Updates the countdown text based on the current time.
         private func updateCountdown() {
-            let now = Date()
-            let remaining = auction.endTime.timeIntervalSince(now)
+            let remaining = auction.endTime.calculateTimeDifferenceFromNowUTC()
             
             if remaining <= 0 {
                 countdown = "0 minutes and 0 seconds"

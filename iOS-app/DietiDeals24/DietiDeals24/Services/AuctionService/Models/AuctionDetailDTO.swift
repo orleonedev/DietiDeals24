@@ -51,6 +51,7 @@ struct AuctionDetailDTO: Decodable {
         let startingDateString = try container.decodeIfPresent(String.self, forKey: .startingDate)
         if let startingDateString = startingDateString {
             let formatter = DateFormatter()
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
             guard let date = formatter.date(from: startingDateString) else {
                 throw DecodingError.dataCorruptedError(
@@ -68,6 +69,7 @@ struct AuctionDetailDTO: Decodable {
         let endingDateString = try container.decodeIfPresent(String.self, forKey: .endingDate)
         if let endingDateString = endingDateString {
             let formatter = DateFormatter()
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
             guard let date = formatter.date(from: endingDateString) else {
                 throw DecodingError.dataCorruptedError(

@@ -36,6 +36,7 @@ struct AuctionCardDTO: Decodable {
         let dateString = try container.decodeIfPresent(String.self, forKey: .endingDate)
         if let dateString = dateString {
             let formatter = DateFormatter()
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
             guard let date = formatter.date(from: dateString) else {
                 throw DecodingError.dataCorruptedError(

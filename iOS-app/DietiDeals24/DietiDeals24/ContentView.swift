@@ -41,5 +41,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView(appState: .init(credentialService: KeychainCredentialService(), authService: CognitoAuthService(rest: DefaultRESTDataSource())))
+    ContentView(appState: .init(credentialService: KeychainCredentialService(), authService: CognitoAuthService(rest: DefaultRESTDataSource()), notificationService: DefaultNotificationService(rest: DefaultRESTDataSource())))
 }

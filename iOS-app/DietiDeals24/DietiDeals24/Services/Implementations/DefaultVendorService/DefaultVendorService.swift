@@ -16,8 +16,9 @@ final class DefaultVendorService: VendorService {
     }
     
     func becomeAVendor(parameters: BecomeAVendorBodyRequest) async throws -> Bool {
-        let response: Bool = try await rest.getCodable(at: VendorEndpoint.becomeVendor(parameters: parameters).endpoint)
-        return response
+        let _: VendorProfileResponseDTO = try await rest.getCodable(at: VendorEndpoint.becomeVendor(parameters: parameters).endpoint)
+        
+        return true
     }
     
     func getVendorProfile(id: UUID) async throws -> VendorProfileResponseDTO {

@@ -47,12 +47,12 @@ struct UserDetailView: View {
                     
                     if let url = userModel?.url, !url.isEmpty {
                         Button {
-                            
+                            openWebsite(urlString: url)
                         } label: {
                             HStack {
                                 Image(systemName: "link")
                                     .font(.headline)
-                                Text(userModel?.url ?? "--")
+                                Text(url)
                                     .font(.headline)
                             }
                         }
@@ -61,7 +61,8 @@ struct UserDetailView: View {
                     if !isPersonalAccount {
                         HStack {
                             Button {
-                                
+                                guard let email = userModel?.email else { return }
+                                self.sendEmail(recipient: email)
                             } label: {
                                 Text("Email")
                                     .font(.headline)
@@ -76,6 +77,22 @@ struct UserDetailView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+extension UserDetailView {
+    
+    private func sendEmail(recipient: String) {
+        let email = "mailto:\(recipient)"
+        if let url = URL(string: email), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    private func openWebsite(urlString: String) {
+        if let url = URL(string: urlString), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
 }

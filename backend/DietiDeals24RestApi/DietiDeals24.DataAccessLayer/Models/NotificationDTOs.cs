@@ -5,7 +5,7 @@ namespace DietiDeals24.DataAccessLayer.Models;
 
 public class UserPushTokenDTO
 {
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
     public string DeviceToken { get; set; }
 }
 

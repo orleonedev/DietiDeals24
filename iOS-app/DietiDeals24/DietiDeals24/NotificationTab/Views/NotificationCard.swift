@@ -26,18 +26,20 @@ struct NotificationCard: View {
                 Text(notification.date.formatted())
                     .font(.caption)
                 Text(notification.title)
-                    .font(.title2)
+                    .font(.headline)
                     .fontWeight(.semibold)
                 Text(notification.auctionName)
-                    .font(.subheadline)
+                    .font(.title3)
                     .fontWeight(.medium)
-                Text(notification.message )
+                Text(notification.message.localized)
                     .font(.caption)
             }
             Spacer()
         }
         .padding()
         .background(.quinary)
+        .contentShape(Rectangle())
+        .onTapGesture { onTap?(notification.auctionId) }
         .clipShape(.rect(cornerRadius: 12))
     }
 }

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "DD24_AppIcon_Light.png",
+      "filename" : "DD24_AppIcon_Light.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "DD24_AppIcon_Dark.png",
+      "filename" : "DD24_AppIcon_Light 1.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "DD24_AppIcon_Tinted.png",
+      "filename" : "DD24_AppIcon_Tinted.jpg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

@@ -11,7 +11,7 @@ public class Notification
     public string Message { get; set; }
     public DateTime CreationDate { get; set; }
     public string AuctionTitle { get; set; }
-    public string MainImageUrl { get; set; }
+    public string? MainImageUrl { get; set; }
 
     // Navigation Properties
     public User User { get; set; }

@@ -160,7 +160,7 @@ ALTER TABLE "Vendor" ADD "ShortBio" text;
 
 ALTER TABLE "Vendor" ADD "WebSiteUrl" text;
 
-ALTER TABLE "Auction" ADD "Category" integer NOT NULL;
+ALTER TABLE "Auction" ADD "Category" integer NOT NULL DEFAULT 0;
 
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20250305154420_categoryAndVendorMigration', '9.0.0');
@@ -185,76 +185,57 @@ ALTER TABLE "Auction" ALTER COLUMN "EndingDate" TYPE timestamp(0) without time z
 INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
 VALUES ('20250306183524_userAndAuctionFix', '9.0.0');
 
+ALTER TABLE "UserPushToken" ALTER COLUMN "RegistrationDate" SET DEFAULT (CURRENT_TIMESTAMP);
+
+ALTER TABLE "UserPushToken" ADD "EndPointArn" character varying(500) NOT NULL DEFAULT '';
+
+ALTER TABLE "Notification" ADD "AuctionTitle" character varying(255) NOT NULL DEFAULT '';
+
+ALTER TABLE "Notification" ADD "CreationDate" timestamp(0) without time zone NOT NULL DEFAULT (CURRENT_TIMESTAMP);
+
+ALTER TABLE "Notification" ADD "MainImageUrl" character varying(500) NOT NULL DEFAULT '';
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250312223128_NotificationsAndUserPushTokenMigration', '9.0.0');
+
+ALTER TABLE "Notification" ALTER COLUMN "MainImageUrl" DROP NOT NULL;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20250314123013_FixNonNullabelImageInNotifications', '9.0.0');
+
 COMMIT;
+
 
 
 START TRANSACTION;
 
 -- Insert sample data for User
-INSERT INTO "User" ("Id", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail") 
-VALUES 
-(gen_random_uuid(), 'buyerNot', 'Unk nown', 'unk.nown@example.com', 0, '1980-01-01', false),
-(gen_random_uuid(), 'buyer1', 'John Doe', 'john.doe@example.com', 0, '1990-01-01', true),
-(gen_random_uuid(), 'buyer2', 'Jane Smith', 'jane.smith@example.com', 0, '1985-05-15', true),
-(gen_random_uuid(), 'seller1', 'Alice Johnson', 'alice.johnson@example.com', 1, '1992-03-20', true),
-(gen_random_uuid(), 'seller2', 'Bob Williams', 'bob.williams@example.com', 1, '1987-11-10', true);
+insert into "User" ("Id", "Username", "Fullname", "Email", "Role", "BirthDate", "HasVerifiedEmail")
+values  ('029514c4-8061-701f-e59d-5db76100eb60', 'oleonetest01', 'Oleone Test01', 'orleone.dev+Test01@gmail.com', 1, '1996-12-20 00:00:00.000000', true),
+        ('e2055474-2031-7029-bc20-ecc047057846', 'test-buyer', 'Test Buyer', 'orleone.dev+TestBuyer@gmail.com', 0, '2005-01-11 00:00:00.000000', true),
+        ('a2654474-d0e1-703f-4c1a-e2a5467de321', 'test-buyer2', 'Test Buyer2', 'orleone.dev+TestBuyer2@gmail.com', 0, '1998-11-11 00:00:00.000000', true),
+        ('02f50404-a051-70b5-7812-1bb1861b1ecb', 'test-buyer4', 'Test Buyer4', 'orleone.dev+TestBuyer4@gmail.com', 0, '1996-05-03 00:00:00.000000', true),
+        ('a2d53494-5041-70ca-c1af-c405ce4c259d', 'test-buyer6', 'Test Buyer6', 'orleone.dev+TestBuyer6@gmail.com', 0, '1996-05-03 00:00:00.000000', true),
+        ('02955454-3071-7059-93da-063efa24f563', 'testbuyer7', 'Test Buyer 7', 'orleone.dev+TestBuyer7@gmail.com', 0, '2025-03-12 00:00:00.000000', true),
+        ('f2e5f4f4-b041-70ed-5905-32ef889f8bb8', 'testbuyer8', 'Test Buyer 8', 'orleone.dev+TestBuyer8@gmail.com', 0, '2025-03-12 00:00:00.000000', true),
+        ('92a5c4b4-6031-70d3-9e54-c6ddac2af2b3', 'test-buyer5', 'Test Buyer5', 'orleone.dev+TestBuyer5@gmail.com', 0, '1996-05-03 00:00:00.000000', true),
+        ('72159444-d071-7025-645c-45e0fd6fed46', 'testseller1', 'Test Seller 1', 'orleone.dev+TestSeller1@gmail.com', 1, '2025-03-12 00:00:00.000000', true),
+        ('52a514f4-70e1-70b5-49d8-edffabdedb5d', 'sideshowgibbon', 'Giuseppe Falso', 'sideshowgibbon@gmail.com', 1, '1997-08-15 00:00:00.000000', true);
 
 -- Insert sample data for Vendor
-INSERT INTO "Vendor" ("Id", "UserId", "StartingDate", "SuccessfulAuctions", "GeoLocation", "WebSiteUrl", "ShortBio") 
-VALUES 
-(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller1'), '2025-01-01', 5, 'Napoli', 'www.google.com', 'Test bio1.'),
-(gen_random_uuid(), (SELECT "Id" FROM "User" WHERE "Username" = 'seller2'), '2025-01-10', 3, 'Latina', 'www.google.com', 'Test bio2.');
+insert into "Vendor" ("Id", "UserId", "StartingDate", "SuccessfulAuctions", "GeoLocation", "ShortBio", "WebSiteUrl")
+values  ('40799cb4-d12c-4225-bae2-d2cb06ab51e0', '029514c4-8061-701f-e59d-5db76100eb60', '2025-03-06 20:45:36', 0, 'Napoli', 'una breve descrizione', 'https://orleonedev.github.io/'),
+        ('78afb6a7-2e31-42a7-a758-7732e592dba4', '72159444-d071-7025-645c-45e0fd6fed46', '2025-03-12 01:08:14', 0, 'Napoli', 'Solo un semplice venditore nel chill', 'Https://un-venditore-nel-chill.io'),
+        ('7baccfa3-e8a1-43b1-b6c4-f6f47a13c708', '52a514f4-70e1-70b5-49d8-edffabdedb5d', '2025-03-12 23:13:59', 0, 'Napoli', 'Un venditore in gamba', 'https://github.com/giuseppe-not-true');
 
 -- Insert sample data for Auction
-INSERT INTO "Auction" ("Id", "Title", "AuctionDescription", "StartingPrice", "CurrentPrice", "AuctionType", "Threshold", "Timer", "SecretPrice", "VendorId", "Category", "AuctionState", "StartingDate", "EndingDate") 
-VALUES 
-(gen_random_uuid(), 'Laptop Auction', 'Brand new laptop, starting price $350', 350.00, 430.00, 1, 25, 48, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- 2, 
- 0, '2025-01-17 10:00:00', '2025-01-19 23:00:00'),
- (gen_random_uuid(), 'iPad Air', 'Brand new iPad.', 325.00, 450.00, 1, 25, 48, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- 2, 
- 0, '2025-01-17 10:00:00', '2025-01-19 23:00:00'),
-(gen_random_uuid(), 'Vintage Chair', 'Antique chair from the 1800s', 300.00, 250.00, 2, 25, 12, 80.00, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
- 3, 
- 1, '2025-01-18 00:00:00', '2025-01-19 12:00:00'),
- (gen_random_uuid(), 'Modern Table', 'An elegant modern table', 600.00, 600.00, 1, 50, 72, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller2')), 
- 3, 
- 2, '2025-01-10 12:00:00', '2025-01-13 12:00:00'),
-(gen_random_uuid(), 'T-Shirt Auction', 'Limited edition t-shirts', 10.00, 25.00, 1, 5, 24, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- 4, 
- 0, '2025-01-17 09:00:00', '2025-01-19 06:00:00'),
- (gen_random_uuid(), 'Levis Blue Jeans', 'Used levi blue jeans.', 15.00, 30.00, 1, 5, 24, NULL, 
- (SELECT "Id" FROM "Vendor" WHERE "UserId" = (SELECT "Id" FROM "User" WHERE "Username" = 'seller1')), 
- 4, 
- 0, '2025-01-17 09:00:00', '2025-01-19 06:00:00');
+insert into "Auction" ("Id", "Title", "AuctionDescription", "StartingPrice", "CurrentPrice", "AuctionType", "Threshold", "Timer", "SecretPrice", "VendorId", "AuctionState", "StartingDate", "EndingDate", "Category")
+values  ('4bfa9ae5-7667-414e-a25f-ba12148f56d9', 'carta pokemon interessante', 'vendo le carte aperte da quesye bustine, giusto per ripagarmele', 15.00, 15.00, 1, 2, 1, null, '7baccfa3-e8a1-43b1-b6c4-f6f47a13c708', 2, '2025-03-13 10:12:29', '2025-03-13 11:12:29', 3),
+        ('ac6fb771-c43c-4974-a279-506e5cd3ac82', 'asta test', 'jdkdjd', 123.00, 123.00, 1, 12, 1, null, '7baccfa3-e8a1-43b1-b6c4-f6f47a13c708', 2, '2025-03-13 19:14:31', '2025-03-13 20:14:31', 1);
 
 -- Insert sample data for AuctionImage
-INSERT INTO "AuctionImage" ("Id", "AuctionId", "Url") 
-VALUES 
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Vintage Chair'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Modern Table'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 'https://fastly.picsum.photos/id/237/200/200.jpg?hmac=zHUGikXUDyLCCmvyww1izLK3R3k8oRYBRiTizZEdyfI');
-
--- Insert sample data for Bid
-INSERT INTO "Bid" ("Id", "AuctionId", "BuyerId", "Price", "BidDate") 
-VALUES 
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 375.00, '2025-01-17 14:00:00'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Laptop Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 430.00, '2025-01-17 23:00:00'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'Vintage Chair'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 250.00, '2025-01-19 08:00:00'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer1'), 16.00, '2025-01-17 13:00:00'),
-(gen_random_uuid(), (SELECT "Id" FROM "Auction" WHERE "Title" = 'T-Shirt Auction'), 
- (SELECT "Id" FROM "User" WHERE "Username" = 'buyer2'), 25.00, '2025-01-18 06:00:00');
+insert into "AuctionImage" ("Id", "AuctionId", "Url")
+values  ('184af91c-0d3a-4fa2-ac17-d5a9042e43ad', '4bfa9ae5-7667-414e-a25f-ba12148f56d9', 'https://sigma63-dietideals24-auction-images.s3.amazonaws.com/auction-4bfa9ae5-7667-414e-a25f-ba12148f56d9/184af91c-0d3a-4fa2-ac17-d5a9042e43ad.jpeg'),
+        ('b59cc0fd-4b2c-4248-89a3-bcca81f1ce71', '4bfa9ae5-7667-414e-a25f-ba12148f56d9', 'https://sigma63-dietideals24-auction-images.s3.amazonaws.com/auction-4bfa9ae5-7667-414e-a25f-ba12148f56d9/b59cc0fd-4b2c-4248-89a3-bcca81f1ce71.jpeg');
 
 COMMIT;

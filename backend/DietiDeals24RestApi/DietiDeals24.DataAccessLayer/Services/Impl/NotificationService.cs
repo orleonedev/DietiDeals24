@@ -21,15 +21,20 @@ public class NotificationService: INotificationService
         _logger = logger;
     }
 
-    public async Task<List<Notification>> GetAllNotificationsForUserIdAsync(Guid userId)
+    public async Task<List<Notification>> GetPaginatedNotificationsForUserIdAsync(Guid userId, int page, int pageSize)
     {
         _logger.LogInformation($"[SERVICE] Getting all notifications for user {userId}");
 
         try
         {
-            return await _unitOfWork.NotificationRepository
+            var notifications = await _unitOfWork.NotificationRepository
                 .Get(notification => notification.UserId == userId)
+                .OrderByDescending(n => n.CreationDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return notifications;
         }
         catch (Exception ex)
         {

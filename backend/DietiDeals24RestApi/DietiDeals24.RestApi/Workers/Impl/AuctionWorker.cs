@@ -244,7 +244,8 @@ public class AuctionWorker: IAuctionWorker
             Type = NotificationType.AuctionExpired,
             MainImageUrl = mainImageUrl,
             AuctionId = auction.Id,
-            AuctionTitle = auction.Title
+            AuctionTitle = auction.Title,
+            Message = "auction.expired.message"
         };
         
         if (isSuccessfullyClosed)
@@ -273,6 +274,7 @@ public class AuctionWorker: IAuctionWorker
             {
                 await _notificationWorker.SendNotificationAsync(bid.BuyerId, buyersNotification);
             }
+            vendorNotification.Message = "auction.successfully.closed.message";
         }
         
         await _notificationWorker.SendNotificationAsync(vendor.UserId, vendorNotification);

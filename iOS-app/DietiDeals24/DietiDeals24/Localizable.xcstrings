@@ -36,6 +36,9 @@
         }
       }
     },
+    "%lld Bids" : {
+
+    },
     "%lld/6" : {
 
     },
@@ -180,6 +183,9 @@
 
     },
     "Joined since %@" : {
+
+    },
+    "Last Price" : {
 
     },
     "load" : {

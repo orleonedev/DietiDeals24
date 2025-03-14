@@ -29,7 +29,7 @@ public class NotificationController : ControllerBase
         try
         {
             var result = await _notificationWorker.GetPaginatedNotificationsForUserIdAsync(filters);
-            return Ok(result.Results);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -48,7 +48,9 @@ public class NotificationController : ControllerBase
         
         try
         {
-            await _notificationWorker.AddNotificationTokenAsync(userPushTokenDto.UserId, userPushTokenDto.DeviceToken);
+            if (userPushTokenDto.UserId == null) throw new ArgumentNullException(nameof(userPushTokenDto.UserId));
+            Guid uuid = userPushTokenDto.UserId.Value;
+            await _notificationWorker.AddNotificationTokenAsync(uuid, userPushTokenDto.DeviceToken);
             
             return Ok();
         }
@@ -63,17 +65,17 @@ public class NotificationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> RemoveNotificationToken([FromBody] string deviceToken)
+    public async Task<IActionResult> RemoveNotificationToken([FromBody] UserPushTokenDTO userPushTokenDto)
     {
         try
         {
-            await _notificationWorker.RemoveNotificationTokenAsync(deviceToken);
+            await _notificationWorker.RemoveNotificationTokenAsync(userPushTokenDto.DeviceToken);
             
             return Ok();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"[CONTROLLER] Failed to remove notification token for device {deviceToken}. Exception occurred: {ex.Message}");
+            _logger.LogError(ex, $"[CONTROLLER] Failed to remove notification token for device {userPushTokenDto.DeviceToken}. Exception occurred: {ex.Message}");
             return BadRequest(ex.Message);
         }
     }

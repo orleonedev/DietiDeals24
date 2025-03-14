@@ -29,7 +29,8 @@ struct SignInView: View, LoadableView {
                 }
                 .background(.clear)
                 .contentShape(Rectangle())
-                socialLoginStack()
+                // social login ko
+                //socialLoginStack()
             }
             .padding()
         }

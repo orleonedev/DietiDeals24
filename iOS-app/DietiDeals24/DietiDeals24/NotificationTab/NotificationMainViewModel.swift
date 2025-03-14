@@ -29,25 +29,27 @@ class NotificationMainViewModel: LoadableViewModel {
     }
     
     @MainActor
-    func getNotifications() async {
-        guard let userId = await UUID(uuidString: coordinator.getUserData()?.userID ?? "") else { return }
-        guard shouldFetchMoreNotifications, !isFetchingNotifications else { return }
-        isFetchingNotifications = true
-        isLoading = true
-        defer {
-            self.isFetchingNotifications = false
-            self.isLoading = false
-        }
-        do {
-            let response: PaginatedResult<NotificationDTO> = try await notificationService.getNotifications(page: self.page, pageSize: self.pageSize, userId: userId)
-            let newNotifications: [NotificationModel] = response.results.compactMap { NotificationModel(from: $0)}
-            self.notificationCount = response.totalRecords
-            self.page = response.pageNumber
-            self.notifications.append(contentsOf: newNotifications)
-            self.shouldFetchMoreNotifications = notificationCount > notifications.count
-            
-        } catch {
-            print("something went wrong")
+    func getNotifications() {
+        Task {
+            guard let userId = await UUID(uuidString: coordinator.getUserData()?.userID ?? "") else { return }
+            guard shouldFetchMoreNotifications, !isFetchingNotifications else { return }
+            isFetchingNotifications = true
+            isLoading = true
+            defer {
+                self.isFetchingNotifications = false
+                self.isLoading = false
+            }
+            do {
+                let response: PaginatedResult<NotificationDTO> = try await notificationService.getNotifications(page: self.page, pageSize: self.pageSize, userId: userId)
+                let newNotifications: [NotificationModel] = response.results.compactMap { NotificationModel(from: $0)}
+                self.notificationCount = response.totalRecords
+                self.page = response.pageNumber
+                self.notifications.append(contentsOf: newNotifications)
+                self.shouldFetchMoreNotifications = notificationCount > notifications.count
+                
+            } catch {
+                print("something went wrong")
+            }
         }
     }
     

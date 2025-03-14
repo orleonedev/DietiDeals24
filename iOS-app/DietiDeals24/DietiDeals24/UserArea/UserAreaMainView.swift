@@ -21,6 +21,22 @@ struct UserAreaMainView: View, LoadableView {
                 UserDetailView(userModel: viewModel.userDataModel, isPersonalAccount: true)
             }
             .padding()
+            if viewModel.userDataModel?.role == .seller {
+                AuctionListView(
+                    auctionList: viewModel.vendorItems,
+                    mainHeader: "My Active Auctions",
+                    additionalInfo: viewModel.vendorItemsCount.formatted(),
+                    onTapCallBack: viewModel.getAuctionDetail,
+                    shouldFetchMore: viewModel.shouldFetchMoreVendorItem,
+                    fetchCallBack: viewModel.getMoreVendorItems
+                )
+                .scrollBounceBehavior(.basedOnSize)
+                .task {
+                    if viewModel.vendorItems.isEmpty {
+                        viewModel.getMoreVendorItems()
+                    }
+                }
+            }
         }
         .background {
             ZStack(alignment: .center) {
@@ -92,6 +108,6 @@ struct UserAreaMainView: View, LoadableView {
 
 #Preview {
     NavigationStack{
-        UserAreaMainView(viewModel: .init(coordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource())))
+        UserAreaMainView(viewModel: .init(coordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource())))
     }
 }

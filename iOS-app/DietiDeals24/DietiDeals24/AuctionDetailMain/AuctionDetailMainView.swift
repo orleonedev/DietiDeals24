@@ -13,11 +13,29 @@ public struct AuctionDetailMainView: View, LoadableView {
     
     public var body: some View {
         ScrollView {
-            VStack(alignment: .center, spacing: 48){
+            VStack(alignment: .leading, spacing: 16){
+                
                 if let auction = viewModel.auction {
+                    ViewThatFits(in: .horizontal, content: {
+                        Text(auction.title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        
+                        Text(auction.title)
+                            .font(.title2)
+                            .lineLimit(3)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.primary)
+                        
+                    })
+                        .padding(.horizontal)
+                        .padding(.top)
                     AuctionDetailView(auction: auction, isPersonalAuction: viewModel.isPersonalAcution)
+                        .padding(.bottom)
                 }
                 if !viewModel.isPersonalAcution, let vendorName = self.viewModel.auction?.vendor.username, let vendorID = self.viewModel.auction?.vendor.id {
+                    Divider()
                     vendorStack(vendorName)
                         .onTapGesture {
                             self.viewModel.showVendorProfile(id: vendorID)
@@ -33,15 +51,14 @@ public struct AuctionDetailMainView: View, LoadableView {
             viewModel.checkAuctionOwnership()
         }
         .overlay {
-            if !viewModel.isPersonalAcution {
+            if !viewModel.isPersonalAcution && viewModel.auction?.state == .open {
                 presetOfferOverlay()
             }
         }
-        .navigationTitle(viewModel.auction?.title ?? "")
-        .navigationBarTitleDisplayMode(.large)
         .overlay {
             loaderView()
         }
+        
     }
     
 }
@@ -105,23 +122,31 @@ extension AuctionDetailMainView {
     vm.setAuction(
         AuctionDetailModel(
             id: UUID(),
-            title: "Title",
-            description: "long description",
+            title: "Medium Size Title for an auction",
+            description: "long description long description long description long description long description long description long description long description long description long description long description long description long description long description ",
             category: .Furniture,
             images: [],
             auctionType: .incremental,
             currentPrice: 12345.0,
             threshold: 123.0,
-            timer: 12,
+            timer: 2,
             secretPrice: nil,
+            startDate: .now.advanced(by: -60*60),
             endTime: .now.advanced(by: 60*60),
-            vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now),
-            state: .open
+            vendor: VendorAuctionDetail(id: UUID(), name: "Test Vendor Name", username: "Test Vendor Name Test Vendor Name Test Vendor Name Test Vendor Name", email: "test@test.com", successfulAuctions: 0, joinedSince: .now),
+            state: .expired,
+            bidsCount: 0
         )
 
     )
     
-    return NavigationStack{ AuctionDetailMainView(viewModel: vm) }
+    return NavigationStack{
+        AuctionDetailMainView(viewModel: vm)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {}
+                }
+            } }
     
     
 }

@@ -11,6 +11,17 @@ enum AuctionState: Int, Decodable {
     case open = 0,
         closed = 1,
         expired = 2
+    
+    var label: String {
+        switch self {
+            case .open:
+                return "Active"
+            case .closed:
+                return "Closed"
+            case .expired:
+                return "Expired"
+        }
+    }
 }
 
 struct AuctionDetailDTO: Decodable {
@@ -72,7 +83,6 @@ struct AuctionDetailDTO: Decodable {
         } else {
             self.startingDate = nil
         }
-        
         
         let endingDateString = try container.decodeIfPresent(String.self, forKey: .endingDate)
         if let endingDateString = endingDateString {
@@ -144,12 +154,17 @@ extension AuctionDetailModel {
         guard let endTime = dto.endingDate else {
             throw AuctionDetailModelError.missingValue("endingDate")
         }
+        guard let startDate = dto.startingDate else {
+            throw AuctionDetailModelError.missingValue("startingDate")
+        }
         guard let state = dto.state else {
             throw AuctionDetailModelError.missingValue("state")
         }
-        
         guard let vendor = dto.vendor else {
             throw AuctionDetailModelError.missingValue("vendor")
+        }
+        guard let bidsCount = dto.bids else {
+            throw AuctionDetailModelError.missingValue("bids")
         }
         
         self.id = id
@@ -165,6 +180,7 @@ extension AuctionDetailModel {
         self.endTime = endTime
         self.vendor = try VendorAuctionDetail(from: vendor)
         self.state = state
-        
+        self.startDate = startDate
+        self.bidsCount = bidsCount
     }
 }

@@ -41,7 +41,7 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .IsRequired();
         
         builder.Property(n => n.MainImageUrl)
-            .IsRequired()
+            .HasDefaultValue(null)
             .HasMaxLength(500);
         
         // Relationships

@@ -12,22 +12,14 @@ public struct NotificationMainView: View, LoadableView {
     @State var viewModel: NotificationMainViewModel
     
     public var body: some View {
-        ScrollView{
-            LazyVStack(alignment: .leading, spacing: 16) {
-                ForEach(viewModel.notifications, id: \.id) { notification in
-                    NotificationCard(notification: notification, onTap: viewModel.getAuctionDetail)
-                }
-            }
-            .padding(.horizontal)
-            
-        }
+        NotificationListView(notificationList: viewModel.notifications, additionalInfo: viewModel.notificationCount.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreNotifications, fetchCallBack: viewModel.getNotifications)
         .refreshable {
-            await viewModel.getNotifications()
+            viewModel.getNotifications()
         }
         .padding(.top)
         .task {
             if viewModel.notifications.isEmpty {
-                await viewModel.getNotifications()
+                viewModel.getNotifications()
             }
         }
         .overlay {
@@ -47,6 +39,7 @@ public struct NotificationMainView: View, LoadableView {
     @Previewable @State var vm =  NotificationMainViewModel(coordinator: NotificationCoordinator(appContainer: .init()), notificationService: DefaultNotificationService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
     let not = (0...10).map { index in NotificationModel(id: UUID(), title: "Title \(index)", message: "Message \(index)", date: Date.now, auctionId: UUID(), auctionName: "Auction name \(index)", imageUrl: "")}
     vm.notifications = not
+    vm.notificationCount = not.count
     
     return NavigationStack{NotificationMainView(viewModel: vm)}
 }

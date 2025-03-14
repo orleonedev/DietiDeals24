@@ -17,10 +17,10 @@ struct AuctionDetailView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             horizontalImageStack(images: auction.images)
+            tagHorizontalStack(auction: auction)
             VStack(alignment: .leading, spacing: 32) {
-                tagHorizontalStack(auction: auction)
-                priceStack(auction.currentPrice)
-                timerAndThresholdStack(threshold: auction.threshold)
+                priceStack(state: auction.state,price: auction.currentPrice, bidsCount: auction.bidsCount)
+                timerAndThresholdStack(state: auction.state, timer: auction.timer, threshold: auction.threshold)
                 if isPersonalAuction, let secrePrice = auction.secretPrice, auction.auctionType == .descending {
                     secrePriceRow(secrePrice)
                 }
@@ -47,25 +47,42 @@ extension AuctionDetailView {
     
     @ViewBuilder
     func tagHorizontalStack(auction: AuctionDetailModel) -> some View {
-        HStack(spacing: 12) {
+        ScrollView(.horizontal){
+            HStack(spacing: 12) {
+                if auction.state != .open {
+                    Text(auction.state.label)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .padding(10)
+                        .padding(.horizontal, 48)
+                        .foregroundStyle(.white)
+                        .background(Color.dietiYellow.mix(with: .black, by: 0.15))
+                        .clipShape(.capsule)
+                }
+                
                 Text(auction.category.label)
                     .font(.headline)
                     .fontWeight(.semibold)
                     .padding(10)
                     .padding(.horizontal)
                     .foregroundStyle(.white)
-                    .background{Color.accent.brightness(-0.2)}
+                    .background( auction.state == .open ? Color.uninaBlu.mix(with: .accentColor, by: 0.5) : Color.secondary )
                     .clipShape(.capsule)
-            
-            Text(auction.auctionType.label)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .padding(10)
-                .padding(.horizontal)
-                .foregroundStyle(.white)
-                .background{Color.accent.brightness(-0.2)}
-                .clipShape(.capsule)
+                
+                Text(auction.auctionType.label)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .padding(10)
+                    .padding(.horizontal)
+                    .foregroundStyle(.white)
+                    .background( auction.state == .open ? Color.uninaBlu.mix(with: .accentColor, by: 0.5) : Color.secondary )
+                    .clipShape(.capsule)
+            }
+            .padding(.horizontal)
         }
+        .scrollIndicators(.hidden)
+        .scrollBounceBehavior(.basedOnSize)
+        .padding(.bottom)
     }
     
     @ViewBuilder
@@ -85,25 +102,27 @@ extension AuctionDetailView {
     }
     
     @ViewBuilder
-    func priceStack(_ price: Double) -> some View {
+    func priceStack(state: AuctionState, price: Double, bidsCount: Int) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Current Price")
+            Text(state == .open ? "Current Price" : "Last Price")
                 .font(.body)
             Text("\(price.formatted()) €")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundStyle(.accent)
+            Text("\(bidsCount) Bids")
+                .font(.body)
         }
     }
     
     @ViewBuilder
-    func timerAndThresholdStack(threshold: Double) -> some View {
+    func timerAndThresholdStack(state: AuctionState, timer: Int, threshold: Double) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Remaining Time")
+                Text(state == .open ? "Remaining Time" : "Timer")
                     .font(.body)
                 Spacer()
-                Text(countdown)
+                Text(state == .open ? countdown : formatTimer(timer))
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(.accent)
@@ -121,6 +140,24 @@ extension AuctionDetailView {
                     .foregroundStyle(.accent)
             }
         }
+    }
+    
+    private func formatTimer(_ hours: Int) -> String {
+        
+        let timer: Int = hours*60*60
+        
+        if timer > 86400 {
+            // More than 1 day: show day and hours.
+            let days = Int(timer) / 86400
+            let hours = (Int(timer) % 86400) / 3600
+            return "\(days) day\(days != 1 ? "s" : ""), \(hours)h"
+        } else {
+            // More than 1 hour: show hours and minutes.
+            let hours = Int(timer) / 3600
+            let minutes = (Int(timer) % 3600) / 60
+            return "\(hours)h \(minutes)m"
+        }
+
     }
     
     @ViewBuilder
@@ -251,11 +288,13 @@ extension AuctionDetailView {
                 auctionType: .incremental,
                 currentPrice: 12345.0,
                 threshold: 123.0,
-                timer: 12,
+                timer: 2,
                 secretPrice: nil,
+                startDate: .now.advanced(by: -60*60),
                 endTime: .now.advanced(by: 60*60),
                 vendor: VendorAuctionDetail(id: UUID(), name: "Test", username: "Test", email: "test@test.com", successfulAuctions: 0, joinedSince: .now),
-                state: .open
+                state: .open,
+                bidsCount: 0
             ), isPersonalAuction: false
         )
     }

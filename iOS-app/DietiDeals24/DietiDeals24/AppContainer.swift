@@ -123,7 +123,11 @@ extension AppContainer {
         }
         
         register(for: UserAreaMainViewModel.self) {
-            UserAreaMainViewModel(coordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
+            UserAreaMainViewModel(coordinator: self.unsafeResolve(), vendorService: self.unsafeResolve(), auctionService: self.unsafeResolve())
+        }
+        
+        register(for: AuctionDetailMainViewModel.self, tag: .init("UserArea")) {
+            AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(UserAreaCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
     }
     

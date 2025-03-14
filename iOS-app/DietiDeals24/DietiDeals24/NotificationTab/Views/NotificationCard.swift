@@ -31,7 +31,7 @@ struct NotificationCard: View {
                 Text(notification.auctionName)
                     .font(.title3)
                     .fontWeight(.medium)
-                Text(notification.message )
+                Text(notification.message.localized)
                     .font(.caption)
             }
             Spacer()

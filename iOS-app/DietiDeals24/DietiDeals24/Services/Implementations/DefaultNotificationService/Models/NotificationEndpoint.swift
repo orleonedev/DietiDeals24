@@ -29,7 +29,7 @@ extension NotificationEndpoint {
     static private func getNotificationEndpoint(page: Int, pageSize: Int, userId: UUID) -> CodableEndpoint<PaginatedResult<NotificationDTO>>{
         
         let baseURL = NetworkConfiguration.backendBaseUrl
-        let body = NotificationsRequestBody(userId: userId, page: page, pageNumber: pageSize).jsonObject
+        let body = NotificationsRequestBody(userId: userId, page: page, pageSize: pageSize).jsonObject
         return CodableEndpoint<PaginatedResult<NotificationDTO>>(
             Endpoint(
                 baseURL: URL(string: baseURL)!,

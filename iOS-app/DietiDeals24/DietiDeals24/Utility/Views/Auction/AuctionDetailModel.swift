@@ -9,20 +9,22 @@ import Foundation
 
 struct AuctionDetailModel: Equatable {
     static func == (lhs: AuctionDetailModel, rhs: AuctionDetailModel) -> Bool {
-            return lhs.id == rhs.id &&
-                   lhs.title == rhs.title &&
-                   lhs.description == rhs.description &&
-                   lhs.category == rhs.category &&
-                   lhs.images == rhs.images &&
-                   lhs.auctionType == rhs.auctionType &&
-                   lhs.currentPrice == rhs.currentPrice &&
-                   lhs.threshold == rhs.threshold &&
-                   lhs.timer == rhs.timer &&
-                   lhs.secretPrice == rhs.secretPrice &&
-                   lhs.endTime == rhs.endTime &&
-                   lhs.vendor == rhs.vendor &&
-                    lhs.state == rhs.state
-        }
+        return lhs.id == rhs.id &&
+                lhs.title == rhs.title &&
+                lhs.description == rhs.description &&
+                lhs.category == rhs.category &&
+                lhs.images == rhs.images &&
+                lhs.auctionType == rhs.auctionType &&
+                lhs.currentPrice == rhs.currentPrice &&
+                lhs.threshold == rhs.threshold &&
+                lhs.timer == rhs.timer &&
+                lhs.secretPrice == rhs.secretPrice &&
+                lhs.endTime == rhs.endTime &&
+                lhs.vendor == rhs.vendor &&
+                lhs.state == rhs.state &&
+                lhs.startDate == rhs.startDate &&
+                lhs.bidsCount == rhs.bidsCount
+    }
     
     var id: UUID
     var title: String
@@ -34,9 +36,11 @@ struct AuctionDetailModel: Equatable {
     var threshold: Double
     var timer: Int
     var secretPrice: Double?
+    var startDate: Date
     var endTime: Date
     var vendor: VendorAuctionDetail
     var state: AuctionState
+    var bidsCount: Int
 }
 
 struct VendorAuctionDetail: Equatable {

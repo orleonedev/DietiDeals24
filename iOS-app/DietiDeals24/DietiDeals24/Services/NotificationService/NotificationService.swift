@@ -25,6 +25,43 @@ struct NotificationDTO: Decodable {
     var mainImageUrl: String?
     var auctionId: UUID?
     var auctionTitle: String?
+    
+    enum CodingKeys: CodingKey {
+        case id
+        case type
+        case creationDate
+        case message
+        case mainImageUrl
+        case auctionId
+        case auctionTitle
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id)
+        self.type = try container.decodeIfPresent(NotificationType.self, forKey: .type)
+        let creationDateString = try container.decodeIfPresent(String.self, forKey: .creationDate)
+        if let creationDateString = creationDateString {
+            let formatter = DateFormatter()
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+            guard let date = formatter.date(from: creationDateString) else {
+                throw DecodingError.dataCorruptedError(
+                    forKey: .creationDate,
+                    in: container,
+                    debugDescription: "Invalid date format: \(creationDateString)"
+                )
+            }
+            self.creationDate = date
+        } else {
+            self.creationDate = nil
+        }
+        
+        self.message = try container.decodeIfPresent(String.self, forKey: .message)
+        self.mainImageUrl = try container.decodeIfPresent(String.self, forKey: .mainImageUrl)
+        self.auctionId = try container.decodeIfPresent(UUID.self, forKey: .auctionId)
+        self.auctionTitle = try container.decodeIfPresent(String.self, forKey: .auctionTitle)
+    }
 }
 
 enum NotificationType: Int, Decodable {

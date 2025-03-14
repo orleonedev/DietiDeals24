@@ -27,19 +27,19 @@ struct RegisterTokenBody: Encodable, BodyParameters {
 struct NotificationsRequestBody: Encodable, BodyParameters {
     let userId: UUID
     let page: Int
-    let pageNumber: Int
+    let pageSize: Int
     
     enum CodingKeys: CodingKey {
         case userId
         case page
-        case pageNumber
+        case pageSize
     }
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(self.userId, forKey: .userId)
         try container.encode(self.page, forKey: .page)
-        try container.encode(self.pageNumber, forKey: .pageNumber)
+        try container.encode(self.pageSize, forKey: .pageSize)
     }
     
 }

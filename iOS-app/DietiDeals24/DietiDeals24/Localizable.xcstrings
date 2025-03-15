@@ -223,6 +223,17 @@
         }
       }
     },
+    "Birthdate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data di nascita"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "it" : {
@@ -239,6 +250,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiudi"
+          }
+        }
+      }
+    },
+    "Code" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codice"
           }
         }
       }
@@ -293,9 +315,6 @@
         }
       }
     },
-    "Dieti Deals 24" : {
-
-    },
     "DietiDeals24" : {
 
     },
@@ -310,7 +329,14 @@
       }
     },
     "Email" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        }
+      }
     },
     "Explore" : {
       "localizations" : {
@@ -318,6 +344,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esplora"
+          }
+        }
+      }
+    },
+    "Full Name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome Completo"
           }
         }
       }
@@ -476,7 +513,14 @@
 
     },
     "Password" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Password"
+          }
+        }
+      }
     },
     "Personal Area" : {
       "localizations" : {
@@ -574,6 +618,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prezzo Segreto"
+          }
+        }
+      }
+    },
+    "Select a category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleziona una categoria"
           }
         }
       }
@@ -690,6 +745,17 @@
         }
       }
     },
+    "Threshold (min. 1)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soglia (min. 1)"
+          }
+        }
+      }
+    },
     "Threshold: %@ €" : {
       "localizations" : {
         "it" : {
@@ -706,6 +772,20 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Timer"
+          }
+        }
+      }
+    },
+    "Timer (min 1h)" : {
+      "extractionState" : "manual"
+    },
+    "Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Titolo"
           }
         }
       }
@@ -766,6 +846,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stai per offrire"
+          }
+        }
+      }
+    },
+    "Your Bid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua Offerta"
           }
         }
       }

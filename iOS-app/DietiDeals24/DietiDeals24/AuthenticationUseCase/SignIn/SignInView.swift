@@ -58,7 +58,7 @@ extension SignInView {
     func loginForm() -> some View {
         VStack(alignment: .leading, spacing: 16 ){
             VStack(alignment: .leading, spacing: 4){
-                ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email")
+                ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email".localized)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
             }
@@ -66,7 +66,7 @@ extension SignInView {
             SecureValidableTextField(
                 validationError: self.$viewModel.validationPasswordError,
                 text: self.$viewModel.loginPassword,
-                validation: self.viewModel.validatePassword, label: "Password"
+                validation: self.viewModel.validatePassword, label: "Password".localized
             )
             .textContentType(.password)
             .autocorrectionDisabled(true)

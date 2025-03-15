@@ -64,7 +64,7 @@ extension PresentOfferView {
     @ViewBuilder
     func incrementalBid() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            ValidableTextField(validationError: $viewModel.priceValidationError, text: $viewModel.bidPriceString, validation: viewModel.validatePrice, label: "Your Bid")
+            ValidableTextField(validationError: $viewModel.priceValidationError, text: $viewModel.bidPriceString, validation: viewModel.validatePrice, label: "Your Bid".localized)
                 .keyboardType(.decimalPad)
                 .focused($isFocused)
                 .onChange(of: viewModel.bidPriceString) { _, newValue in

@@ -53,7 +53,7 @@ extension SignUpView {
             ValidableTextField(
                 validationError: self.$viewModel.validationEmailError,
                 text: self.$viewModel.email, validation: self.viewModel.validateEmail,
-                label: "Email"
+                label: "Email".localized
             )
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
@@ -62,7 +62,7 @@ extension SignUpView {
             ValidableTextField(
                 validationError: self.$viewModel.validationUserNameError,
                 text: self.$viewModel.username, validation: self.viewModel.validateUsername,
-                label: "Username"
+                label: "Username".localized
             )
             .textContentType(.username)
             .keyboardType(.asciiCapable)
@@ -72,7 +72,7 @@ extension SignUpView {
             SecureValidableTextField(
                 validationError: self.$viewModel.validationPasswordError,
                 text: self.$viewModel.password, validation: self.viewModel.validatePassword,
-                label: "Password"
+                label: "Password".localized
             )
             .autocorrectionDisabled(true)
             .textContentType(.newPassword)
@@ -83,14 +83,14 @@ extension SignUpView {
                 validationError: self.$viewModel.validationFullNameError,
                 text: self.$viewModel.fullName,
                 validation: self.viewModel.validateFullName,
-                label: "Full Name"
+                label: "Full Name".localized
             )
             .textContentType(.name)
             .keyboardType(.asciiCapable)
             .focused(self.$isFocused)
 
             
-            ValidableDatePicker(validationError: self.$viewModel.validationBirthDateError, date: self.$viewModel.birthdate, validation: self.viewModel.validateBirthDate, label: "Birthdate", range: self.viewModel.dateRange)
+            ValidableDatePicker(validationError: self.$viewModel.validationBirthDateError, date: self.$viewModel.birthdate, validation: self.viewModel.validateBirthDate, label: "Birthdate".localized, range: self.viewModel.dateRange)
             
         }
     }

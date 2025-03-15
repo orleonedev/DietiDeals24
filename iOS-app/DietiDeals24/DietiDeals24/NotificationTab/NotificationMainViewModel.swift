@@ -29,6 +29,15 @@ class NotificationMainViewModel: LoadableViewModel {
     }
     
     @MainActor
+    func refreshData() {
+        page = 1
+        notificationCount = 0
+        notifications.removeAll()
+        shouldFetchMoreNotifications = true
+        self.getNotifications()
+    }
+    
+    @MainActor
     func getNotifications() {
         Task {
             guard let userId = await UUID(uuidString: coordinator.getUserData()?.userID ?? "") else { return }

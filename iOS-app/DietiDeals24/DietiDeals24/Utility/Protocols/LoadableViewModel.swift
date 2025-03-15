@@ -37,31 +37,3 @@ extension View where Self: LoadableView {
         }
     }
 }
-
-@Observable
-class testViewModel: LoadableViewModel {
-    var isLoading: Bool = false
-}
-
-struct test: View, LoadableView {
-    @State var viewModel: testViewModel = testViewModel()
-    
-    var body: some View {
-        ZStack {
-            Color.red
-                .ignoresSafeArea()
-            Button("load") {
-                self.viewModel.isLoading = true
-            }
-        }
-        .overlay {
-            if viewModel.isLoading {
-                self.loaderView()
-            }
-        }
-    }
-}
-
-#Preview {
-    test()
-}

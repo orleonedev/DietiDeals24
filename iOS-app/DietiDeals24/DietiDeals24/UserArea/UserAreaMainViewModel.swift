@@ -70,6 +70,15 @@ class UserAreaMainViewModel: LoadableViewModel {
     }
     
     @MainActor
+    func refreshVendorItems() {
+        vendorItems.removeAll()
+        vendorItemsCount = 0
+        vendorPage = 1
+        shouldFetchMoreVendorItem = true
+        getMoreVendorItems()
+    }
+    
+    @MainActor
     func getMoreVendorItems() {
         Task {
             guard shouldFetchMoreVendorItem, !isFetchingVendorItems else { return }

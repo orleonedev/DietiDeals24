@@ -30,10 +30,13 @@ struct UserAreaMainView: View, LoadableView {
                     shouldFetchMore: viewModel.shouldFetchMoreVendorItem,
                     fetchCallBack: viewModel.getMoreVendorItems
                 )
-                .scrollBounceBehavior(.basedOnSize)
+                .refreshable {
+                    viewModel.refreshVendorItems()
+                }
+                .scrollBounceBehavior( viewModel.vendorItems.isEmpty ? .basedOnSize : .automatic)
                 .task {
                     if viewModel.vendorItems.isEmpty {
-                        viewModel.getMoreVendorItems()
+                        viewModel.refreshVendorItems()
                     }
                 }
             }
@@ -95,7 +98,7 @@ struct UserAreaMainView: View, LoadableView {
                         self.viewModel.logout()
                     } label: {
                         Label("Logout", systemImage: "rectangle.portrait.and.arrow.right")
-                        }
+                    }
                 }
             }
         }

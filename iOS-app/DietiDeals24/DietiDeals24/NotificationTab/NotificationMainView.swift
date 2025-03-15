@@ -14,12 +14,12 @@ public struct NotificationMainView: View, LoadableView {
     public var body: some View {
         NotificationListView(notificationList: viewModel.notifications, additionalInfo: viewModel.notificationCount.formatted(), onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreNotifications, fetchCallBack: viewModel.getNotifications)
         .refreshable {
-            viewModel.getNotifications()
+            viewModel.refreshData()
         }
         .padding(.top)
         .task {
             if viewModel.notifications.isEmpty {
-                viewModel.getNotifications()
+                viewModel.refreshData()
             }
         }
         .overlay {

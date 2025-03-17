@@ -69,14 +69,20 @@ extension SignUpView {
             .focused(self.$isFocused)
 
             
-            SecureValidableTextField(
-                validationError: self.$viewModel.validationPasswordError,
-                text: self.$viewModel.password, validation: self.viewModel.validatePassword,
-                label: "Password".localized
-            )
-            .autocorrectionDisabled(true)
-            .textContentType(.newPassword)
-            .focused(self.$isFocused)
+            VStack(alignment: .leading, spacing: 8){
+                SecureValidableTextField(
+                    validationError: self.$viewModel.validationPasswordError,
+                    text: self.$viewModel.password, validation: self.viewModel.validatePassword,
+                    label: "Password".localized
+                )
+                .autocorrectionDisabled(true)
+                .textContentType(.newPassword)
+                .focused(self.$isFocused)
+                
+                PasswordRequirementsView(requirements: viewModel.passwordRequirements)
+                    .font(.caption)
+                    .padding(.leading)
+            }
 
             
             ValidableTextField(
@@ -99,13 +105,7 @@ extension SignUpView {
     func signUpButton() -> some View {
         VStack {
             Button(action: {
-                Task{
-                    do {
-                        try await viewModel.signUp()
-                    } catch {
-                        print(error)
-                    }
-                }
+                viewModel.signUp()
             }) {
                 Text("Sign Up")
                     .font(.headline)
@@ -159,5 +159,5 @@ extension SignUpView {
 }
 
 #Preview {
-    SignUpView(viewModel: .init(coordinator: .init(container: .init())))
+    SignUpView(viewModel: .init(coordinator: .init(container: .init()), validator: Validator()))
 }

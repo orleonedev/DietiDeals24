@@ -89,10 +89,10 @@ extension AppContainer {
             AuthFlowCoordinator(container: self)
         }
         register(for: SignInViewModel.self) { [self] in
-            SignInViewModel(coordinator: unsafeResolve())
+            SignInViewModel(coordinator: unsafeResolve(), validator: Validator())
         }
         register(for: SignUpViewModel.self) { [self] in
-            SignUpViewModel(coordinator: unsafeResolve())
+            SignUpViewModel(coordinator: unsafeResolve(), validator: Validator())
         }
         register(for: CodeVerificationViewModel.self) { [self] in
             CodeVerificationViewModel(coordinator: unsafeResolve())

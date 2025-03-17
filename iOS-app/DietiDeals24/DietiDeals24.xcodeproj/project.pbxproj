@@ -49,6 +49,7 @@
 		512DF9E02CFE29930039DC6C /* DietiDeals24-DEV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DietiDeals24-DEV.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5166D0592D5020B70049F386 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		5166D05C2D5020C30049F386 /* Secrets-DEV.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Secrets-DEV.xcconfig"; sourceTree = "<group>"; };
+		51675A692D85A25D00205BAB /* DietiDeals24Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = DietiDeals24Tests.xctestplan; path = DietiDeals24Tests/DietiDeals24Tests.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -68,6 +69,13 @@
 			);
 			target = 512DF9D92CFE29930039DC6C /* DietiDeals24-DEV */;
 		};
+		51675A7F2D88C2FB00205BAB /* Exceptions for "DietiDeals24" folder in "DietiDeals24Tests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Utility/Validator/Validator.swift,
+			);
+			target = 51244D092CF62CD4003AA070 /* DietiDeals24Tests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -76,6 +84,7 @@
 			exceptions = (
 				5166D0902D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24" target */,
 				5166D0912D550D1A0049F386 /* Exceptions for "DietiDeals24" folder in "DietiDeals24-DEV" target */,
+				51675A7F2D88C2FB00205BAB /* Exceptions for "DietiDeals24" folder in "DietiDeals24Tests" target */,
 			);
 			path = DietiDeals24;
 			sourceTree = "<group>";
@@ -136,6 +145,7 @@
 		51244CF12CF62CD3003AA070 = {
 			isa = PBXGroup;
 			children = (
+				51675A692D85A25D00205BAB /* DietiDeals24Tests.xctestplan */,
 				51244CFC2CF62CD3003AA070 /* DietiDeals24 */,
 				51244D0D2CF62CD4003AA070 /* DietiDeals24Tests */,
 				51244D172CF62CD4003AA070 /* DietiDeals24UITests */,
@@ -269,7 +279,6 @@
 					};
 					51244D092CF62CD4003AA070 = {
 						CreatedOnToolsVersion = 16.1;
-						TestTargetID = 512DF9D92CFE29930039DC6C;
 					};
 					51244D132CF62CD4003AA070 = {
 						CreatedOnToolsVersion = 16.1;
@@ -587,7 +596,6 @@
 		51244D222CF62CD4003AA070 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SA4H49C4LT;
@@ -599,14 +607,12 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DietiDeals24-DEV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DietiDeals24-DEV";
 			};
 			name = Debug;
 		};
 		51244D232CF62CD4003AA070 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SA4H49C4LT;
@@ -618,7 +624,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DietiDeals24-DEV.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DietiDeals24-DEV";
 			};
 			name = Release;
 		};

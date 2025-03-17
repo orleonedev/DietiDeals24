@@ -512,16 +512,6 @@
     "Oreste Leone\nN86001980" : {
 
     },
-    "Password" : {
-      "localizations" : {
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Password"
-          }
-        }
-      }
-    },
     "Personal Area" : {
       "localizations" : {
         "it" : {

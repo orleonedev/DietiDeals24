@@ -23,6 +23,8 @@ class SignUpViewModel: LoadableViewModel {
     var validationUserNameError: Bool = false
     var validationBirthDateError: Bool = false
     
+    let passwordRequirements: [String] = ["At least one uppercase letter", "At least one lowercase letter", "At least one digit", "At least one special character", "Minimum length of 8 characters"]
+    
     let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
         let startComponents = Calendar.current.dateComponents([.year, .month, .day], from: .distantPast)
@@ -34,30 +36,32 @@ class SignUpViewModel: LoadableViewModel {
     }()
     
     var coordinator: AuthFlowCoordinator
+    let validator: Validator
     
-    init(coordinator: AuthFlowCoordinator) {
+    init(coordinator: AuthFlowCoordinator, validator: Validator) {
         self.coordinator = coordinator
+        self.validator = validator
     }
     
-    private var isFormValid: Bool {
-        self.validateFields()
+    var isFormValid: Bool {
         return !validationEmailError && !validationPasswordError && !validationFullNameError && !validationUserNameError && !validationBirthDateError
     }
     
     private func validateFields() {
-        validationEmailError = !self.email.isValidEmail
-        validationPasswordError = !self.validatePassword(self.password)
+        let emailAndPasswordErrors = validator.validateEmailAndPassword(email: self.email, password: self.password)
+        self.validationPasswordError = emailAndPasswordErrors.contains(where: { $0 == .emptyPassword || $0 == .invalidPassword})
+        self.validationEmailError = emailAndPasswordErrors.contains(where: { $0 == .emptyEmail || $0 == .invalidEmail})
         validationFullNameError = self.fullName.isEmpty
         validationUserNameError = self.username.isEmpty
         self.validateBirthDate()
     }
     
     func validateEmail() {
-        validationEmailError = !self.email.isValidEmail
+        validationEmailError = !validator.isValidEmail(self.email)
     }
     
     func validatePassword() {
-        validationPasswordError = !self.validatePassword(self.password)
+        validationPasswordError = !validator.validatePassword(self.password)
     }
     
     func validateUsername() {
@@ -69,40 +73,32 @@ class SignUpViewModel: LoadableViewModel {
     }
     
     func validateBirthDate() {
-        validationBirthDateError = !self.isValidBirthdate(self.birthdate)
+        validationBirthDateError = !validator.isValidBirthdate(self.birthdate)
     }
     
-    private func isValidBirthdate(_ birthdate: Date) -> Bool {
-        let calendar = Calendar.current
-        let today = Date()
-        
-        // Calcola la data esattamente 18 anni fa
-        if let eighteenYearsAgo = calendar.date(byAdding: .year, value: -18, to: today) {
-            return birthdate <= eighteenYearsAgo
+    
+    @MainActor
+    public func signUp() {
+        validateFields()
+        guard isFormValid else { return }
+        Task {
+            isLoading = true
+            defer { isLoading = false }
+            do {
+                try await coordinator.signUp(
+                    model: UserSignUpAttributes(
+                        username: self.username,
+                        email: self.email,
+                        password: self.password,
+                        preferredUsername: self.username,
+                        name: self.fullName,
+                        birthdate: self.birthdate
+                    )
+                )
+            } catch {
+                print(error)
+            }
         }
-        
-        return false
-    }
-    
-    private func validatePassword(_ password: String) -> Bool {
-        let passwordRegex = #"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$"#
-        return NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password)
-    }
-    
-    
-    public func signUp() async throws {
-        isLoading = true
-        try await coordinator.signUp(
-            model: UserSignUpAttributes(
-                username: self.username,
-                email: self.email,
-                password: self.password,
-                preferredUsername: self.username,
-                name: self.fullName,
-                birthdate: self.birthdate
-            )
-        )
-        isLoading = false
     }
     
     public func skipSignUp() async throws {

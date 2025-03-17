@@ -48,7 +48,7 @@ extension SignInView {
     
     @ViewBuilder
     func loginView() -> some View {
-        VStack(alignment: .leading, spacing: 32){
+        VStack(alignment: .leading, spacing: 64){
             loginForm()
             loginButton()
         }
@@ -56,20 +56,19 @@ extension SignInView {
     
     @ViewBuilder
     func loginForm() -> some View {
-        VStack(alignment: .leading, spacing: 16 ){
-            VStack(alignment: .leading, spacing: 4){
+        VStack(alignment: .leading, spacing: 24 ){
                 ValidableTextField(validationError: self.$viewModel.invalidLoginEmail, text: self.$viewModel.loginEmail, validation: self.viewModel.validateEmail, label: "Email".localized)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
-            }
             
-            SecureValidableTextField(
-                validationError: self.$viewModel.validationPasswordError,
-                text: self.$viewModel.loginPassword,
-                validation: self.viewModel.validatePassword, label: "Password".localized
-            )
-            .textContentType(.password)
-            .autocorrectionDisabled(true)
+                SecureValidableTextField(
+                    validationError: self.$viewModel.validationPasswordError,
+                    text: self.$viewModel.loginPassword,
+                    validation: self.viewModel.validatePassword, label: "Password".localized
+                )
+                .textContentType(.password)
+                .autocorrectionDisabled(true)
+                
         }
         
     }
@@ -196,7 +195,7 @@ extension SignInView {
 #Preview {
     SignInView(
         viewModel: .init(
-            coordinator: .init(container: .init())
+            coordinator: .init(container: .init()), validator: Validator()
         )
     )
 }

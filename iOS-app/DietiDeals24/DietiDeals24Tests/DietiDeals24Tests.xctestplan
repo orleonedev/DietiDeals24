@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "CAA4B487-9E61-4B1E-87BA-5005C668EDCA",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:DietiDeals24.xcodeproj",
+        "identifier" : "51244D092CF62CD4003AA070",
+        "name" : "DietiDeals24Tests"
+      }
+    }
+  ],
+  "version" : 1
+}

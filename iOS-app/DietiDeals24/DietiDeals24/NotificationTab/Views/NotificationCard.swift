@@ -25,7 +25,7 @@ struct NotificationCard: View {
             VStack(alignment: .leading) {
                 Text(notification.date.formatted())
                     .font(.caption)
-                Text(notification.title)
+                Text(notification.title.localized)
                     .font(.headline)
                     .fontWeight(.semibold)
                 Text(notification.auctionName)

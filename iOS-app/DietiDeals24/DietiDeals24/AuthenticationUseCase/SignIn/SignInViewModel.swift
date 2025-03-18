@@ -17,11 +17,13 @@ class SignInViewModel: LoadableViewModel {
     var loginPassword: String = ""
     var invalidLoginEmail: Bool = false
     var validationPasswordError: Bool = false
-    
+    let validator: Validator
     var coordinator: AuthFlowCoordinator
     
-    init(coordinator: AuthFlowCoordinator) {
+    
+    init(coordinator: AuthFlowCoordinator, validator: Validator) {
         self.coordinator = coordinator
+        self.validator = validator
     }
     
     func skipAuth() async throws {
@@ -31,9 +33,10 @@ class SignInViewModel: LoadableViewModel {
     }
     
     func tryAuthentication() async throws {
-        guard !loginEmail.isEmpty,
-              !loginPassword.isEmpty
-        else {
+        let validationErrors = validator.validateEmailAndPassword(email: self.loginEmail, password: self.loginPassword)
+        guard validationErrors.isEmpty else {
+            self.validationPasswordError = validationErrors.contains(where: { $0 == .emptyPassword || $0 == .invalidPassword})
+            self.invalidLoginEmail = validationErrors.contains(where: { $0 == .emptyEmail || $0 == .invalidEmail})
             return
         }
         isLoading = true
@@ -42,25 +45,22 @@ class SignInViewModel: LoadableViewModel {
     }
     
     func validateEmail() {
-        let result = self.loginEmail.isValidEmail
-        if !result {
+        let isValid = validator.isValidEmail(self.loginEmail)
+        if !isValid {
             print("invalid email format")
             self.invalidLoginEmail = true
         }
     }
     
     func validatePassword() {
-        let result = validatePasswordPattern(self.loginPassword)
-        if !result {
+        let isValid = validator.validatePassword(self.loginPassword)
+        if !isValid {
             print("invalid password format")
             self.validationPasswordError = true
         }
     }
     
-    private func validatePasswordPattern(_ password: String) -> Bool {
-        let passwordRegex = #"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$"#
-        return NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password)
-    }
+    
     
     @MainActor func goToSignUp() {
         coordinator.goToSignUp()

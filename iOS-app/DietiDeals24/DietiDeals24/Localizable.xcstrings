@@ -33,26 +33,107 @@
             "state" : "new",
             "value" : "%1$lld bid%2$@"
           }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Offerte"
+          }
         }
       }
     },
     "%lld Bids" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Offerte"
+          }
+        }
+      }
     },
     "%lld/6" : {
 
     },
     "A code has been sent to the email address: \n**%@** \nPlease enter the verification code" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un codice è stato mandato all’indirizzo email: **%@**\nPer favore, inserisci il codice di verifica"
+          }
+        }
+      }
     },
     "Add up to 6 images" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi fino a 6 immagini"
+          }
+        }
+      }
     },
     "Apply" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Applica"
+          }
+        }
+      }
+    },
+    "Auction Closed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auction Closed"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asta Conclusa"
+          }
+        }
+      }
+    },
+    "Auction expired" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auction Expired"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asta Scaduta"
+          }
+        }
+      }
     },
     "Auction Type" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auction Type"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipologia Asta"
+          }
+        }
+      }
     },
     "auction.expired.message" : {
       "extractionState" : "manual",
@@ -123,79 +204,253 @@
       }
     },
     "Become a Vendor" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diventa un venditore"
+          }
+        }
+      }
     },
     "Become a Vendor on \nDietiDeals24" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diventa un Venditore su DietiDeals24"
+          }
+        }
+      }
+    },
+    "Birthdate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data di nascita"
+          }
+        }
+      }
     },
     "Cancel" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla"
+          }
+        }
+      }
     },
     "Close" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi"
+          }
+        }
+      }
+    },
+    "Code" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codice"
+          }
+        }
+      }
     },
     "Create Auction" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea Asta"
+          }
+        }
+      }
     },
     "Create your account" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea il tuo account"
+          }
+        }
+      }
     },
     "Current Price" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo attuale"
+          }
+        }
+      }
     },
     "Current Price: %@ €" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo attuale: %@"
+          }
+        }
+      }
     },
     "Description" : {
-
-    },
-    "Dieti Deals 24" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descrizione"
+          }
+        }
+      }
     },
     "DietiDeals24" : {
 
     },
     "Don't have an account?" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non hai un account?"
+          }
+        }
+      }
     },
     "Email" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
+          }
+        }
+      }
     },
     "Explore" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esplora"
+          }
+        }
+      }
+    },
+    "Full Name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nome Completo"
+          }
+        }
+      }
     },
     "Giuseppe Falso\nN86002941" : {
 
     },
-    "Hello, %@!" : {
-
-    },
     "If you haven't received any notifications yet, please try again later." : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se non hai ricevuto ancora notifiche, prova in un altro momento."
+          }
+        }
+      }
     },
     "Images (optional)" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Immagini (opzionali)"
+          }
+        }
+      }
     },
     "INGSW2324_63" : {
 
     },
     "Join our vendor community and start listing your items for auction. Tap the button below to begin." : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unisciti alla nostra community e inizia a listare i tuoi articoli per le aste. Premi il pulsante sotto per iniziare."
+          }
+        }
+      }
     },
     "Joined since %@" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iscritto da %@"
+          }
+        }
+      }
     },
     "Last Price" : {
-
-    },
-    "load" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultimo Prezzo"
+          }
+        }
+      }
     },
     "Logout" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esci"
+          }
+        }
+      }
     },
     "More" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro"
+          }
+        }
+      }
+    },
+    "New Bid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Bid"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuova Offerta"
+          }
+        }
+      }
     },
     "new.bid.message" : {
       "extractionState" : "manual",
@@ -205,71 +460,208 @@
             "state" : "translated",
             "value" : "You have received a new bid!"
           }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hai ricevuto una nuova offerta!"
+          }
         }
       }
     },
     "Next" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avanti"
+          }
+        }
+      }
     },
     "No notifications" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna notifica"
+          }
+        }
+      }
     },
     "Notifications" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifiche"
+          }
+        }
+      }
     },
     "Or sign in with" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O accedi con"
+          }
+        }
+      }
     },
     "Oreste Leone\nN86001980" : {
 
     },
-    "Password" : {
-
-    },
     "Personal Area" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Area Personale"
+          }
+        }
+      }
     },
     "Place a Bid" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Piazza un offerta"
+          }
+        }
+      }
     },
     "Place Bid" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offri"
+          }
+        }
+      }
     },
     "Present Offer" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Presenta offerta"
+          }
+        }
+      }
     },
     "Publish Auction" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pubblica Asta"
+          }
+        }
+      }
     },
     "Ready to create your next auction? Tap the button below to get started with listing your items." : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sei pronto a creare la tua prossima asta? Premi il pulsante qui sotto ed inizia a vendere i tuoi articoli."
+          }
+        }
+      }
     },
     "Remaining Time" : {
-
-    },
-    "Revoke Cred" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo rimanente"
+          }
+        }
+      }
     },
     "Search" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca"
+          }
+        }
+      }
     },
     "Search for products or services" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca prodotti o servizi"
+          }
+        }
+      }
     },
     "Secret Price" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo Segreto"
+          }
+        }
+      }
+    },
+    "Select a category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleziona una categoria"
+          }
+        }
+      }
     },
     "Sell" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vendi"
+          }
+        }
+      }
     },
     "Sign In" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accedi"
+          }
+        }
+      }
     },
     "Sign Up" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrati"
+          }
+        }
+      }
     },
     "Signing up means you agree to our" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrarti implica che accetti i nostri"
+          }
+        }
+      }
     },
     "Skip Sign In" : {
 
@@ -284,49 +676,180 @@
 
     },
     "Start Selling" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia a vendere"
+          }
+        }
+      }
     },
     "Starting Price" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo di Partenza"
+          }
+        }
+      }
     },
     "Submit Vendor Details" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferma i dati"
+          }
+        }
+      }
     },
     "Successful Auctions: %@" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aste concluse con successo: %@"
+          }
+        }
+      }
     },
     "Terms and Conditions" : {
-
-    },
-    "This is the start of cognito setup" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Termini e condizioni"
+          }
+        }
+      }
     },
     "Threshold" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soglia"
+          }
+        }
+      }
+    },
+    "Threshold (min. 1)" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soglia (min. 1)"
+          }
+        }
+      }
     },
     "Threshold: %@ €" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soglia: %@ €"
+          }
+        }
+      }
     },
     "Timer" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timer"
+          }
+        }
+      }
+    },
+    "Timer (min 1h)" : {
+      "extractionState" : "manual"
+    },
+    "Title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Titolo"
+          }
+        }
+      }
     },
     "Verify" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica"
+          }
+        }
+      }
     },
     "Verify your email address" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verifica il tuo indirizzo email"
+          }
+        }
+      }
     },
     "We couldn't find any auctions at this time. Try again later." : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non siamo riusciti a trovare aste in questo momento. Prova più tardi"
+          }
+        }
+      }
     },
     "We Would love to hear more about you, to enrich the experience for all our users!" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorremmo sapere di più su di te, per poter arricchire l’esperienza per tutti i nostri utenti"
+          }
+        }
+      }
     },
     "Welcome, Vendor!" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benvenuto, Venditore!"
+          }
+        }
+      }
     },
     "Your about to bid" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stai per offrire"
+          }
+        }
+      }
+    },
+    "Your Bid" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua Offerta"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

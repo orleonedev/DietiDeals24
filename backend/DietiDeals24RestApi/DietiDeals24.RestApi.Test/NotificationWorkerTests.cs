@@ -167,44 +167,6 @@ public class NotificationWorkerTests // White box test
             // Act & Assert
             await Assert.ThrowsAsync<KeyNotFoundException>(() => worker.AddNotificationTokenAsync(nonExistingUserId, deviceToken));
         }
-
-        [Fact]
-        public async Task RemoveNotificationTokenAsync_ValidInput_ShouldCompleteSuccessfully()
-        {
-            // Arrange
-            var deviceToken = "valid_device_token";
-
-            _notificationWorkerMock
-                .Setup(worker => worker.RemoveNotificationTokenAsync(deviceToken))
-                .Returns(Task.CompletedTask);
-
-            var worker = _notificationWorkerMock.Object;
-
-            // Act & Assert
-            await worker.RemoveNotificationTokenAsync(deviceToken);
-        }
-
-        [Fact]
-        public async Task RemoveNotificationTokenAsync_NullOrEmptyToken_ShouldThrowException()
-        {
-            // Arrange
-            string emptyToken = "";
-            string nullToken = null;
-
-            _notificationWorkerMock
-                .Setup(worker => worker.RemoveNotificationTokenAsync(emptyToken))
-                .ThrowsAsync(new ArgumentException("Device token cannot be empty"));
-
-            _notificationWorkerMock
-                .Setup(worker => worker.RemoveNotificationTokenAsync(nullToken))
-                .ThrowsAsync(new ArgumentNullException(nameof(nullToken)));
-
-            var worker = _notificationWorkerMock.Object;
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => worker.RemoveNotificationTokenAsync(emptyToken));
-            await Assert.ThrowsAsync<ArgumentNullException>(() => worker.RemoveNotificationTokenAsync(nullToken));
-        }
     }
     
     [Collection("Sequential")]

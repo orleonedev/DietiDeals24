@@ -14,7 +14,7 @@ public class NotificationWorker: INotificationWorker
     private readonly ILogger<NotificationWorker> _logger;
     private readonly INotificationService _notificationService;
     private readonly IAmazonSimpleNotificationService _snsClient;
-    private readonly string _platformApplicationArn; // Replace with your AWS SNS Platform Application ARN
+    private readonly string _platformApplicationArn;
 
     public NotificationWorker(ILogger<NotificationWorker> logger, 
         INotificationService notificationService, 
@@ -139,20 +139,20 @@ public class NotificationWorker: INotificationWorker
         {
             _logger.LogInformation($"[WORKER] Storing notification for user {userId}.");
             await _notificationService.AddNotificationAsync(notificationDto, userId);
-            _logger.LogInformation($"[WORKER] notification for user {userId} was stored.");
+            _logger.LogInformation($"[WORKER] Notification for user {userId} was stored.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"[WORKER] Storing notification failed for user {userId}: {ex.Message}");
             return;
         }
-
-        _logger.LogInformation($"[WORKER] Sending notification to user {userId}.");
-
+        
         List<string> endpointArns;
         // Retrieve the user's endpoint ARNs from the database
         try
         {
+            _logger.LogInformation($"[WORKER] Sending notification to user {userId}.");
+
             endpointArns = await _notificationService.GetEndPointArnFromUserIdAsync(userId);
             if (!endpointArns.Any())
             {
@@ -181,30 +181,9 @@ public class NotificationWorker: INotificationWorker
                 break;
             default:
                 notificationTitle = "Unknown Notification Type";
+                _logger.LogWarning($"[WORKER] Unknown notification type: {notificationDto.Type}");
                 break;
         }
-
-        // Construct the payload for APNs (Apple Push Notification service)
-        // var payload = new
-        // {
-        //     aps = new
-        //     {
-        //         alert = new
-        //         {
-        //             title = notificationTitle,
-        //             body = notificationDto.Message
-        //         },
-        //         sound = "default", // Optional: Customize sound
-        //         // Add any custom data
-        //     },
-        //     data = new
-        //     {
-        //         auctionId = notificationDto.AuctionId,
-        //         auctionTitle = notificationDto.AuctionTitle
-        //     }
-        // };
-        //
-        // var jsonPayload = JsonSerializer.Serialize(payload);
 
         var jsonPayload = PushNotificationTemplate.GetPushString(notificationTitle, notificationDto.Message,
             notificationDto.AuctionTitle, notificationDto.AuctionId);

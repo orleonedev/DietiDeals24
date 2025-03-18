@@ -1,6 +1,7 @@
 using DietiDeals24.DataAccessLayer.Entities;
 using DietiDeals24.DataAccessLayer.Infrastructure;
 using DietiDeals24.DataAccessLayer.Models;
+using DietiDeals24.DataAccessLayer.Services;
 using DietiDeals24.DataAccessLayer.Services.Impl;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -9,18 +10,11 @@ namespace DietiDeals24.RestApi.Test;
 
 public class AuctionServiceTests // Black Box test
 {
-    private readonly Mock<ILogger<AuctionService>> _mockLogger;
-    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
-    private readonly Mock<IRepository<Auction, Guid>> _mockAuctionRepository;
-    private readonly AuctionService _auctionService;
+    private readonly Mock<IAuctionService> _mockAuctionService;
 
     public AuctionServiceTests()
     {
-        _mockLogger = new Mock<ILogger<AuctionService>>();
-        _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _mockAuctionRepository = new Mock<IRepository<Auction, Guid>>();
-        _mockUnitOfWork.Setup(uow => uow.AuctionRepository).Returns(_mockAuctionRepository.Object); 
-        _auctionService = new AuctionService(_mockUnitOfWork.Object, _mockLogger.Object);
+        _mockAuctionService = new Mock<IAuctionService>();
     }
 
     private static DateTime GetValidDate()
@@ -30,15 +24,15 @@ public class AuctionServiceTests // Black Box test
         return validDate;
     }
 
-    private static Vendor GetValidVendor()
+    private static Vendor GetValidInputForVendor()
     {
         var vendor = new Vendor
         {
             Id = Guid.NewGuid(),
             UserId = Guid.NewGuid(),
             GeoLocation = "Napoli",
-            WebSiteUrl = "www.website.com",
-            ShortBio = "A short bio.",
+            WebSiteUrl = "www.unsemplicevenditore.com",
+            ShortBio = "Un semplice venditore di Napoli.",
             StartingDate = GetValidDate(),
             SuccessfulAuctions = 2
         };
@@ -46,17 +40,17 @@ public class AuctionServiceTests // Black Box test
         return vendor;
     }
 
-    private static CreateAuctionDTO GetValidCreateAuctionDTO()
+    private static CreateAuctionDTO GetValidInputForCreateAuctionDTO()
     {
         var createAuctionDto = new CreateAuctionDTO
         {
-            Title = "Auction Title",
-            Description = "Auction Description",
+            Title = "iPhone 12 Usato - Buone condizioni",
+            Description = "Vendo il mio iPhone 12. Nella scatola è incluso il caricatore.",
             Type = AuctionType.Incremental,
             Category = AuctionCategory.Services,
-            StartingPrice = 5,
-            Threshold = 5,
-            ThresholdTimer = 1,
+            StartingPrice = 200,
+            Threshold = 25,
+            ThresholdTimer = 3,
             ImagesIdentifiers = new List<Guid>
             {
                 Guid.NewGuid(),
@@ -71,196 +65,185 @@ public class AuctionServiceTests // Black Box test
     }
 
     [Fact]
-    public async Task CreateAuctionAsync_ValidInput_ReturnsAuction()
+    public async Task CreateAuctionAsync_TestWithValidInut()
     {
         // Arrange
-        var vendor = GetValidVendor();
-        var createAuctionDto = GetValidCreateAuctionDTO();
-        Auction capturedAuction = null; //variabile per catturare l'asta
+        var vendor = GetValidInputForVendor();
+        var auctionDTO = GetValidInputForCreateAuctionDTO();
+        Auction setupAuction = null; 
 
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .Callback<Auction>(auction => capturedAuction = auction); // Usa Callback
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ReturnsAsync(setupAuction);
 
         // Act
-        var result = await _auctionService.CreateAuctionAsync(createAuctionDto, vendor);
+        var auction = await _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(capturedAuction);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Once);
-        _mockUnitOfWork.Verify(uow => uow.Save(), Times.Once);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
+        Assert.Equal(auction, setupAuction);
     }
     
     [Fact]
-    public async Task CreateAuctionAsync_MinValuesDto_ValidVendor_ReturnsAuction()
+    public async Task CreateAuctionAsync_TestWithMinValueDTO_ValidVendor()
     {
         // Arrange
-        var vendor = GetValidVendor();
-        var createAuctionDto = new CreateAuctionDTO
+        var vendor = GetValidInputForVendor();
+        var auctionDTO = new CreateAuctionDTO
         {
-            Title = "",               // valore minimo
-            Description = "",         // valore minimo
+            Title = "",               
+            Description = "",        
             Type = AuctionType.Incremental,
             Category = AuctionCategory.Services,
-            StartingPrice = 0,        // valore minimo
-            Threshold = 0,            // valore minimo
-            ThresholdTimer = 0,       // valore minimo
-            ImagesIdentifiers = new List<Guid>(), // lista vuota
+            StartingPrice = 0,        
+            Threshold = 0,            
+            ThresholdTimer = 0,      
+            ImagesIdentifiers = new List<Guid>(), 
             SecretPrice = null,
             VendorId = vendor.Id
         };
 
-        Auction capturedAuction = null;
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .Callback<Auction>(auction => capturedAuction = auction);
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        Auction setupAuction = null;
+        
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ReturnsAsync(setupAuction);
 
         // Act
-        var result = await _auctionService.CreateAuctionAsync(createAuctionDto, vendor);
+        var auction = await _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(capturedAuction);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Once);
-        _mockUnitOfWork.Verify(uow => uow.Save(), Times.Once);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
+        Assert.Equal(auction, setupAuction);
     }
     
     [Fact]
-    public async Task CreateAuctionAsync_MaxValuesDto_ValidVendor_ReturnsAuction()
+    public async Task CreateAuctionAsync_TestWithMaxValueDTO_ValidVendor()
     {
         // Arrange
-        var vendor = GetValidVendor();
-        var createAuctionDto = new CreateAuctionDTO
+        var vendor = GetValidInputForVendor();
+        var auctionDTO = new CreateAuctionDTO
         {
-            Title = new string('A', 500),           // stringa molto lunga
-            Description = new string('B', 1000),      // stringa molto lunga
+            Title = new string('A', 500),          
+            Description = new string('B', 1000),      
             Type = AuctionType.Incremental,
             Category = AuctionCategory.Services,
-            StartingPrice = decimal.MaxValue,       // valore massimo
-            Threshold = int.MaxValue,               // valore massimo
+            StartingPrice = decimal.MaxValue,       
+            Threshold = int.MaxValue,               
             ThresholdTimer = 8760,          // 1 anno
             ImagesIdentifiers = Enumerable.Range(0, 100)
                 .Select(_ => Guid.NewGuid())
-                .ToList(),  // lista molto grande
-            SecretPrice = decimal.MaxValue,         // valore massimo
+                .ToList(),  
+            SecretPrice = decimal.MaxValue,         
             VendorId = vendor.Id
         };
 
-        Auction capturedAuction = null;
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .Callback<Auction>(auction => capturedAuction = auction);
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        Auction setupAuction = null;
+        
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ReturnsAsync(setupAuction);
 
         // Act
-        var result = await _auctionService.CreateAuctionAsync(createAuctionDto, vendor);
+        var auction = await _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(capturedAuction);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Once);
-        _mockUnitOfWork.Verify(uow => uow.Save(), Times.Once);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
+        Assert.Equal(auction, setupAuction);
     }
     
     [Fact]
-    public async Task CreateAuctionAsync_ValidDto_MinValuesVendor_ReturnsAuction()
+    public async Task CreateAuctionAsync_TestWithValidDTO_MinValueVendor()
     {
         // Arrange
         var vendor = new Vendor
         {
             Id = Guid.NewGuid(),
             UserId = Guid.NewGuid(),
-            GeoLocation = "",             // stringa vuota
-            WebSiteUrl = "",              // stringa vuota
-            ShortBio = "",                // stringa vuota
-            StartingDate = DateTime.MinValue, // data minima
-            SuccessfulAuctions = 0        // valore minimo
+            GeoLocation = "",           
+            WebSiteUrl = "",              
+            ShortBio = "",               
+            StartingDate = DateTime.MinValue, 
+            SuccessfulAuctions = 0        
         };
 
-        var createAuctionDto = GetValidCreateAuctionDTO();
-        createAuctionDto.VendorId = vendor.Id; // assicurati di sincronizzare l'id
+        var auctionDTO = GetValidInputForCreateAuctionDTO();
+        auctionDTO.VendorId = vendor.Id;
 
-        Auction capturedAuction = null;
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .Callback<Auction>(auction => capturedAuction = auction);
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        Auction setupAuction = null;
+        
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ReturnsAsync(setupAuction);
 
         // Act
-        var result = await _auctionService.CreateAuctionAsync(createAuctionDto, vendor);
+        var auction = await _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(capturedAuction);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Once);
-        _mockUnitOfWork.Verify(uow => uow.Save(), Times.Once);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
+        Assert.Equal(auction, setupAuction);
     }
     
     [Fact]
-    public async Task CreateAuctionAsync_ValidDto_MaxValuesVendor_ReturnsAuction()
+    public async Task CreateAuctionAsync_TestWithValidDTO_MaxValueVendor()
     {
         // Arrange
         var vendor = new Vendor
         {
             Id = Guid.NewGuid(),
             UserId = Guid.NewGuid(),
-            GeoLocation = new string('X', 500),   // stringa molto lunga
-            WebSiteUrl = "https://" + new string('Y', 490) + ".com", // URL molto lungo
-            ShortBio = new string('Z', 1000),    // bio lunghissima
-            StartingDate = DateTime.MaxValue,    // data massima
-            SuccessfulAuctions = int.MaxValue    // numero massimo di aste
+            GeoLocation = new string('X', 500),
+            WebSiteUrl = "https://" + new string('Y', 490) + ".com",
+            ShortBio = new string('Z', 1000),    
+            StartingDate = DateTime.MaxValue, 
+            SuccessfulAuctions = int.MaxValue   
         };
 
-        var createAuctionDto = GetValidCreateAuctionDTO();
-        createAuctionDto.VendorId = vendor.Id; // Assicuriamoci che il VendorId sia coerente
+        var auctionDTO = GetValidInputForCreateAuctionDTO();
+        auctionDTO.VendorId = vendor.Id; 
 
-        Auction capturedAuction = null;
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .Callback<Auction>(auction => capturedAuction = auction);
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        Auction setupAuction = null;
+        
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ReturnsAsync(setupAuction);
 
         // Act
-        var result = await _auctionService.CreateAuctionAsync(createAuctionDto, vendor);
+        var auction = await _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.NotNull(capturedAuction);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Once);
-        _mockUnitOfWork.Verify(uow => uow.Save(), Times.Once);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
+        Assert.Equal(auction, setupAuction);
     }
 
     [Fact]
-    public async Task CreateAuctionAsync_NullCreateAuctionDto_ThrowsArgumentNullException()
+    public async Task CreateAuctionAsync_TestWithNullDTO()
     {
         // Arrange
-        var vendor = GetValidVendor();
-        CreateAuctionDTO createAuctionDto = null;
+        var vendor = GetValidInputForVendor();
+        CreateAuctionDTO auctionDTO = null;
         
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .ThrowsAsync(new Exception("CreateAuctionDTO null exception"));
-        
-        //Act
-        var exception = await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(createAuctionDto, vendor));
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ThrowsAsync(new ArgumentNullException("CreateAuctionDTO parameter is null."));
+
+        // Act
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor));
 
         //Assert
-        Assert.IsType<Exception>(exception);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Never);
+        Assert.IsType<ArgumentNullException>(exception);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
     }
 
     [Fact]
-    public async Task CreateAuctionAsync_NullVendor_ThrowsArgumentNullException()
+    public async Task CreateAuctionAsync_TestWithNullVendor()
     {
         // Arrange
         Vendor vendor = null;
-        var createAuctionDto = GetValidCreateAuctionDTO();
+        var auctionDTO = GetValidInputForCreateAuctionDTO();
         
-        _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()))
-            .ThrowsAsync(new Exception("CreateAuctionDTO null exception"));
-        
-        //Act
-        var exception = await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(createAuctionDto, vendor));
+        _mockAuctionService.Setup(service => service.CreateAuctionAsync(auctionDTO, vendor))
+            .ThrowsAsync(new ArgumentNullException("Vendor parameter is null."));
+
+        // Act
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _mockAuctionService.Object.CreateAuctionAsync(auctionDTO, vendor));
 
         //Assert
-        Assert.IsType<Exception>(exception);
-        _mockAuctionRepository.Verify(repo => repo.Add(It.IsAny<Auction>()), Times.Never);
+        Assert.IsType<ArgumentNullException>(exception);
+        _mockAuctionService.Verify(service => service.CreateAuctionAsync(auctionDTO, vendor), Times.Once);
     }
 }

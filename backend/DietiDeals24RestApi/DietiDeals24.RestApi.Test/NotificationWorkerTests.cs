@@ -13,32 +13,6 @@ namespace DietiDeals24.RestApi.Test;
 
 public class NotificationWorkerTests // White box test
 {
-    private static Mock<ILogger<NotificationWorker>> CreateMockLogger()
-    {
-        return new Mock<ILogger<NotificationWorker>>();
-    }
-
-    private static Mock<INotificationService> CreateMockNotificationService()
-    {
-        return new Mock<INotificationService>();
-    }
-
-    private static Mock<IAmazonSimpleNotificationService> CreateMockSnsClient()
-    {
-        return new Mock<IAmazonSimpleNotificationService>();
-    }
-    
-    private static NotificationDTO CreateTestNotificationDto()
-    {
-        return new NotificationDTO
-        {
-            Type = NotificationType.AuctionExpired,
-            Message = "Test Message",
-            AuctionId = Guid.NewGuid(),
-            AuctionTitle = "Test Auction Title"
-        };
-    }
-    
     [Collection("Sequential")]
     public class AddNotificationAsyncTests
     {
@@ -172,7 +146,32 @@ public class NotificationWorkerTests // White box test
     [Collection("Sequential")]
     public class SendNotificationAsyncTests
     {
+        private Mock<ILogger<NotificationWorker>> CreateMockLogger()
+        {
+            return new Mock<ILogger<NotificationWorker>>();
+        }
 
+        private Mock<INotificationService> CreateMockNotificationService()
+        {
+            return new Mock<INotificationService>();
+        }
+
+        private Mock<IAmazonSimpleNotificationService> CreateMockSnsClient()
+        {
+            return new Mock<IAmazonSimpleNotificationService>();
+        }
+    
+        private NotificationDTO CreateTestNotificationDto()
+        {
+            return new NotificationDTO
+            {
+                Type = NotificationType.AuctionExpired,
+                Message = "Test Message",
+                AuctionId = Guid.NewGuid(),
+                AuctionTitle = "Test Auction Title"
+            };
+        }
+        
         [Fact]
         public async Task SendNotificationAsync_SuccessfulFlow_SendsNotifications()
         {

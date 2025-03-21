@@ -32,7 +32,7 @@ public class VendorController : ControllerBase
 
             if (result == null)
             {
-                return BadRequest();
+                return NotFound();
             }
                 
             return Ok(result);
@@ -58,7 +58,7 @@ public class VendorController : ControllerBase
 
             if (result == null)
             {
-                return BadRequest();
+                return NotFound();
             }
                 
             return Ok(result);
@@ -66,6 +66,30 @@ public class VendorController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, $"[CONTROLLER] Failed to get vendor details for id: {vendorId}. Exception occurred: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("update-vendor", Name = "UpdateVendor")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendor)
+    {
+        try
+        {
+            var result = await _vendorWorker.UpdateVendorAsync(vendor);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+                
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[CONTROLLER] Failed to update vendor with id: {vendor.VendorId}. Exception occurred: {ex.Message}");
             return BadRequest(ex.Message);
         }
     }

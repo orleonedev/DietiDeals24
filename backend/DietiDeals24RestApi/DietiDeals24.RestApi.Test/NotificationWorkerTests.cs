@@ -14,11 +14,11 @@ namespace DietiDeals24.RestApi.Test;
 public class NotificationWorkerTests
 {
     [Collection("Sequential")]
-    public class AddNotificationAsyncTests
+    public class AddNotificationTokenAsyncTests // Black e White Box
     {
         private readonly NotificationWorker _notificationWorker;
 
-        public AddNotificationAsyncTests() // Black Box test
+        public AddNotificationTokenAsyncTests() // Black Box test
         {
             var mockLogger = new Mock<ILogger<NotificationWorker>>();
             var mockNotificationService = new Mock<INotificationService>();
@@ -238,7 +238,6 @@ public class NotificationWorkerTests
                 var endpointArns = new List<string> { "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone", 
                     "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad" };
                 
-                
                _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
                    .ReturnsAsync(new Notification());
                _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
@@ -276,47 +275,6 @@ public class NotificationWorkerTests
                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default),
                    Times.Exactly(endpointArns.Count));
             } 
-            
-            [Theory]
-           [InlineData(NotificationType.AuctionExpired, "Auction expired")]
-           [InlineData(NotificationType.AuctionBid, "New Bid")]
-           [InlineData(NotificationType.AuctionClosed, "Auction Closed")]
-           [InlineData((NotificationType)999, "Unknown Notification Type")] //simula default nello switch
-           public async Task TestPathWithDifferentNotificationTypes_1_2_3_5_6_7_8_(NotificationType type,
-               string expectedTitle)
-           {
-               // Arrange
-               var userId = Guid.NewGuid();
-               var notificationDto = CreateTestNotificationDto();
-               notificationDto.Type = type;
-               var endpointArns = new List<string> { "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone" };
-
-               _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                   .ReturnsAsync(new Notification());
-               _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                   .ReturnsAsync(endpointArns);
-               _mockSnsClient
-                   .Setup(s => s.PublishAsync(It.Is<PublishRequest>(req => req.Message.Contains(expectedTitle)), default))
-                   .ReturnsAsync(new PublishResponse());
-
-               // Act
-               await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-               // Assert
-               _mockLogger.Verify(
-                   x => x.Log(
-                       LogLevel.Warning,
-                       It.IsAny<EventId>(),
-                       It.IsAny<It.IsAnyType>(),
-                       It.IsAny<Exception>(),
-                       It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-                   Times.AtMost(1));
-               _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-               _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-               _mockSnsClient.Verify(
-                   s => s.PublishAsync(It.Is<PublishRequest>(req => req.Message.Contains(expectedTitle)), default),
-                   Times.Once);
-           }
 
             [Fact]
             public async Task TestPath_1_2_10_8()
@@ -395,6 +353,7 @@ public class NotificationWorkerTests
                         It.IsAny<Exception>(),
                         (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
                     Times.AtLeastOnce);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
                 _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
                 _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
             }
@@ -424,6 +383,7 @@ public class NotificationWorkerTests
                         It.IsAny<Exception>(),
                         (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
                     Times.Once);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
                 _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
                 _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
             }

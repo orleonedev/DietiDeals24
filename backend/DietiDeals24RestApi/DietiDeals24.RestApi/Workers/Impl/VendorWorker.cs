@@ -82,4 +82,32 @@ public class VendorWorker: IVendorWorker
             throw new Exception($"[WORKER] Failed to get vendor details for id: {vendorId}. Exception occurred: {ex.Message}", ex);
         }
     }
+
+    public async Task<DetailedVendorDTO> UpdateVendorAsync(UpdateVendorDTO vendorDto)
+    {
+        try
+        {
+            var vendor = await _vendorService.UpdateVendorAsync(vendorDto);
+
+            var detailedVendor = new DetailedVendorDTO
+            {
+                Id = vendor.Id,
+                Name = vendor.User.Fullname,
+                Username = vendor.User.Username,
+                Email = vendor.User.Email,
+                SuccessfulAuctions = vendor.SuccessfulAuctions,
+                JoinedSince = vendor.StartingDate,
+                GeoLocation = vendor.GeoLocation,
+                WebSiteUrl = vendor.WebSiteUrl,
+                ShortBio = vendor.ShortBio
+            };
+
+            return detailedVendor;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[WORKER] Failed to update vendor with id: {vendorDto.VendorId}. Exception occurred: {ex.Message}");
+            throw new Exception($"[WORKER] Failed to to update vendor with id: {vendorDto.VendorId}. Exception occurred: {ex.Message}", ex);
+        }
+    }
 }

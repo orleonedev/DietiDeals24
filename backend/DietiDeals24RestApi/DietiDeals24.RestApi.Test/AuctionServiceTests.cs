@@ -19,34 +19,56 @@ public class AuctionServiceTests // Black Box Test
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockAuctionRepository = new Mock<IRepository<Auction, Guid>>();
 
-        _mockUnitOfWork.Setup(uow => uow.AuctionRepository).Returns(_mockAuctionRepository.Object);
+        _mockUnitOfWork.Setup(unit => unit.AuctionRepository).Returns(_mockAuctionRepository.Object);
         _auctionService = new AuctionService(_mockUnitOfWork.Object, mockLogger.Object);
     }
 
-    private static Vendor GetValidInputForVendor() => new Vendor
+    private static DateTime GetValidDate()
     {
-        Id = Guid.NewGuid(),
-        UserId = Guid.NewGuid(),
-        GeoLocation = "Napoli",
-        WebSiteUrl = "www.unsemplicevenditore.com",
-        ShortBio = "Un semplice venditore di Napoli.",
-        StartingDate = DateTime.UtcNow,
-        SuccessfulAuctions = 2
-    };
+        DateTime now = DateTime.Now;
+        DateTime validDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+        return validDate;
+    }
 
-    private static CreateAuctionDTO GetValidInputForCreateAuctionDTO() => new CreateAuctionDTO
+    private static Vendor GetValidInputForVendor()
     {
-        Title = "iPhone 12 Usato - Buone condizioni",
-        Description = "Vendo il mio iPhone 12. Nella scatola è incluso il caricatore.",
-        Type = AuctionType.Incremental,
-        Category = AuctionCategory.Services,
-        StartingPrice = 200,
-        Threshold = 25,
-        ThresholdTimer = 3,
-        ImagesIdentifiers = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() },
-        SecretPrice = null,
-        VendorId = Guid.NewGuid(),
-    };
+        var vendor = new Vendor
+        {
+            Id = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
+            GeoLocation = "Napoli",
+            WebSiteUrl = "www.unsemplicevenditore.com",
+            ShortBio = "Un semplice venditore di Napoli.",
+            StartingDate = GetValidDate(),
+            SuccessfulAuctions = 2
+        };
+
+        return vendor;
+    }
+
+    private static CreateAuctionDTO GetValidInputForCreateAuctionDTO()
+    {
+        var createAuctionDto = new CreateAuctionDTO
+        {
+            Title = "iPhone 12 Usato - Buone condizioni",
+            Description = "Vendo il mio iPhone 12. Nella scatola è incluso il caricatore.",
+            Type = AuctionType.Incremental,
+            Category = AuctionCategory.Services,
+            StartingPrice = 200,
+            Threshold = 25,
+            ThresholdTimer = 3,
+            ImagesIdentifiers = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            },
+            SecretPrice = null,
+            VendorId = Guid.NewGuid(),
+        };
+        
+        return createAuctionDto;
+    }
 
     [Fact]
     public async Task CreateAuctionAsync_TestWithValidInut()
@@ -57,8 +79,7 @@ public class AuctionServiceTests // Black Box Test
         auctionDTO.VendorId = vendor.Id;
 
         _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()));
-
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockUnitOfWork.Setup(unit => unit.Save()).ReturnsAsync(1);
 
         // Act
         var result = await _auctionService.CreateAuctionAsync(auctionDTO, vendor);
@@ -89,7 +110,7 @@ public class AuctionServiceTests // Black Box Test
         };
 
         _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()));
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockUnitOfWork.Setup(unit => unit.Save()).ReturnsAsync(1);
 
         // Act
         var result = await _auctionService.CreateAuctionAsync(auctionDTO, vendor);
@@ -112,14 +133,14 @@ public class AuctionServiceTests // Black Box Test
             Category = AuctionCategory.Services,
             StartingPrice = decimal.MaxValue,
             Threshold = int.MaxValue,
-            ThresholdTimer = 8760,
+            ThresholdTimer = 8760, //1 anno
             ImagesIdentifiers = new List<Guid>(Enumerable.Range(0, 100).Select(_ => Guid.NewGuid())),
             SecretPrice = decimal.MaxValue,
             VendorId = vendor.Id
         };
 
         _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()));
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockUnitOfWork.Setup(unit => unit.Save()).ReturnsAsync(1);
 
         // Act
         var result = await _auctionService.CreateAuctionAsync(auctionDTO, vendor);
@@ -148,7 +169,7 @@ public class AuctionServiceTests // Black Box Test
         auctionDTO.VendorId = vendor.Id;
 
         _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()));
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockUnitOfWork.Setup(unit => unit.Save()).ReturnsAsync(1);
 
         // Act
         var result = await _auctionService.CreateAuctionAsync(auctionDTO, vendor);
@@ -177,7 +198,7 @@ public class AuctionServiceTests // Black Box Test
         auctionDTO.VendorId = vendor.Id;
 
         _mockAuctionRepository.Setup(repo => repo.Add(It.IsAny<Auction>()));
-        _mockUnitOfWork.Setup(uow => uow.Save()).ReturnsAsync(1);
+        _mockUnitOfWork.Setup(unit => unit.Save()).ReturnsAsync(1);
 
         // Act
         var result = await _auctionService.CreateAuctionAsync(auctionDTO, vendor);

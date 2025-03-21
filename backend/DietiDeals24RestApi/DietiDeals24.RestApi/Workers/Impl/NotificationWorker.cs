@@ -66,10 +66,16 @@ public class NotificationWorker: INotificationWorker
 
     public async Task AddNotificationTokenAsync(Guid userId, string deviceToken)
     {
+        if (userId == Guid.Empty || string.IsNullOrWhiteSpace(deviceToken))
+        {
+            _logger.LogError("[WORKER] One or more parameter are empty.");
+            throw new Exception($"[WORKER] One or more parameter are empty.");
+        }
+        
         _logger.LogInformation($"[WORKER] Adding notification token for user {userId}.");
         string? alreadyRegisteredToken = await _notificationService.GetEndPointArnFromDeviceTokenAsync(deviceToken);
 
-        if (alreadyRegisteredToken.Any())
+        if (alreadyRegisteredToken != null && alreadyRegisteredToken.Any())
         {
             _logger.LogInformation($"[WORKER] Adding notification token failed for user {userId}: Device token {deviceToken} was already registered.");
             return;
@@ -135,6 +141,12 @@ public class NotificationWorker: INotificationWorker
 
     public async Task SendNotificationAsync(Guid userId, NotificationDTO notificationDto)
     {
+        if (userId == Guid.Empty || notificationDto == null)
+        {
+            _logger.LogError("[WORKER] One or more parameter are empty.");
+            throw new Exception($"[WORKER] One or more parameter are empty.");
+        }
+        
         try
         {
             _logger.LogInformation($"[WORKER] Storing notification for user {userId}.");

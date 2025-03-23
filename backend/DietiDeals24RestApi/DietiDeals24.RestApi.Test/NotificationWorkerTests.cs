@@ -277,406 +277,406 @@ public class NotificationWorkerTests
                 );
             }
         }
-
-        [Collection("Sequential")]
-        public class SendNotificationAsyncTests // Black e White Box test
+    }
+    
+    [Collection("Sequential")]
+    public class SendNotificationAsyncTests // Black e White Box test
+    {
+        private static NotificationDTO CreateTestNotificationDto()
         {
-            private static NotificationDTO CreateTestNotificationDto()
+            return new NotificationDTO
             {
-                return new NotificationDTO
+                Type = NotificationType.AuctionClosed,
+                Message = "L'asta è terminata.",
+                AuctionId = Guid.NewGuid(),
+                AuctionTitle = "iPhone 12 - Usato"
+            };
+        }
+
+        private static Guid GetValidUserId()
+        {
+            return Guid.NewGuid();
+        }
+
+        public class BlackBoxTests
+        {
+            private readonly NotificationWorker _notificationWorker;
+            private readonly Mock<ILogger<NotificationWorker>> _mockLogger;
+            private readonly Mock<INotificationService> _mockNotificationService;
+            private readonly Mock<IAmazonSimpleNotificationService> _mockSnsClient;
+
+            public BlackBoxTests()
+            {
+                _mockLogger = new Mock<ILogger<NotificationWorker>>();
+                _mockNotificationService = new Mock<INotificationService>();
+                _mockSnsClient = new Mock<IAmazonSimpleNotificationService>();
+                _notificationWorker = new NotificationWorker(_mockLogger.Object,
+                    _mockNotificationService.Object,
+                    _mockSnsClient.Object);
+            }
+
+            [Fact]
+            public async Task SendNotificationAsync_TestWithValidInput()
+            {
+                //Arrange
+                var userId = Guid.NewGuid();
+                var notificationDto = CreateTestNotificationDto();
+
+                //Act
+                var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
+                await result;
+
+                //Assert
+                Assert.True(result.IsCompletedSuccessfully);
+            }
+
+            [Fact]
+            public async Task SendNotificationAsync_TestWithMinNotificationDto_ValidUserId()
+            {
+                //Arrange
+                var userId = Guid.NewGuid();
+                var notificationDto = new NotificationDTO
                 {
+                    Id = default,
                     Type = NotificationType.AuctionClosed,
-                    Message = "L'asta è terminata.",
-                    AuctionId = Guid.NewGuid(),
-                    AuctionTitle = "iPhone 12 - Usato"
+                    CreationDate = default,
+                    Message = "",
+                    MainImageUrl = "",
+                    AuctionId = default,
+                    AuctionTitle = ""
                 };
+
+                //Act
+                var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
+                await result;
+
+                //Assert
+                Assert.True(result.IsCompletedSuccessfully);
             }
 
-            private static Guid GetValidUserId()
+            [Fact]
+            public async Task SendNotificationAsync_TestWithMaxNotificationDto_ValidUserId()
             {
-                return Guid.NewGuid();
+                //Arrange
+                var userId = Guid.NewGuid();
+                var notificationDto = new NotificationDTO
+                {
+                    Id = default,
+                    Type = NotificationType.AuctionBid,
+                    CreationDate = default,
+                    Message = new string('a', 300),
+                    MainImageUrl = new string('a', 300),
+                    AuctionId = default,
+                    AuctionTitle = new string('a', 300)
+                };
+
+                //Act
+                var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
+                await result;
+
+                //Assert
+                Assert.True(result.IsCompletedSuccessfully);
             }
 
-            public class BlackBoxTests
+            [Fact]
+            public async Task SendNotificationAsync_TestWithEmptyUserId_ValidNotificationDto()
             {
-                private readonly NotificationWorker _notificationWorker;
-                private readonly Mock<ILogger<NotificationWorker>> _mockLogger;
-                private readonly Mock<INotificationService> _mockNotificationService;
-                private readonly Mock<IAmazonSimpleNotificationService> _mockSnsClient;
+                //Arrange
+                var userId = Guid.Empty;
+                var notificationDto = CreateTestNotificationDto();
 
-                public BlackBoxTests()
-                {
-                    _mockLogger = new Mock<ILogger<NotificationWorker>>();
-                    _mockNotificationService = new Mock<INotificationService>();
-                    _mockSnsClient = new Mock<IAmazonSimpleNotificationService>();
-                    _notificationWorker = new NotificationWorker(_mockLogger.Object,
-                        _mockNotificationService.Object,
-                        _mockSnsClient.Object);
-                }
+                //Act & Assert
+                await Assert.ThrowsAsync<Exception>(() =>
+                    _notificationWorker.SendNotificationAsync(userId, notificationDto));
 
-                [Fact]
-                public async Task SendNotificationAsync_TestWithValidInput()
-                {
-                    //Arrange
-                    var userId = Guid.NewGuid();
-                    var notificationDto = CreateTestNotificationDto();
-
-                    //Act
-                    var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
-                    await result;
-
-                    //Assert
-                    Assert.True(result.IsCompletedSuccessfully);
-                }
-
-                [Fact]
-                public async Task SendNotificationAsync_TestWithMinNotificationDto_ValidUserId()
-                {
-                    //Arrange
-                    var userId = Guid.NewGuid();
-                    var notificationDto = new NotificationDTO
-                    {
-                        Id = default,
-                        Type = NotificationType.AuctionClosed,
-                        CreationDate = default,
-                        Message = "",
-                        MainImageUrl = "",
-                        AuctionId = default,
-                        AuctionTitle = ""
-                    };
-
-                    //Act
-                    var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
-                    await result;
-
-                    //Assert
-                    Assert.True(result.IsCompletedSuccessfully);
-                }
-
-                [Fact]
-                public async Task SendNotificationAsync_TestWithMaxNotificationDto_ValidUserId()
-                {
-                    //Arrange
-                    var userId = Guid.NewGuid();
-                    var notificationDto = new NotificationDTO
-                    {
-                        Id = default,
-                        Type = NotificationType.AuctionBid,
-                        CreationDate = default,
-                        Message = new string('a', 300),
-                        MainImageUrl = new string('a', 300),
-                        AuctionId = default,
-                        AuctionTitle = new string('a', 300)
-                    };
-
-                    //Act
-                    var result = _notificationWorker.SendNotificationAsync(userId, notificationDto);
-                    await result;
-
-                    //Assert
-                    Assert.True(result.IsCompletedSuccessfully);
-                }
-
-                [Fact]
-                public async Task SendNotificationAsync_TestWithEmptyUserId_ValidNotificationDto()
-                {
-                    //Arrange
-                    var userId = Guid.Empty;
-                    var notificationDto = CreateTestNotificationDto();
-
-                    //Act & Assert
-                    await Assert.ThrowsAsync<Exception>(() =>
-                        _notificationWorker.SendNotificationAsync(userId, notificationDto));
-
-                }
-
-                [Fact]
-                public async Task SendNotificationAsync_TestWithNullNotificationDto_ValidUserId()
-                {
-                    //Arrange
-                    var userId = Guid.NewGuid();
-                    NotificationDTO notificationDto = null;
-
-                    //Act & Assert
-                    await Assert.ThrowsAsync<Exception>(() =>
-                        _notificationWorker.SendNotificationAsync(userId, notificationDto));
-                }
             }
 
-            public class WhiteBoxTests
+            [Fact]
+            public async Task SendNotificationAsync_TestWithNullNotificationDto_ValidUserId()
             {
-                private readonly NotificationWorker _notificationWorker;
-                private readonly Mock<ILogger<NotificationWorker>> _mockLogger;
-                private readonly Mock<INotificationService> _mockNotificationService;
-                private readonly Mock<IAmazonSimpleNotificationService> _mockSnsClient;
+                //Arrange
+                var userId = Guid.NewGuid();
+                NotificationDTO notificationDto = null;
 
-                public WhiteBoxTests()
+                //Act & Assert
+                await Assert.ThrowsAsync<Exception>(() =>
+                    _notificationWorker.SendNotificationAsync(userId, notificationDto));
+            }
+        }
+
+        public class WhiteBoxTests
+        {
+            private readonly NotificationWorker _notificationWorker;
+            private readonly Mock<ILogger<NotificationWorker>> _mockLogger;
+            private readonly Mock<INotificationService> _mockNotificationService;
+            private readonly Mock<IAmazonSimpleNotificationService> _mockSnsClient;
+
+            public WhiteBoxTests()
+            {
+                _mockLogger = new Mock<ILogger<NotificationWorker>>();
+                _mockNotificationService = new Mock<INotificationService>();
+                _mockSnsClient = new Mock<IAmazonSimpleNotificationService>();
+                _notificationWorker = new NotificationWorker(_mockLogger.Object,
+                    _mockNotificationService.Object,
+                    _mockSnsClient.Object);
+            }
+
+            [Fact]
+            public async Task TestPath_1_2_3_5_6_7_8()
+            {
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+                var endpointArns = new List<string>
                 {
-                    _mockLogger = new Mock<ILogger<NotificationWorker>>();
-                    _mockNotificationService = new Mock<INotificationService>();
-                    _mockSnsClient = new Mock<IAmazonSimpleNotificationService>();
-                    _notificationWorker = new NotificationWorker(_mockLogger.Object,
-                        _mockNotificationService.Object,
-                        _mockSnsClient.Object);
-                }
+                    "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone",
+                    "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"
+                };
 
-                [Fact]
-                public async Task TestPath_1_2_3_5_6_7_8()
+                _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ReturnsAsync(new Notification());
+                _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
+                    .ReturnsAsync(endpointArns);
+                _mockSnsClient.Setup(s => s.PublishAsync(It.IsAny<PublishRequest>(), default))
+                    .ReturnsAsync(new PublishResponse());
+
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+
+                // Assert
+                // Verifica che il logger sia stato chiamato un numero di volte compreso in un intervallo
+                // 1 ad inizio AddNotificationAsync, 1 alla fine, 1 quanod inizia ad inviare la notifica, 1 dopo la fine dell'invio di notifica.
+                // 2 per ogni endpoint.
+                int expectedInformationLogs = 4 + (endpointArns.Count * 2);
+
+                _mockLogger.Verify(
+                    x => x.Log(
+                        LogLevel.Information,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.Between(5, expectedInformationLogs, Range.Inclusive));
+                _mockLogger.Verify(
+                    x => x.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.Never);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default),
+                    Times.Exactly(endpointArns.Count));
+            }
+
+            [Fact]
+            public async Task TestPath_1_2_10_8()
+            {
+                //Arrange
+                Guid userId = Guid.Empty;
+                NotificationDTO notificationDto = null;
+                var exception = new Exception("One or more parameter is empty.");
+
+                // Act
+                await Assert.ThrowsAsync<Exception>(() =>
+                    _notificationWorker.SendNotificationAsync(userId, notificationDto));
+
+                // Assert
+                _mockLogger.Verify(l => l.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.Once);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Never);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Never);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
+            }
+
+            [Fact]
+            public async Task TestPath_1_2_11_8()
+            {
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+                var exception = new Exception("Add notification failed");
+
+                _mockNotificationService
+                    .Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ThrowsAsync(exception);
+
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+
+                // Assert
+                _mockLogger.Verify(l => l.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.AtLeastOnce);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Never);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
+            }
+
+            [Fact]
+            public async Task TestPath_1_2_3_12_8()
+            {
+
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+                var exception = new Exception("Get endpoints failed");
+
+                _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ReturnsAsync(new Notification());
+                _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
+                    .ThrowsAsync(exception);
+
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+
+                // Assert
+                _mockLogger.Verify(l => l.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.AtLeastOnce);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
+            }
+
+            [Fact]
+            public async Task TestPath_1_2_3_4_8()
+            {
+
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+
+                _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ReturnsAsync(new Notification());
+
+                _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
+                    .ReturnsAsync(new List<string>());
+
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+
+                // Assert
+                _mockLogger.Verify(l => l.Log(
+                        LogLevel.Warning,
+                        It.IsAny<EventId>(),
+                        It.Is<It.IsAnyType>((state, type) => state.ToString().Contains("No endpoints found")),
+                        It.IsAny<Exception>(),
+                        (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+                    Times.Once);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
+            }
+
+            [Fact]
+            public async Task TestPathWithExceptionOnPublish_1_2_3_5_6_7_8()
+            {
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+                var endpointArns = new List<string> { "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone" };
+                var exception = new Exception("Publish failed");
+
+                _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ReturnsAsync(new Notification());
+                _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
+                    .ReturnsAsync(endpointArns);
+                _mockSnsClient.Setup(s => s.PublishAsync(It.IsAny<PublishRequest>(), default))
+                    .ThrowsAsync(exception);
+
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+
+                // Assert
+                _mockLogger.Verify(
+                    x => x.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        exception,
+                        It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    Times.Once);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
+                _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default),
+                    Times.Once);
+            }
+
+            [Fact]
+            public async Task TestPathPublishFailsForOneEndpoint_1_2_3_5_6_7_8()
+            {
+                // Arrange
+                var userId = GetValidUserId();
+                var notificationDto = CreateTestNotificationDto();
+                var endpointArns = new List<string>
                 {
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-                    var endpointArns = new List<string>
-                    {
-                        "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone",
-                        "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"
-                    };
+                    "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone",
+                    "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad",
+                    "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone2"
+                };
+                var exception =
+                    new Exception("Publish failed for arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad");
 
-                    _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ReturnsAsync(new Notification());
-                    _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                        .ReturnsAsync(endpointArns);
-                    _mockSnsClient.Setup(s => s.PublishAsync(It.IsAny<PublishRequest>(), default))
-                        .ReturnsAsync(new PublishResponse());
+                _mockNotificationService
+                    .Setup(s => s.AddNotificationAsync(notificationDto, userId))
+                    .ReturnsAsync(new Notification());
+                _mockNotificationService
+                    .Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
+                    .ReturnsAsync(endpointArns);
+                // Successo per tutti gli endpoint eccetto arn:endpoint2
+                _mockSnsClient
+                    .Setup(s => s.PublishAsync(
+                        It.Is<PublishRequest>(p =>
+                            p.TargetArn != "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default))
+                    .ReturnsAsync(new PublishResponse());
+                // Setup per "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"
+                _mockSnsClient
+                    .Setup(x => x.PublishAsync(
+                        It.Is<PublishRequest>(p =>
+                            p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default))
+                    .ThrowsAsync(exception);
 
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
+                // Act
+                await _notificationWorker.SendNotificationAsync(userId, notificationDto);
 
-                    // Assert
-                    // Verifica che il logger sia stato chiamato un numero di volte compreso in un intervallo
-                    // 1 ad inizio AddNotificationAsync, 1 alla fine, 1 quanod inizia ad inviare la notifica, 1 dopo la fine dell'invio di notifica.
-                    // 2 per ogni endpoint.
-                    int expectedInformationLogs = 4 + (endpointArns.Count * 2);
-
-                    _mockLogger.Verify(
-                        x => x.Log(
-                            LogLevel.Information,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.Between(5, expectedInformationLogs, Range.Inclusive));
-                    _mockLogger.Verify(
-                        x => x.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.Never);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default),
-                        Times.Exactly(endpointArns.Count));
-                }
-
-                [Fact]
-                public async Task TestPath_1_2_10_8()
-                {
-                    //Arrange
-                    Guid userId = Guid.Empty;
-                    NotificationDTO notificationDto = null;
-                    var exception = new Exception("One or more parameter is empty.");
-
-                    // Act
-                    await Assert.ThrowsAsync<Exception>(() =>
-                        _notificationWorker.SendNotificationAsync(userId, notificationDto));
-
-                    // Assert
-                    _mockLogger.Verify(l => l.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.Once);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Never);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Never);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
-                }
-
-                [Fact]
-                public async Task TestPath_1_2_11_8()
-                {
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-                    var exception = new Exception("Add notification failed");
-
-                    _mockNotificationService
-                        .Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ThrowsAsync(exception);
-
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-                    // Assert
-                    _mockLogger.Verify(l => l.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.AtLeastOnce);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Never);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
-                }
-
-                [Fact]
-                public async Task TestPath_1_2_3_12_8()
-                {
-
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-                    var exception = new Exception("Get endpoints failed");
-
-                    _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ReturnsAsync(new Notification());
-                    _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                        .ThrowsAsync(exception);
-
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-                    // Assert
-                    _mockLogger.Verify(l => l.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.AtLeastOnce);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
-                }
-
-                [Fact]
-                public async Task TestPath_1_2_3_4_8()
-                {
-
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-
-                    _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ReturnsAsync(new Notification());
-
-                    _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                        .ReturnsAsync(new List<string>());
-
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-                    // Assert
-                    _mockLogger.Verify(l => l.Log(
-                            LogLevel.Warning,
-                            It.IsAny<EventId>(),
-                            It.Is<It.IsAnyType>((state, type) => state.ToString().Contains("No endpoints found")),
-                            It.IsAny<Exception>(),
-                            (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-                        Times.Once);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default), Times.Never);
-                }
-
-                [Fact]
-                public async Task TestPathWithExceptionOnPublish_1_2_3_5_6_7_8()
-                {
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-                    var endpointArns = new List<string> { "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone" };
-                    var exception = new Exception("Publish failed");
-
-                    _mockNotificationService.Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ReturnsAsync(new Notification());
-                    _mockNotificationService.Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                        .ReturnsAsync(endpointArns);
-                    _mockSnsClient.Setup(s => s.PublishAsync(It.IsAny<PublishRequest>(), default))
-                        .ThrowsAsync(exception);
-
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-                    // Assert
-                    _mockLogger.Verify(
-                        x => x.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            exception,
-                            It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-                        Times.Once);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-                    _mockSnsClient.Verify(s => s.PublishAsync(It.IsAny<PublishRequest>(), default),
-                        Times.Once);
-                }
-
-                [Fact]
-                public async Task TestPathPublishFailsForOneEndpoint_1_2_3_5_6_7_8()
-                {
-                    // Arrange
-                    var userId = GetValidUserId();
-                    var notificationDto = CreateTestNotificationDto();
-                    var endpointArns = new List<string>
-                    {
-                        "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone",
-                        "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad",
-                        "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone2"
-                    };
-                    var exception =
-                        new Exception("Publish failed for arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad");
-
-                    _mockNotificationService
-                        .Setup(s => s.AddNotificationAsync(notificationDto, userId))
-                        .ReturnsAsync(new Notification());
-                    _mockNotificationService
-                        .Setup(s => s.GetEndPointArnFromUserIdAsync(userId))
-                        .ReturnsAsync(endpointArns);
-                    // Successo per tutti gli endpoint eccetto arn:endpoint2
-                    _mockSnsClient
-                        .Setup(s => s.PublishAsync(
-                            It.Is<PublishRequest>(p =>
-                                p.TargetArn != "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default))
-                        .ReturnsAsync(new PublishResponse());
-                    // Setup per "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"
-                    _mockSnsClient
-                        .Setup(x => x.PublishAsync(
-                            It.Is<PublishRequest>(p =>
-                                p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default))
-                        .ThrowsAsync(exception);
-
-                    // Act
-                    await _notificationWorker.SendNotificationAsync(userId, notificationDto);
-
-                    // Assert
-                    _mockLogger.Verify(
-                        x => x.Log(
-                            LogLevel.Error,
-                            It.IsAny<EventId>(),
-                            It.IsAny<It.IsAnyType>(),
-                            It.Is<Exception>(ex =>
-                                ex.Message.Contains(
-                                    "Publish failed for arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad")),
-                            It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-                        Times.Once);
-                    _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
-                    _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
-                    _mockSnsClient.Verify(x => x.PublishAsync(It.Is<PublishRequest>(p =>
-                            p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone"
-                            || p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone2"), default),
-                        Times.Exactly(2));
-                    _mockSnsClient.Verify(
-                        x => x.PublishAsync(
-                            It.Is<PublishRequest>(p =>
-                                p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default),
-                        Times.Once);
-                }
+                // Assert
+                _mockLogger.Verify(
+                    x => x.Log(
+                        LogLevel.Error,
+                        It.IsAny<EventId>(),
+                        It.IsAny<It.IsAnyType>(),
+                        It.Is<Exception>(ex =>
+                            ex.Message.Contains(
+                                "Publish failed for arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad")),
+                        It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                    Times.Once);
+                _mockNotificationService.Verify(s => s.AddNotificationAsync(notificationDto, userId), Times.Once);
+                _mockNotificationService.Verify(s => s.GetEndPointArnFromUserIdAsync(userId), Times.Once);
+                _mockSnsClient.Verify(x => x.PublishAsync(It.Is<PublishRequest>(p =>
+                        p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone"
+                        || p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/iphone2"), default),
+                    Times.Exactly(2));
+                _mockSnsClient.Verify(
+                    x => x.PublishAsync(
+                        It.Is<PublishRequest>(p =>
+                            p.TargetArn == "arn:aws:sns:eu-west-1:123150819972:endpoint/APNS/ipad"), default),
+                    Times.Once);
             }
         }
     }

@@ -7,6 +7,7 @@ using DietiDeals24.RestApi.Workers;
 using DietiDeals24.RestApi.Workers.Impl;
 using Microsoft.Extensions.Logging;
 using Moq;
+using DateTime = System.DateTime;
 using Range = Moq.Range;
 
 namespace DietiDeals24.RestApi.Test;
@@ -286,8 +287,11 @@ public class NotificationWorkerTests
         {
             return new NotificationDTO
             {
+                Id = default,
                 Type = NotificationType.AuctionClosed,
+                CreationDate = new DateTime(2025,01,01),
                 Message = "L'asta è terminata.",
+                MainImageUrl = "www.mainimage.com",
                 AuctionId = Guid.NewGuid(),
                 AuctionTitle = "iPhone 12 - Usato"
             };

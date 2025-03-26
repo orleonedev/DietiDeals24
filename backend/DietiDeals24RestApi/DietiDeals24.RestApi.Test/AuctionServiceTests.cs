@@ -213,20 +213,18 @@ public class AuctionServiceTests // Black Box Test
     {
         // Arrange
         var vendor = GetValidInputForVendor();
-        CreateAuctionDTO auctionDTO = null;
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(auctionDTO, vendor));
+        await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(null, vendor));
     }
 
     [Fact]
     public async Task CreateAuctionAsync_TestWithNullVendor()
     {
         // Arrange
-        Vendor vendor = null;
         var auctionDTO = GetValidInputForCreateAuctionDTO();
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(auctionDTO, vendor));
+        await Assert.ThrowsAsync<Exception>(() => _auctionService.CreateAuctionAsync(auctionDTO, null));
     }
 }

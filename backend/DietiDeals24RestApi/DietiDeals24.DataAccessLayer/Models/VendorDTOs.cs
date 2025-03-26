@@ -10,6 +10,14 @@ public class CreateVendorDTO
     public string? ShortBio { get; set; }
 }
 
+public class UpdateVendorDTO
+{
+    public Guid VendorId { get; set; }
+    public string? GeoLocation { get; set; }
+    public string? WebSiteUrl { get; set; }
+    public string? ShortBio { get; set; }
+}
+
 public class DetailedVendorDTO
 {
     public Guid Id { get; set; }

@@ -73,9 +73,16 @@ public class BidWorker: IBidWorker
                 
                 notification.Type = NotificationType.AuctionClosed;
                 notification.Message = "auction.won.message";
-                await _notificationWorker.SendNotificationAsync(bidDto.BuyerId, notification);
                 notification.Message = "auction.successfully.closed.message";
-                await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
+                try
+                {
+                    await _notificationWorker.SendNotificationAsync(bidDto.BuyerId, notification);
+                    await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+                }
             }
             else
             {
@@ -84,7 +91,14 @@ public class BidWorker: IBidWorker
                 var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
                 notification.Type = NotificationType.AuctionBid;
                 notification.Message = "new.bid.message";
-                await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
+                try
+                {
+                    await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+                }
             }
             
             await _auctionService.UpdateAuctionAsync(auction);

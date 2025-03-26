@@ -12,4 +12,5 @@ public interface IVendorService
     public Task<IEnumerable<Vendor>> GetAllVendorsAsync(string? predicate = null, params object[] parameters);
     public Task<Vendor> CreateVendorAsync(CreateVendorDTO vendorDto);
     public Task AddSuccessfulAuctionToVendorAsync(Guid vendorId);
+    public Task<Vendor> UpdateVendorAsync(UpdateVendorDTO vendorDto);
 }

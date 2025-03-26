@@ -22,6 +22,19 @@ struct UserAreaMainView: View, LoadableView {
             }
             .padding()
             if viewModel.userDataModel?.role == .seller {
+                Button {
+                    viewModel.editVendorProfile()
+                } label: {
+                    Text("Edit Profile")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(.accent)
+                        .clipShape(.rect(cornerRadius: 12))
+                }
+                .padding()
                 AuctionListView(
                     auctionList: viewModel.vendorItems,
                     mainHeader: "My Active Auctions",
@@ -42,6 +55,7 @@ struct UserAreaMainView: View, LoadableView {
             }
         }
         .background {
+            if viewModel.vendorItems.isEmpty {
             ZStack(alignment: .center) {
                 Color.clear
                 VStack(spacing: 8) {
@@ -82,7 +96,7 @@ struct UserAreaMainView: View, LoadableView {
                     
                 }
                 
-            }
+            }}
         }
         .task {
             await viewModel.getUserData()
@@ -110,7 +124,12 @@ struct UserAreaMainView: View, LoadableView {
 
 
 #Preview {
-    NavigationStack{
-        UserAreaMainView(viewModel: .init(coordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource())))
+    @Previewable @State var vm = UserAreaMainViewModel(coordinator: .init(appContainer: .init()), vendorService: DefaultVendorService(rest: DefaultRESTDataSource()), auctionService: DefaultAuctionService(rest: DefaultRESTDataSource()))
+    
+     return NavigationStack{
+         UserAreaMainView(viewModel: vm)
+             .onLongPressGesture {
+                 vm.userDataModel = UserDataModel(name: "User", username: "User", email: "user@user.com", role: .seller, vendorId: UUID().uuidString, shortBio: "yes", url: "url.com", successfulAuctions: 1, joinedSince: .now, geoLocation: "Fratm" )
+             }
     }
 }

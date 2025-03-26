@@ -8,6 +8,11 @@
 import Foundation
 
 final class DefaultVendorService: VendorService {
+    func updateVendorProfile(update: UpdateVendorBodyRequest) async throws -> VendorProfileResponseDTO {
+        let updatedProfile: VendorProfileResponseDTO = try await rest.getCodable(at: VendorEndpoint.updateVendorDetail(update: update).endpoint)
+        return updatedProfile
+    }
+    
     
     let rest: RESTDataSource
     

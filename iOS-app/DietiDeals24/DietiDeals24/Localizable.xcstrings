@@ -75,6 +75,17 @@
         }
       }
     },
+    "All" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte"
+          }
+        }
+      }
+    },
     "Apply" : {
       "localizations" : {
         "it" : {
@@ -254,6 +265,17 @@
         }
       }
     },
+    "Clothing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vestiario"
+          }
+        }
+      }
+    },
     "Code" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -261,6 +283,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Codice"
+          }
+        }
+      }
+    },
+    "Collectibles" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collezionabile"
           }
         }
       }
@@ -305,6 +338,17 @@
         }
       }
     },
+    "Descending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al Ribasso"
+          }
+        }
+      }
+    },
     "Description" : {
       "localizations" : {
         "it" : {
@@ -324,6 +368,20 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non hai un account?"
+          }
+        }
+      }
+    },
+    "Edit Profile" : {
+
+    },
+    "Electronics" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elettronica"
           }
         }
       }
@@ -359,8 +417,30 @@
         }
       }
     },
+    "Furniture" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arredamento"
+          }
+        }
+      }
+    },
     "Giuseppe Falso\nN86002941" : {
 
+    },
+    "Hobbies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hobby"
+          }
+        }
+      }
     },
     "If you haven't received any notifications yet, please try again later." : {
       "localizations" : {
@@ -378,6 +458,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Immagini (opzionali)"
+          }
+        }
+      }
+    },
+    "Incremental" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incrementale"
           }
         }
       }
@@ -512,6 +603,17 @@
     "Oreste Leone\nN86001980" : {
 
     },
+    "Other" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altro"
+          }
+        }
+      }
+    },
     "Personal Area" : {
       "localizations" : {
         "it" : {
@@ -629,6 +731,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vendi"
+          }
+        }
+      }
+    },
+    "Services" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servizi"
           }
         }
       }
@@ -779,6 +892,12 @@
           }
         }
       }
+    },
+    "Update Vendor Details" : {
+
+    },
+    "Update Your Profile" : {
+
     },
     "Verify" : {
       "localizations" : {

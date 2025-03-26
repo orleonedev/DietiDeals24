@@ -129,6 +129,10 @@ extension AppContainer {
         register(for: AuctionDetailMainViewModel.self, tag: .init("UserArea")) {
             AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(UserAreaCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
         }
+        
+        register(for: UpdateVendorDetailViewModel.self) {
+            UpdateVendorDetailViewModel(userAreaCoordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
+        }
     }
     
     //MARK: - SELL TAB

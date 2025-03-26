@@ -32,11 +32,11 @@ enum AuctionType: Int, FilterModelProtocol {
     var label: String {
         switch self {
             case .incremental:
-                return "Incremental"
+                return "Incremental".localized
             case .descending:
-                return "Descending"
+                return "Descending".localized
             case .all:
-                return "All"
+                return "All".localized
         }
     }
     
@@ -92,19 +92,28 @@ enum AuctionCategory: Int, FilterModelProtocol {
     case Electronics = 2
     case Furniture = 3
     case Clothing = 4
+    case Collectibles = 5
+    case Hobbies = 6
+    case Other = 7
     
     var label: String {
         switch self {
             case .services:
-                return "Services"
+                return "Services".localized
             case .Electronics:
-                return "Electronics"
+                return "Electronics".localized
             case .Furniture:
-                return "Furniture"
+                return "Furniture".localized
             case .Clothing:
-                return "Clothing"
+                return "Clothing".localized
             case .all:
-                return "All"
+                return "All".localized
+            case .Collectibles:
+                return "Collectibles".localized
+            case .Hobbies:
+                return "Hobbies".localized
+            case .Other:
+                return "Other".localized
         }
     }
     

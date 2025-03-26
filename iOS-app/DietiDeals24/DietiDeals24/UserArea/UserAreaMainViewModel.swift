@@ -95,4 +95,13 @@ class UserAreaMainViewModel: LoadableViewModel {
             self.shouldFetchMoreVendorItem = vendorItemsCount > vendorItems.count
         }
     }
+    
+    @MainActor
+    func editVendorProfile() {
+        guard let userDataModel, let vendorId = UUID(uuidString: userDataModel.vendorId ?? ""), let shortBio = userDataModel.shortBio, let website = userDataModel.url, let location = userDataModel.geoLocation else { return }
+        self.coordinator.editVendorProfile(vendorId: vendorId, shortBio: shortBio, website: website, location: location, onEditComplete: { Task {
+            await self.getUserData()
+        }})
+        
+    }
 }

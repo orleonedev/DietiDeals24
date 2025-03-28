@@ -265,19 +265,40 @@ public class AuctionWorker: IAuctionWorker
             var winnerBid = bids.FirstOrDefault();
             
             //Winner notification
-            await _notificationWorker.SendNotificationAsync(winnerBid.BuyerId, buyersNotification);
+            try
+            {
+                await _notificationWorker.SendNotificationAsync(winnerBid.BuyerId, buyersNotification);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+            }
 
             bids.Remove(winnerBid);
             buyersNotification.Message = "auction.lost.message";
             
             foreach (var bid in bids)
             {
-                await _notificationWorker.SendNotificationAsync(bid.BuyerId, buyersNotification);
+                try
+                {
+                    await _notificationWorker.SendNotificationAsync(bid.BuyerId, buyersNotification);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+                }
             }
             vendorNotification.Message = "auction.successfully.closed.message";
         }
         
-        await _notificationWorker.SendNotificationAsync(vendor.UserId, vendorNotification);
+        try
+        {
+            await _notificationWorker.SendNotificationAsync(vendor.UserId, vendorNotification);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+        }
     }
 
     private async Task OnDescendingAuctionEndTimeReached(Auction auction,Vendor vendor, string mainImageUrl)
@@ -306,8 +327,14 @@ public class AuctionWorker: IAuctionWorker
             AuctionTitle = auction.Title
         };
         
-        await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
-        
+        try
+        {
+            await _notificationWorker.SendNotificationAsync(vendor.UserId, notification);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"[WORKER] Failed to send notification. Exception occurred: {ex.Message}");
+        }
     }
 
 }

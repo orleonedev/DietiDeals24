@@ -89,10 +89,10 @@ extension AppContainer {
             AuthFlowCoordinator(container: self)
         }
         register(for: SignInViewModel.self) { [self] in
-            SignInViewModel(coordinator: unsafeResolve())
+            SignInViewModel(coordinator: unsafeResolve(), validator: Validator())
         }
         register(for: SignUpViewModel.self) { [self] in
-            SignUpViewModel(coordinator: unsafeResolve())
+            SignUpViewModel(coordinator: unsafeResolve(), validator: Validator())
         }
         register(for: CodeVerificationViewModel.self) { [self] in
             CodeVerificationViewModel(coordinator: unsafeResolve())
@@ -128,6 +128,10 @@ extension AppContainer {
         
         register(for: AuctionDetailMainViewModel.self, tag: .init("UserArea")) {
             AuctionDetailMainViewModel(auctionCoordinator: self.unsafeResolve(UserAreaCoordinator.self), vendorService: self.unsafeResolve(VendorService.self), auctionService: self.unsafeResolve(AuctionService.self))
+        }
+        
+        register(for: UpdateVendorDetailViewModel.self) {
+            UpdateVendorDetailViewModel(userAreaCoordinator: self.unsafeResolve(), vendorService: self.unsafeResolve())
         }
     }
     

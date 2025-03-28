@@ -13,3 +13,10 @@ struct BecomeAVendorBodyRequest: Encodable, BodyParameters {
     var webSiteUrl: String = ""
     var geoLocation: String = ""
 }
+
+struct UpdateVendorBodyRequest: Encodable, BodyParameters {
+    var vendorId: UUID
+    var shortBio: String = ""
+    var webSiteUrl: String = ""
+    var geoLocation: String = ""
+}

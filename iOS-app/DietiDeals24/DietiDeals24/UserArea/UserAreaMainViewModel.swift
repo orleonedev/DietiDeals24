@@ -70,6 +70,15 @@ class UserAreaMainViewModel: LoadableViewModel {
     }
     
     @MainActor
+    func refreshVendorItems() {
+        vendorItems.removeAll()
+        vendorItemsCount = 0
+        vendorPage = 1
+        shouldFetchMoreVendorItem = true
+        getMoreVendorItems()
+    }
+    
+    @MainActor
     func getMoreVendorItems() {
         Task {
             guard shouldFetchMoreVendorItem, !isFetchingVendorItems else { return }
@@ -85,5 +94,14 @@ class UserAreaMainViewModel: LoadableViewModel {
             self.vendorItems.append(contentsOf: newVendorItems)
             self.shouldFetchMoreVendorItem = vendorItemsCount > vendorItems.count
         }
+    }
+    
+    @MainActor
+    func editVendorProfile() {
+        guard let userDataModel, let vendorId = UUID(uuidString: userDataModel.vendorId ?? ""), let shortBio = userDataModel.shortBio, let website = userDataModel.url, let location = userDataModel.geoLocation else { return }
+        self.coordinator.editVendorProfile(vendorId: vendorId, shortBio: shortBio, website: website, location: location, onEditComplete: { Task {
+            await self.getUserData()
+        }})
+        
     }
 }

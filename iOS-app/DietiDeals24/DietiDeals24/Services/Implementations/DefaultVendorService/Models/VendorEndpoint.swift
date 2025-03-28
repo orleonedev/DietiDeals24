@@ -10,6 +10,7 @@ import Foundation
 enum VendorEndpoint {
     case becomeVendor(parameters: BecomeAVendorBodyRequest)
     case getVendor(id: UUID)
+    case updateVendorDetail(update: UpdateVendorBodyRequest)
 }
 
 extension VendorEndpoint {
@@ -19,6 +20,8 @@ extension VendorEndpoint {
                 return Self.getBecomeAVendorEndpoint(param: parameters)
             case .getVendor(let id):
                 return Self.getVendorDetailEndpoint(id: id)
+            case .updateVendorDetail(update: let update):
+                return Self.updateVendorDetailEndpoint(update: update)
         }
     }
     
@@ -56,4 +59,23 @@ extension VendorEndpoint {
             )
         )
     }
+    
+    static private func updateVendorDetailEndpoint(update: UpdateVendorBodyRequest) -> CodableEndpoint<VendorProfileResponseDTO> {
+        
+        let baseURLString = URL(string: NetworkConfiguration.backendBaseUrl)!
+        let httpMethod = HTTPMethod.post
+        let encoding = Endpoint.Encoding.json
+        let body = update.jsonObject
+        
+        return CodableEndpoint<VendorProfileResponseDTO>(
+            Endpoint(
+                baseURL: baseURLString,
+                path: "/Vendor/update-vendor",
+                parameters: body ?? [:],
+                encoding: encoding,
+                method: httpMethod,
+                authorizationType: .bearer
+            )
+        )
+            }
 }

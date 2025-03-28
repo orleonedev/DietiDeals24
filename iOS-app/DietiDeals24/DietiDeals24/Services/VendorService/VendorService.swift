@@ -12,4 +12,6 @@ protocol VendorService {
     func becomeAVendor(parameters: BecomeAVendorBodyRequest) async throws -> Bool
     
     func getVendorProfile(id: UUID) async throws -> VendorProfileResponseDTO
+    
+    func updateVendorProfile(update: UpdateVendorBodyRequest) async throws -> VendorProfileResponseDTO
 }

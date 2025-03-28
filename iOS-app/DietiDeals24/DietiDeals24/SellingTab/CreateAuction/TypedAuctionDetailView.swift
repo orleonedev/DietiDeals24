@@ -55,20 +55,20 @@ extension TypedAuctionDetailView {
     func formFields() -> some View {
         VStack(alignment: .leading,spacing: 21) {
             
-            ValidableTextField(validationError: $viewModel.startingPriceValidationError, text: $viewModel.startingPrice, validation: viewModel.validateStartingPrice, label: "Starting Price" )
+            ValidableTextField(validationError: $viewModel.startingPriceValidationError, text: $viewModel.startingPrice, validation: viewModel.validateStartingPrice, label: "Starting Price".localized )
             .keyboardType(.decimalPad)
             .focused(self.$isFocused)
             
-            ValidableTextField(validationError: $viewModel.timerValidationError, text: $viewModel.timer, validation: viewModel.validateTimer, label: "Timer (min 1h)" )
+            ValidableTextField(validationError: $viewModel.timerValidationError, text: $viewModel.timer, validation: viewModel.validateTimer, label: "Timer (min 1h)".localized )
             .keyboardType(.decimalPad)
             .focused(self.$isFocused)
             
-            ValidableTextField(validationError: $viewModel.thresholdValidationError, text: $viewModel.threshold, validation: viewModel.validateThreshold, label: "Threshold (min. 1)" )
+            ValidableTextField(validationError: $viewModel.thresholdValidationError, text: $viewModel.threshold, validation: viewModel.validateThreshold, label: "Threshold (min. 1)".localized )
                 .keyboardType(.numberPad)
             .focused(self.$isFocused)
             
             if self.viewModel.auctionType == .descending {
-                ValidableTextField(validationError: $viewModel.secretPriceValidationError, text: $viewModel.secretPrice, validation: viewModel.validateSecretPrice, label: "Secret Price" )
+                ValidableTextField(validationError: $viewModel.secretPriceValidationError, text: $viewModel.secretPrice, validation: viewModel.validateSecretPrice, label: "Secret Price".localized )
                     .keyboardType(.decimalPad)
                 .focused(self.$isFocused)
                 .transition(.opacity)

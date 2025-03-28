@@ -35,6 +35,16 @@ class UserAreaCoordinator: Coordinator, UserProfileCoordinatorProtocol, AuctionC
         }
     }
     
+    @MainActor
+    func editVendorProfile(vendorId: UUID, shortBio: String, website: String, location: String, onEditComplete:  (() -> Void)?) {
+        self.router.navigate(to: editVendorProfileDestination(vendorId: vendorId, shortBio: shortBio, website: website, location: location), type: .sheet, onDismiss: onEditComplete)
+    }
+    
+    @MainActor
+    func dismiss() {
+        self.router.dismiss()
+    }
+    
     func auctionDetailDestination(_ auction: AuctionDetailModel) -> RoutingKit.Destination {
         .init {
             let vm = self.appContainer.unsafeResolve(AuctionDetailMainViewModel.self, tag: .init("UserArea"))
@@ -56,6 +66,14 @@ class UserAreaCoordinator: Coordinator, UserProfileCoordinatorProtocol, AuctionC
     func presentOfferSheetDestination(for auction: AuctionDetailModel, onBidResult: ((Bool) -> Void)?) -> RoutingKit.Destination {
         .init {
             EmptyView()
+        }
+    }
+    
+    func editVendorProfileDestination(vendorId: UUID, shortBio: String, website: String, location: String) -> RoutingKit.Destination {
+        .init {
+            let vm = self.appContainer.unsafeResolve(UpdateVendorDetailViewModel.self)
+            vm.setupDetails(vendorId: vendorId, shortBio: shortBio, url: website, geoLocation: location)
+            return UpdateVendorDetailView(viewModel: vm)
         }
     }
     

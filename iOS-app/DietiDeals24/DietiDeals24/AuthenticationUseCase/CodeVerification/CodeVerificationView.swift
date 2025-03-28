@@ -32,7 +32,7 @@ struct CodeVerificationView: View, LoadableView {
                         .multilineTextAlignment(.center)
                         .lineSpacing(8)
                     
-                    ValidableTextField(validationError: $viewModel.validationCodeError, text: $viewModel.confimationCode, validation: viewModel.validateCode, label: "Code")
+                    ValidableTextField(validationError: $viewModel.validationCodeError, text: $viewModel.confimationCode, validation: viewModel.validateCode, label: "Code".localized)
                         .textContentType(.oneTimeCode)
                         .keyboardType(.numberPad)
                         .focused(self.$isFocused)

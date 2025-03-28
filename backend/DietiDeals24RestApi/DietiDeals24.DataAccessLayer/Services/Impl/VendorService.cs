@@ -157,6 +157,54 @@ public class VendorService: IVendorService
             _logger.LogError(ex, $"[SERVICE] Updating vendor successful auctions with id: {vendorId} failed. Exception occurred: {ex.Message}");
             throw new Exception($"[SERVICE] Updating vendor successful auctions with id: {vendorId} failed. Exception occurred: {ex.Message}", ex);
         }
-        
+    }
+
+    public async Task<Vendor> UpdateVendorAsync(UpdateVendorDTO vendorDto)
+    {
+        try
+        {
+            var vendor = await _unitOfWork.VendorRepository
+                .Get(vendor => vendor.Id == vendorDto.VendorId)
+                .Select(vendor => new Vendor
+                {
+                    Id = vendor.Id,
+                    UserId = vendor.UserId,
+                    GeoLocation = vendor.GeoLocation,
+                    WebSiteUrl = vendor.WebSiteUrl,
+                    ShortBio = vendor.ShortBio,
+                    StartingDate = vendor.StartingDate,
+                    SuccessfulAuctions = vendor.SuccessfulAuctions,
+                    User = vendor.User
+                })
+                .FirstOrDefaultAsync();
+            
+            if (vendor == null)
+            {
+                throw new InvalidOperationException($"Vendor with UserId {vendorDto.VendorId} does not exists.");
+            }
+
+            var newVendor = new Vendor
+            {
+                Id = vendor.Id,
+                UserId = vendor.UserId,
+                GeoLocation = vendorDto.GeoLocation,
+                WebSiteUrl = vendorDto.WebSiteUrl,
+                ShortBio = vendorDto.ShortBio,
+                StartingDate = vendor.StartingDate,
+                SuccessfulAuctions = vendor.SuccessfulAuctions
+            };
+            
+            _unitOfWork.BeginTransaction();
+            await _unitOfWork.VendorRepository.Update(vendor);
+            _unitOfWork.Commit();
+            await _unitOfWork.Save();
+
+            return newVendor;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"[SERVICE] Failed to update vendor with id: {vendorDto.VendorId}. Exception occurred: {ex.Message}");
+            throw new Exception($"[SERVICE] Failed to update vendor with id: {vendorDto.VendorId}. Exception occurred: {ex.Message}", ex);
+        }
     }
 }

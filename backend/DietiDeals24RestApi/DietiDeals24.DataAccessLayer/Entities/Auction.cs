@@ -47,7 +47,10 @@ public enum AuctionCategory
     Services = 1,
     Electronics = 2,
     Furniture = 3,
-    Clothing = 4
+    Clothing = 4,
+    Collectibles = 5,
+    Hobbies = 6,
+    Other = 7
 }
 
 public enum AuctionSortOrder

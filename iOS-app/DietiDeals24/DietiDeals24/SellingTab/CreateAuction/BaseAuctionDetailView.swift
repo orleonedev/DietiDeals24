@@ -46,15 +46,15 @@ extension BaseAuctionDetailView {
     @ViewBuilder
     func formFields() -> some View {
         VStack(alignment: .leading, spacing: 32 ){
-            ValidableTextField(validationError: $viewModel.validationTitleError, text: $viewModel.baseAuction.title, validation: viewModel.validateTitle, label: "Title")
+            ValidableTextField(validationError: $viewModel.validationTitleError, text: $viewModel.baseAuction.title, validation: viewModel.validateTitle, label: "Title".localized)
                 .focused(self.$isFocused)
 
             
-            ValidableTextField(validationError: $viewModel.validationDescriptionError, text: $viewModel.baseAuction.description, validation: viewModel.validateDescription, label: "Description")
+            ValidableTextField(validationError: $viewModel.validationDescriptionError, text: $viewModel.baseAuction.description, validation: viewModel.validateDescription, label: "Description".localized)
                 .focused(self.$isFocused)
 
             
-            MenuPicker(title: "Category", selection: $viewModel.baseAuction.category, options: Array(AuctionCategory.allCases.dropFirst()), placeholderLabel: "Select a category")
+            MenuPicker(title: "Category", selection: $viewModel.baseAuction.category, options: Array(AuctionCategory.allCases.dropFirst()), placeholderLabel: "Select a category".localized)
             
         }
         .padding(.vertical)

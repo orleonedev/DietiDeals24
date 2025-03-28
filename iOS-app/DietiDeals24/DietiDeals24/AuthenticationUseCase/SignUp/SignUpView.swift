@@ -53,7 +53,7 @@ extension SignUpView {
             ValidableTextField(
                 validationError: self.$viewModel.validationEmailError,
                 text: self.$viewModel.email, validation: self.viewModel.validateEmail,
-                label: "Email"
+                label: "Email".localized
             )
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
@@ -62,35 +62,41 @@ extension SignUpView {
             ValidableTextField(
                 validationError: self.$viewModel.validationUserNameError,
                 text: self.$viewModel.username, validation: self.viewModel.validateUsername,
-                label: "Username"
+                label: "Username".localized
             )
             .textContentType(.username)
             .keyboardType(.asciiCapable)
             .focused(self.$isFocused)
 
             
-            SecureValidableTextField(
-                validationError: self.$viewModel.validationPasswordError,
-                text: self.$viewModel.password, validation: self.viewModel.validatePassword,
-                label: "Password"
-            )
-            .autocorrectionDisabled(true)
-            .textContentType(.newPassword)
-            .focused(self.$isFocused)
+            VStack(alignment: .leading, spacing: 8){
+                SecureValidableTextField(
+                    validationError: self.$viewModel.validationPasswordError,
+                    text: self.$viewModel.password, validation: self.viewModel.validatePassword,
+                    label: "Password".localized
+                )
+                .autocorrectionDisabled(true)
+                .textContentType(.newPassword)
+                .focused(self.$isFocused)
+                
+                PasswordRequirementsView(requirements: viewModel.passwordRequirements)
+                    .font(.caption)
+                    .padding(.leading)
+            }
 
             
             ValidableTextField(
                 validationError: self.$viewModel.validationFullNameError,
                 text: self.$viewModel.fullName,
                 validation: self.viewModel.validateFullName,
-                label: "Full Name"
+                label: "Full Name".localized
             )
             .textContentType(.name)
             .keyboardType(.asciiCapable)
             .focused(self.$isFocused)
 
             
-            ValidableDatePicker(validationError: self.$viewModel.validationBirthDateError, date: self.$viewModel.birthdate, validation: self.viewModel.validateBirthDate, label: "Birthdate", range: self.viewModel.dateRange)
+            ValidableDatePicker(validationError: self.$viewModel.validationBirthDateError, date: self.$viewModel.birthdate, validation: self.viewModel.validateBirthDate, label: "Birthdate".localized, range: self.viewModel.dateRange)
             
         }
     }
@@ -99,13 +105,7 @@ extension SignUpView {
     func signUpButton() -> some View {
         VStack {
             Button(action: {
-                Task{
-                    do {
-                        try await viewModel.signUp()
-                    } catch {
-                        print(error)
-                    }
-                }
+                viewModel.signUp()
             }) {
                 Text("Sign Up")
                     .font(.headline)
@@ -159,5 +159,5 @@ extension SignUpView {
 }
 
 #Preview {
-    SignUpView(viewModel: .init(coordinator: .init(container: .init())))
+    SignUpView(viewModel: .init(coordinator: .init(container: .init()), validator: Validator()))
 }

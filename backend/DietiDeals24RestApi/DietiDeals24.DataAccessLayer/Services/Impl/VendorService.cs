@@ -182,24 +182,17 @@ public class VendorService: IVendorService
             {
                 throw new InvalidOperationException($"Vendor with UserId {vendorDto.VendorId} does not exists.");
             }
-
-            var newVendor = new Vendor
-            {
-                Id = vendor.Id,
-                UserId = vendor.UserId,
-                GeoLocation = vendorDto.GeoLocation,
-                WebSiteUrl = vendorDto.WebSiteUrl,
-                ShortBio = vendorDto.ShortBio,
-                StartingDate = vendor.StartingDate,
-                SuccessfulAuctions = vendor.SuccessfulAuctions
-            };
+            
+            vendor.GeoLocation = vendorDto.GeoLocation;
+            vendor.WebSiteUrl = vendorDto.WebSiteUrl;
+            vendor.ShortBio = vendorDto.ShortBio;
             
             _unitOfWork.BeginTransaction();
             await _unitOfWork.VendorRepository.Update(vendor);
             _unitOfWork.Commit();
             await _unitOfWork.Save();
 
-            return newVendor;
+            return vendor;
         }
         catch (Exception ex)
         {

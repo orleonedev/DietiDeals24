@@ -785,9 +785,6 @@
     "Skip Submit" : {
 
     },
-    "Something went wrong" : {
-
-    },
     "Start Selling" : {
       "localizations" : {
         "it" : {
@@ -892,6 +889,9 @@
           }
         }
       }
+    },
+    "Unable to find auctions" : {
+
     },
     "Update Vendor Details" : {
 

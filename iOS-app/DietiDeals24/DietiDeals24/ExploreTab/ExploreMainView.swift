@@ -96,7 +96,7 @@ extension ExploreMainView {
             }
             .overlay {
                 if viewModel.exploreItems.isEmpty && !viewModel.isFetchingExploreItems {
-                    ContentUnavailableView("Something went wrong", systemImage: "questionmark.circle.dashed", description: Text("We couldn't find any auctions at this time. Try again later.")
+                    ContentUnavailableView("Unable to find auctions", systemImage: "questionmark.circle.dashed", description: Text("We couldn't find any auctions at this time. Try again later.")
                     )
                 }
             }

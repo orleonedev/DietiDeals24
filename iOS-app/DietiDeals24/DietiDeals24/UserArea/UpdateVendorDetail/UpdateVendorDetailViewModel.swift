@@ -45,7 +45,7 @@ class UpdateVendorDetailViewModel: LoadableViewModel {
             defer {
                 isLoading = false
             }
-            let response = try await vendorService.updateVendorProfile(update: UpdateVendorBodyRequest(vendorId: uuid, shortBio: self.shortBio, webSiteUrl: self.url, geoLocation: self.geoLocation))
+            let _ = try await vendorService.updateVendorProfile(update: UpdateVendorBodyRequest(vendorId: uuid, shortBio: self.shortBio, webSiteUrl: self.url, geoLocation: self.geoLocation))
             
             dismiss()
         }

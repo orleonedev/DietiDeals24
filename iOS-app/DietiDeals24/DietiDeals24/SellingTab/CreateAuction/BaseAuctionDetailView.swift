@@ -54,7 +54,7 @@ extension BaseAuctionDetailView {
                 .focused(self.$isFocused)
 
             
-            MenuPicker(title: "Category", selection: $viewModel.baseAuction.category, options: Array(AuctionCategory.allCases.dropFirst()), placeholderLabel: "Select a category".localized)
+            MenuPicker(title: "Category".localized, selection: $viewModel.baseAuction.category, options: Array(AuctionCategory.allCases.dropFirst()), placeholderLabel: "Select a category".localized)
             
         }
         .padding(.vertical)

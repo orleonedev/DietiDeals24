@@ -89,7 +89,7 @@ extension ExploreMainView {
     @ViewBuilder
     func exploreView() -> some View {
         
-        AuctionListView(auctionList: viewModel.exploreItems, mainHeader: viewModel.exploreItems.count > 0 ? "Latest Auctions" : "", additionalInfo: viewModel.exploreItems.count > 0 ? viewModel.exploreItems.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
+        AuctionListView(auctionList: viewModel.exploreItems, mainHeader: viewModel.exploreItems.count > 0 ? "Latest Auctions".localized : "", additionalInfo: viewModel.exploreItems.count > 0 ? viewModel.exploreItems.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
             .scrollIndicatorsFlash(onAppear: true)
             .refreshable {
                 await viewModel.refreshExploreItems()

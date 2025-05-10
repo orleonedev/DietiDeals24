@@ -43,9 +43,6 @@ struct UserAreaMainView: View, LoadableView {
                     shouldFetchMore: viewModel.shouldFetchMoreVendorItem,
                     fetchCallBack: viewModel.getMoreVendorItems
                 )
-                .refreshable {
-                    viewModel.refreshVendorItems()
-                }
                 .scrollBounceBehavior( viewModel.vendorItems.isEmpty ? .basedOnSize : .automatic)
                 .task {
                     if viewModel.vendorItems.isEmpty {
@@ -102,6 +99,9 @@ struct UserAreaMainView: View, LoadableView {
             await viewModel.getUserData()
         }
         .scrollBounceBehavior(.basedOnSize)
+        .refreshable {
+            viewModel.refreshVendorItems()
+        }
         .animation(.easeInOut, value: viewModel.userDataModel)
         .navigationBarTitleDisplayMode(.large)
         .navigationTitle(Text("Personal Area"))

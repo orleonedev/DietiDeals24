@@ -21,7 +21,7 @@ RUN dotnet publish "DietiDeals24.Lambda.RegisterUserPostConfirmation.csproj" \
 
 # Stage 3: Runtime Stage
 FROM public.ecr.aws/lambda/dotnet:8-arm64 AS final
-ENV BACKEND_URL=http://52.50.106.87:80/api/Authentication/register-user
+ENV BACKEND_URL=http://52.50.90.140:80/api/Authentication/register-user
 WORKDIR /var/task
 COPY --from=publish /app/publish .
 CMD [ "DietiDeals24.Lambda.RegisterUserPostConfirmation::DietiDeals24.Lambda.RegisterUserPostConfirmation.Function::FunctionHandler" ]

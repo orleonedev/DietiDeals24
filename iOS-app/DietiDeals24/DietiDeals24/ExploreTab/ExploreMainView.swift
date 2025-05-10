@@ -22,7 +22,12 @@ public struct ExploreMainView: View, LoadableView {
                         .task {
                             if viewModel.exploreItems.isEmpty {
                                 viewModel.getMoreExploreItems()
+                            } else {
+                                await viewModel.refreshExploreItems()
                             }
+                        }
+                        .refreshable {
+                            await viewModel.refreshExploreItems()
                         }
                 case .searching:
                     auctionListViewWithFilters()
@@ -91,9 +96,6 @@ extension ExploreMainView {
         
         AuctionListView(auctionList: viewModel.exploreItems, mainHeader: viewModel.exploreItems.count > 0 ? "Latest Auctions".localized : "", additionalInfo: viewModel.exploreItems.count > 0 ? viewModel.exploreItems.count.formatted() : "", onTapCallBack: viewModel.getAuctionDetail, shouldFetchMore: viewModel.shouldFetchMoreExploreItem, fetchCallBack: viewModel.getMoreExploreItems)
             .scrollIndicatorsFlash(onAppear: true)
-            .refreshable {
-                await viewModel.refreshExploreItems()
-            }
             .overlay {
                 if viewModel.exploreItems.isEmpty && !viewModel.isFetchingExploreItems {
                     ContentUnavailableView("Unable to find auctions", systemImage: "questionmark.circle.dashed", description: Text("We couldn't find any auctions at this time. Try again later.")

@@ -51,12 +51,12 @@ extension BecomeAVendorView {
     @ViewBuilder
     func FormContent() -> some View {
         VStack(alignment: .leading, spacing: 21 ){
-            RoundedCornerTextField(text: $viewModel.shortBio, label: "Short Bio")
+            RoundedCornerTextField(text: $viewModel.shortBio, label: "Short Bio".localized)
                 
-            RoundedCornerTextField(text: $viewModel.geoLocation, label: "Geographical Location")
+            RoundedCornerTextField(text: $viewModel.geoLocation, label: "Geographical Location".localized)
                 .textContentType(.addressCity)
                 
-            RoundedCornerTextField(text: $viewModel.url, label: "Link to your website")
+            RoundedCornerTextField(text: $viewModel.url, label: "Website".localized)
                 .textContentType(.URL)
                 .keyboardType(.URL)
             

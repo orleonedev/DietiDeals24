@@ -41,7 +41,7 @@ enum AuctionType: Int, FilterModelProtocol {
     }
     
     static var title: String {
-        "Auction Type"
+        "Auction Type".localized
     }
 }
 
@@ -63,18 +63,18 @@ enum SortOrderFilter: Int, FilterModelProtocol {
     var label: String {
         switch self {
             case .priceAscending:
-                return "Price Ascending"
+                return "Price Ascending".localized
             case .newer:
-                return "Newest"
+                return "Newest".localized
             case .relevance:
-                return "Relevance"
+                return "Relevance".localized
             case .priceDescending:
-                return "Price Descending"
+                return "Price Descending".localized
         }
     }
     
     static var title: String {
-        "Order by"
+        "Order by".localized
     }
 }
 
@@ -118,7 +118,7 @@ enum AuctionCategory: Int, FilterModelProtocol {
     }
     
     static var title: String {
-        "Category"
+        "Category".localized
     }
 }
 
@@ -129,7 +129,7 @@ struct PriceRangeFilter {
     var max: Double?
     
    static var title: String {
-        "Price Range"
+       "Price Range".localized
     }
 }
 

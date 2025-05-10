@@ -37,7 +37,7 @@ struct UserAreaMainView: View, LoadableView {
                 .padding()
                 AuctionListView(
                     auctionList: viewModel.vendorItems,
-                    mainHeader: "My Active Auctions",
+                    mainHeader: "My Active Auctions".localized,
                     additionalInfo: viewModel.vendorItemsCount.formatted(),
                     onTapCallBack: viewModel.getAuctionDetail,
                     shouldFetchMore: viewModel.shouldFetchMoreVendorItem,

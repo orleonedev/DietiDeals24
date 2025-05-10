@@ -255,6 +255,17 @@
         }
       }
     },
+    "Category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categoria"
+          }
+        }
+      }
+    },
     "Close" : {
       "localizations" : {
         "it" : {
@@ -373,7 +384,14 @@
       }
     },
     "Edit Profile" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica Profilo"
+          }
+        }
+      }
     },
     "Electronics" : {
       "extractionState" : "manual",
@@ -424,6 +442,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arredamento"
+          }
+        }
+      }
+    },
+    "Geographical Location" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posizione Geografica"
           }
         }
       }
@@ -496,12 +525,26 @@
         }
       }
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "Last Price" : {
       "localizations" : {
         "it" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ultimo Prezzo"
+          }
+        }
+      }
+    },
+    "Latest Auctions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ultime Aste"
           }
         }
       }
@@ -522,6 +565,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Altro"
+          }
+        }
+      }
+    },
+    "My Active Auctions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mie Aste Attive"
           }
         }
       }
@@ -556,6 +610,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hai ricevuto una nuova offerta!"
+          }
+        }
+      }
+    },
+    "Newest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più recente"
           }
         }
       }
@@ -596,6 +661,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O accedi con"
+          }
+        }
+      }
+    },
+    "Order by" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordina per"
           }
         }
       }
@@ -654,6 +730,28 @@
         }
       }
     },
+    "Price Ascending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo Crescente"
+          }
+        }
+      }
+    },
+    "Price Descending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo Decrescente"
+          }
+        }
+      }
+    },
     "Publish Auction" : {
       "localizations" : {
         "it" : {
@@ -670,6 +768,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sei pronto a creare la tua prossima asta? Premi il pulsante qui sotto ed inizia a vendere i tuoi articoli."
+          }
+        }
+      }
+    },
+    "Relevance" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rilevanza"
           }
         }
       }
@@ -742,6 +851,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Servizi"
+          }
+        }
+      }
+    },
+    "Short Bio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Breve Descrizione"
           }
         }
       }
@@ -894,10 +1014,24 @@
 
     },
     "Update Vendor Details" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiorna Dettagli Venditore"
+          }
+        }
+      }
     },
     "Update Your Profile" : {
-
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiorna Profilo"
+          }
+        }
+      }
     },
     "Verify" : {
       "localizations" : {
@@ -935,6 +1069,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vorremmo sapere di più su di te, per poter arricchire l’esperienza per tutti i nostri utenti"
+          }
+        }
+      }
+    },
+    "Website" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sito web"
           }
         }
       }

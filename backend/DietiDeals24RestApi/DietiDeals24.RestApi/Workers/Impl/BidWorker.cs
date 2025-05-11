@@ -88,6 +88,7 @@ public class BidWorker: IBidWorker
             {
                 auction.CurrentPrice = bid.Price;
                 auction.EndingDate = actualDate.AddHours(auction.Timer);
+                await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
                 var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
                 notification.Type = NotificationType.AuctionBid;
                 notification.Message = "new.bid.message";

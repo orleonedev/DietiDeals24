@@ -48,12 +48,13 @@ public class EventBridgeSchedulerService
     public async Task DeleteScheduledAuctionEndEvent(string auctionId)
     {
         string scheduleName = $"AuctionEnd-{auctionId}"; // Stesso nome assegnato prima
-
+        _logger.LogInformation($"[ EventBridgeSchedulerService ] Deleting Schedule AuctionEnd {scheduleName}");
         var request = new DeleteScheduleRequest
         {
             Name = scheduleName
         };
 
-        await _schedulerClient.DeleteScheduleAsync(request);
+        var response = await _schedulerClient.DeleteScheduleAsync(request);
+        _logger.LogInformation($"[ EventBridgeSchedulerService ] Status: { response.HttpStatusCode } Deleting Schedule AuctionEnd {scheduleName}");
     }
 }

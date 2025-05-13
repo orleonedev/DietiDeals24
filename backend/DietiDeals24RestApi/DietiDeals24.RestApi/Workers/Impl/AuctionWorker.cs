@@ -313,6 +313,7 @@ public class AuctionWorker: IAuctionWorker
             await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
             var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             _logger.LogInformation("[WORKER] Decreased auction end time reached, event bridge triggered.");
+            await _auctionService.UpdateAuctionAsync(auction);
             return;
         }
                 

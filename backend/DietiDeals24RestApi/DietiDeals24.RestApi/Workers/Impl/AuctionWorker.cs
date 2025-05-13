@@ -310,6 +310,7 @@ public class AuctionWorker: IAuctionWorker
             DateTime now = DateTime.Now;
             DateTime actualDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
             auction.EndingDate = actualDate.AddHours(auction.Timer);
+            await _eventBridgeSchedulerService.DeleteScheduledAuctionEndEvent(auction.Id.ToString());
             var response = await _eventBridgeSchedulerService.ScheduleAuctionEndEvent(auction.Id.ToString(), auction.EndingDate);
             _logger.LogInformation("[WORKER] Decreased auction end time reached, event bridge triggered.");
             return;
